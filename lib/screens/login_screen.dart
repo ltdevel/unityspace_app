@@ -39,29 +39,49 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                     'Пространства',
                     style: TextStyle(
                       fontSize: 24,
-                        color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withOpacity(0.9),
                     ),
                   ),
                   const Spacer(),
                 ],
               ),
-
-              // PrimaryButton(
-              //   text: "Sign In",
-              //   press: () => Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => const ChatsScreen(),
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: kDefaultPadding * 1.5),
-              // PrimaryButton(
-              //   color: Theme.of(context).colorScheme.secondary,
-              //   text: "Sign Up",
-              //   press: () {},
-              // ),
-              const Spacer(flex: 2),
+              const SizedBox(height: 32),
+              Text(
+                'Войдите через',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  height: 32 / 28,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'или с помощью электронной почты',
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 24 / 14,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+              const SizedBox(height: 12),
+              MaterialButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                minWidth: double.infinity,
+                height: 40,
+                elevation: 2,
+                color: Colors.white,
+                onPressed: () {},
+                child: const Text(
+                  'Ввести емайл',
+                  style: TextStyle(
+                    color: Color(0xFF111012),
+                    fontSize: 16,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
