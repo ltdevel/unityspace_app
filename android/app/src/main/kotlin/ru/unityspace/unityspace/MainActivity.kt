@@ -1,4 +1,4 @@
-package com.example.unityspace
+package ru.unityspace.unityspace
 
 import io.flutter.embedding.android.FlutterActivity
 
