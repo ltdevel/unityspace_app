@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/widgets/main_form_input_field.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
 import 'package:unityspace/widgets/main_form_widget.dart';
@@ -38,7 +39,23 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                   // загрузка и вход
                 },
                 submittingNow: false,
-                children: const [],
+                children: [
+                  MainFormInputField(
+                    autofocus: true,
+                    labelText: 'Ваша электронная почта',
+                    iconAssetName: 'assets/icons/email.svg',
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    autocorrect: false,
+                    validator: (text) {
+                      if (text.isEmpty) return 'Поле не заполнено';
+                      if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
+                        return 'Введите корректный email';
+                      }
+                      return '';
+                    },
+                  ),
+                ],
               ),
             ],
           ),
