@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unityspace/widgets/main_form_button_widget.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
+import 'package:unityspace/widgets/main_form_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginByEmailScreenStore extends WStore {
@@ -32,13 +32,13 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               const SizedBox(height: 32),
               const MainFormTextTitleWidget(text: 'Войти по емайл'),
               const SizedBox(height: 32),
-              //
-              const SizedBox(height: 12),
-              MainFormButtonWidget(
-                text: 'Войти',
-                onPressed: () {
+              MainFormWidget(
+                submitButtonText: 'Войти',
+                onSubmit: () {
                   // загрузка и вход
                 },
+                submittingNow: false,
+                children: const [],
               ),
             ],
           ),
