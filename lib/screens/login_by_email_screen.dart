@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wstore/wstore.dart';
 
-class LoginScreenStore extends WStore {
+class LoginByEmailScreenStore extends WStore {
   // TODO: add data here...
 
   @override
-  LoginScreen get widget => super.widget as LoginScreen;
+  LoginByEmailScreen get widget => super.widget as LoginByEmailScreen;
 }
 
-class LoginScreen extends WStoreWidget<LoginScreenStore> {
-  const LoginScreen({
+class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
+  const LoginByEmailScreen({
     super.key,
   });
 
   @override
-  LoginScreenStore createWStore() => LoginScreenStore();
+  LoginByEmailScreenStore createWStore() => LoginByEmailScreenStore();
 
   @override
-  Widget build(BuildContext context, LoginScreenStore store) {
+  Widget build(BuildContext context, LoginByEmailScreenStore store) {
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -47,7 +47,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               ),
               const SizedBox(height: 32),
               Text(
-                'Войдите через',
+                'Войти по емайл',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
@@ -56,14 +56,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                 ),
               ),
               const SizedBox(height: 32),
-              Text(
-                'или с помощью электронной почты',
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 24 / 14,
-                  color: Colors.white.withOpacity(0.9),
-                ),
-              ),
+              //
               const SizedBox(height: 12),
               MaterialButton(
                 shape: RoundedRectangleBorder(
@@ -74,7 +67,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                 elevation: 2,
                 color: Colors.white,
                 onPressed: () {
-                  Navigator.pushNamed(context, '/email');
+                  // Navigator.pushNamed(context, '/email');
                 },
                 child: const Text(
                   'Ввести емайл',

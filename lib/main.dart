@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
 
 void main() {
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/email': (context) => const LoginByEmailScreen(),
+      },
     );
   }
 }
