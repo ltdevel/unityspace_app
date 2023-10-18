@@ -25,9 +25,10 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 60),
           child: Column(
             children: [
+              const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
               const MainFormTextTitleWidget(text: 'Войдите через'),

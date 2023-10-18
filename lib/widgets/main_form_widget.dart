@@ -37,13 +37,21 @@ class _MainFormWidgetState extends State<MainFormWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...widget.children(submit),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                ...widget.children(submit),
+              ],
+            ),
+          ),
           const SizedBox(height: 12),
           MainFormButtonWidget(
             loading: widget.submittingNow,
             text: widget.submitButtonText,
             onPressed: submit,
           ),
+          const SizedBox(height: 12),
         ],
       ),
     );
