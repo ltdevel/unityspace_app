@@ -6,7 +6,13 @@ import 'package:unityspace/widgets/main_form_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginByEmailScreenStore extends WStore {
-  // TODO: add data here...
+  bool showPassword = false;
+
+  void toggleShowPassword() {
+    setStore(() {
+      showPassword = !showPassword;
+    });
+  }
 
   @override
   LoginByEmailScreen get widget => super.widget as LoginByEmailScreen;
@@ -39,7 +45,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                   // загрузка и вход
                 },
                 submittingNow: false,
-                children: [
+                children: (submit) => [
                   MainFormInputField(
                     autofocus: true,
                     labelText: 'Ваша электронная почта',
@@ -53,6 +59,32 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                         return 'Введите корректный email';
                       }
                       return '';
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  WStoreValueBuilder<LoginByEmailScreenStore, bool>(
+                    store: store,
+                    watch: (store) => store.showPassword,
+                    builder: (context, showPassword) {
+                      return MainFormInputField(
+                        labelText: 'Ваш пароль',
+                        iconAssetName: showPassword
+                            ? 'assets/icons/password_hide.svg'
+                            : 'assets/icons/password_show.svg',
+                        textInputAction: TextInputAction.done ,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !showPassword,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        onIconTap: () {
+                          store.toggleShowPassword();
+                        },
+                        onEditingComplete: submit,
+                        validator: (text) {
+                          if (text.isEmpty) return 'Поле не заполнено';
+                          return '';
+                        },
+                      );
                     },
                   ),
                 ],

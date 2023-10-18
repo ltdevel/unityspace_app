@@ -5,7 +5,7 @@ class MainFormWidget extends StatefulWidget {
   final String submitButtonText;
   final VoidCallback onSubmit;
   final bool submittingNow;
-  final List<Widget> children;
+  final List<Widget> Function(VoidCallback submit) children;
 
   const MainFormWidget({
     super.key,
@@ -22,6 +22,14 @@ class MainFormWidget extends StatefulWidget {
 class _MainFormWidgetState extends State<MainFormWidget> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  void submit() {
+    FormState? formState = _formKey.currentState;
+    if (formState != null && formState.validate()) {
+      formState.save();
+      widget.onSubmit();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -29,18 +37,12 @@ class _MainFormWidgetState extends State<MainFormWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...widget.children,
+          ...widget.children(submit),
           const SizedBox(height: 12),
           MainFormButtonWidget(
             loading: widget.submittingNow,
             text: widget.submitButtonText,
-            onPressed: () {
-              FormState? formState = _formKey.currentState;
-              if (formState != null && formState.validate()) {
-                formState.save();
-                widget.onSubmit();
-              }
-            },
+            onPressed: submit,
           ),
         ],
       ),

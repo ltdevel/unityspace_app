@@ -10,6 +10,7 @@ class MainFormInputField extends StatefulWidget {
   final void Function(String value)? onSaved;
   final void Function(String value)? onChanged;
   final String Function(String value)? validator;
+  final VoidCallback? onEditingComplete;
   final TextInputAction? textInputAction;
   final bool autocorrect;
   final bool enableSuggestions;
@@ -24,6 +25,7 @@ class MainFormInputField extends StatefulWidget {
     this.onIconTap,
     this.onSaved,
     this.onChanged,
+    this.onEditingComplete,
     this.validator,
     this.textInputAction,
     this.keyboardType,
@@ -63,6 +65,7 @@ class _MainFormInputFieldState extends State<MainFormInputField> {
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
       obscureText: widget.obscureText,
+      onEditingComplete: widget.onEditingComplete,
       validator: (value) {
         if (widget.validator == null) return null;
         final result = widget.validator!(value ?? '');
