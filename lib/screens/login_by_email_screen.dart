@@ -74,7 +74,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                           iconAssetName: showPassword
                               ? 'assets/icons/password_hide.svg'
                               : 'assets/icons/password_show.svg',
-                          textInputAction: TextInputAction.done ,
+                          textInputAction: TextInputAction.done,
                           keyboardType: TextInputType.visiblePassword,
                           obscureText: !showPassword,
                           autocorrect: false,
