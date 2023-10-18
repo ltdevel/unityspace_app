@@ -42,6 +42,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               MainFormWidget(
                 submitButtonText: 'Войти',
                 onSubmit: () {
+                  FocusScope.of(context).unfocus();
                   // загрузка и вход
                 },
                 submittingNow: false,
@@ -79,7 +80,9 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                         onIconTap: () {
                           store.toggleShowPassword();
                         },
-                        onEditingComplete: submit,
+                        onEditingComplete: () {
+                          submit();
+                        },
                         validator: (text) {
                           if (text.isEmpty) return 'Поле не заполнено';
                           return '';
