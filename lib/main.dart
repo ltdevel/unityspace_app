@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
+import 'package:unityspace/store/auth_store.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AuthStore().loadUserTokens();
+
   runApp(const MyApp());
 }
 

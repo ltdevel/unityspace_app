@@ -25,7 +25,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 48),
           child: Column(
             children: [
               const SizedBox(height: 60),

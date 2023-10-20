@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/widgets/main_form_input_field.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
@@ -6,12 +7,50 @@ import 'package:unityspace/widgets/main_form_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginByEmailScreenStore extends WStore {
+  static const statusInit = 0;
+  static const statusProcessing = 1;
+  static const statusError = 2;
+  static const statusOk = 3;
+
+  int status = statusInit;
   bool showPassword = false;
+  String loginError = '';
+  String email = '';
+  String password = '';
 
   void toggleShowPassword() {
     setStore(() {
       showPassword = !showPassword;
     });
+  }
+
+  void login() {
+    if (status == statusProcessing) return;
+    //
+    setStore(() {
+      status = statusProcessing;
+    });
+    //
+    subscribe(
+      future: AuthStore().login(email, password),
+      subscriptionId: 1,
+      onData: (_) {
+        setStore(() {
+          status = statusOk;
+        });
+      },
+      onError: (error, __) {
+        String errorText =
+            'При входе возникла проблема, пожалуйста, попробуйте ещё раз';
+        if (error == 'Incorrect user name or password') {
+          errorText = 'Неправильный email или пароль!';
+        }
+        setStore(() {
+          status = statusError;
+          loginError = errorText;
+        });
+      },
+    );
   }
 
   @override
@@ -32,7 +71,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 48),
           child: Column(
             children: [
               const SizedBox(height: 60),
@@ -41,64 +80,111 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               const MainFormTextTitleWidget(text: 'Войти по емайл'),
               const SizedBox(height: 32),
               Expanded(
-                child: MainFormWidget(
-                  submitButtonText: 'Войти',
-                  onSubmit: () {
-                    FocusScope.of(context).unfocus();
-                    // загрузка и вход
+                child: WStoreConsumer(
+                  store: store,
+                  watch: () => [store.status],
+                  builder: (context, _) {
+                    final loading = store.status ==
+                        LoginByEmailScreenStore.statusProcessing;
+                    return LoginByEmailForm(loading: loading);
                   },
-                  submittingNow: false,
-                  children: (submit) => [
-                    MainFormInputField(
-                      autofocus: true,
-                      labelText: 'Ваша электронная почта',
-                      iconAssetName: 'assets/icons/email.svg',
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.emailAddress,
-                      autocorrect: false,
-                      validator: (text) {
-                        if (text.isEmpty) return 'Поле не заполнено';
-                        if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
-                          return 'Введите корректный email';
-                        }
-                        return '';
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    WStoreValueBuilder<LoginByEmailScreenStore, bool>(
-                      store: store,
-                      watch: (store) => store.showPassword,
-                      builder: (context, showPassword) {
-                        return MainFormInputField(
-                          labelText: 'Ваш пароль',
-                          iconAssetName: showPassword
-                              ? 'assets/icons/password_hide.svg'
-                              : 'assets/icons/password_show.svg',
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: !showPassword,
-                          autocorrect: false,
-                          enableSuggestions: false,
-                          onIconTap: () {
-                            store.toggleShowPassword();
-                          },
-                          onEditingComplete: () {
-                            submit();
-                          },
-                          validator: (text) {
-                            if (text.isEmpty) return 'Поле не заполнено';
-                            return '';
-                          },
+                  onChange: (context) {
+                    switch (store.status) {
+                      case LoginByEmailScreenStore.statusError:
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(store.loginError),
+                          ),
                         );
-                      },
-                    ),
-                  ],
+                        break;
+                      case LoginByEmailScreenStore.statusOk:
+                        // TODO: делаем переход в главный экран
+                        break;
+                    }
+                  },
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class LoginByEmailForm extends StatelessWidget {
+  final bool loading;
+
+  const LoginByEmailForm({
+    super.key,
+    required this.loading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MainFormWidget(
+      submitButtonText: 'Войти',
+      onSubmit: () {
+        FocusScope.of(context).unfocus();
+        // загрузка и вход
+        context.wstore<LoginByEmailScreenStore>().login();
+      },
+      submittingNow: loading,
+      children: (submit) => [
+        MainFormInputField(
+          enabled: !loading,
+          autofocus: true,
+          labelText: 'Ваша электронная почта',
+          iconAssetName: 'assets/icons/email.svg',
+          textInputAction: TextInputAction.next,
+          keyboardType: TextInputType.emailAddress,
+          autocorrect: false,
+          validator: (text) {
+            if (text.isEmpty) return 'Поле не заполнено';
+            if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
+              return 'Введите корректный email';
+            }
+            return '';
+          },
+          onSaved: (value) {
+            context.wstore<LoginByEmailScreenStore>().email = value;
+          },
+        ),
+        const SizedBox(height: 12),
+        WStoreValueBuilder<LoginByEmailScreenStore, bool>(
+          watch: (store) => store.showPassword,
+          builder: (context, showPassword) {
+            return MainFormInputField(
+              enabled: !loading,
+              labelText: 'Ваш пароль (не менее 8 символов)',
+              iconAssetName: showPassword
+                  ? 'assets/icons/password_hide.svg'
+                  : 'assets/icons/password_show.svg',
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: !showPassword,
+              autocorrect: false,
+              enableSuggestions: false,
+              onIconTap: () {
+                context.wstore<LoginByEmailScreenStore>().toggleShowPassword();
+              },
+              onEditingComplete: () {
+                submit();
+              },
+              validator: (text) {
+                if (text.isEmpty) return 'Поле не заполнено';
+                if (text.length < 8) {
+                  return 'Пароль должен быть не менее 8 символов';
+                }
+                return '';
+              },
+              onSaved: (value) {
+                context.wstore<LoginByEmailScreenStore>().password = value;
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }
