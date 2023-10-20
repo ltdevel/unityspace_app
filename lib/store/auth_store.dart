@@ -13,6 +13,8 @@ class AuthStore extends GStore {
 
   AuthTokens _currentTokens = const AuthTokens('', '');
 
+  bool get isAuthenticated => _currentTokens.accessToken.isNotEmpty;
+
   AuthTokens getUserTokens() {
     return _currentTokens;
   }

@@ -98,7 +98,10 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                         );
                         break;
                       case LoginByEmailScreenStore.statusOk:
-                        // TODO: делаем переход в главный экран
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/loading',
+                          (route) => false,
+                        );
                         break;
                     }
                   },

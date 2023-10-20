@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/home_screen.dart';
+import 'package:unityspace/screens/loading_screen.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
@@ -8,11 +10,20 @@ void main() async {
 
   await AuthStore().loadUserTokens();
 
-  runApp(const MyApp());
+  runApp(
+    MyApp(
+      isAuthenticated: AuthStore().isAuthenticated,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isAuthenticated;
+
+  const MyApp({
+    super.key,
+    required this.isAuthenticated,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +34,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      initialRoute: isAuthenticated ? '/loading' : '/login',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/login': (context) => const LoginScreen(),
         '/email': (context) => const LoginByEmailScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/loading': (context) => const LoadingScreen(),
       },
     );
   }
