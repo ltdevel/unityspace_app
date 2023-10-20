@@ -45,10 +45,10 @@ class HttpPlugin {
   Future<http.Response> post(final String url, Object? data) async {
     try {
       final uri = _makeUri(url);
-      logger.d('REQUEST to $url: $data');
+      logger.d('POST REQUEST to $url: $data');
       final response = await _client.post(uri, body: data, headers: _headers);
       logger.d(
-          'RESPONSE status = ${response.statusCode} body = ${response.body}');
+          'POST RESPONSE status = ${response.statusCode} body = ${response.body}');
       if (response.statusCode == 200) return response;
       final jsonData = json.decode(response.body);
       final message = jsonData['message'];
@@ -60,7 +60,34 @@ class HttpPlugin {
         jsonData['error']?.toString() ?? 'unknown',
       );
     } catch (e) {
-      logger.d('RESPONSE exception = ${e.toString()}');
+      logger.d('POST RESPONSE exception = ${e.toString()}');
+      if (e is http.ClientException) {
+        throw HttpPluginException(-1, e.message, 'ClientException');
+      }
+      rethrow;
+    }
+  }
+
+  Future<http.Response> patch(final String url, Object? data) async {
+    try {
+      final uri = _makeUri(url);
+      logger.d('PATCH REQUEST to $url: $data');
+      final response = await _client.patch(uri, body: data, headers: _headers);
+      logger.d(
+        'PATCH RESPONSE status = ${response.statusCode} body = ${response.body}',
+      );
+      if (response.statusCode == 200) return response;
+      final jsonData = json.decode(response.body);
+      final message = jsonData['message'];
+      throw HttpPluginException(
+        response.statusCode,
+        message is List<dynamic>
+            ? message.firstOrNull?.toString() ?? 'unknown'
+            : message?.toString() ?? 'unknown',
+        jsonData['error']?.toString() ?? 'unknown',
+      );
+    } catch (e) {
+      logger.d('PATCH RESPONSE exception = ${e.toString()}');
       if (e is http.ClientException) {
         throw HttpPluginException(-1, e.message, 'ClientException');
       }
