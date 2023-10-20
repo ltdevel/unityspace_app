@@ -24,3 +24,13 @@ Future<OnlyTokensResponse> login({
     rethrow;
   }
 }
+
+Future<void> signOut({
+  required final String refreshToken,
+  required final int globalUserId,
+}) async {
+  await HttpPlugin().patch('/auth/logout', {
+    'refreshToken': refreshToken,
+    'userId': globalUserId,
+  });
+}
