@@ -34,7 +34,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: isAuthenticated ? '/loading' : '/login',
+      initialRoute: '/loading',
+      // initialRoute: isAuthenticated ? '/loading' : '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
         '/email': (context) => const LoginByEmailScreen(),

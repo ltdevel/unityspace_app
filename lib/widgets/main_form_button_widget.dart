@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/widgets/color_button_widget.dart';
 
 class MainFormButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
@@ -14,30 +15,13 @@ class MainFormButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      minWidth: double.infinity,
-      height: 40,
-      elevation: 2,
-      color: Colors.white,
-      onPressed: loading ? null : onPressed,
-      child: loading
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            )
-          : Text(
-              text,
-              style: const TextStyle(
-                color: Color(0xFF111012),
-                fontSize: 16,
-              ),
-            ),
+    return ColorButtonWidget(
+      width: double.infinity,
+      onPressed: onPressed,
+      text: text,
+      loading: loading,
+      colorBackground: Colors.white,
+      colorText: const Color(0xFF111012),
     );
   }
 }

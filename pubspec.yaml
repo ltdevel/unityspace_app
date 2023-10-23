@@ -17,6 +17,7 @@ dependencies:
   http: ^1.1.0
   shared_preferences: ^2.2.2
   logger: ^2.0.2+1
+  lottie: ^2.7.0
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,7 @@ flutter:
 
   assets:
     - assets/icons/
+    - assets/animations/
 
   fonts:
     - family: Roboto
