@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:unityspace/plugins/logger_plugin.dart';
+import 'package:unityspace/store/auth_store.dart';
 
 class HttpPluginException implements Exception {
   final int statusCode;
@@ -42,13 +43,72 @@ class HttpPlugin {
     _headers['Authorization'] = authorization;
   }
 
-  Future<http.Response> post(final String url, final Object? data) async {
+  Future<http.Response> post(
+    final String url, [
+    final Map<String, dynamic>? data,
+  ]) {
+    return send('POST', url, data);
+  }
+
+  Future<http.Response> patch(
+    final String url, [
+    final Map<String, dynamic>? data,
+  ]) {
+    return send('PATCH', url, data);
+  }
+
+  Future<http.Response> get(
+    final String url, [
+    Map<String, dynamic>? queryParameters,
+  ]) {
+    return send('GET', url, null, queryParameters);
+  }
+
+  Future<http.Response> send(
+    final String method,
+    final String url, [
+    final Map<String, dynamic>? data,
+    Map<String, dynamic>? queryParameters,
+  ]) async {
+    final uri = _makeUri(url, queryParameters);
+    final request = http.Request(method, uri);
+    request.headers.addAll(_headers);
+    if (data != null) {
+      request.bodyFields = data.cast<String, String>();
+    }
     try {
-      final uri = _makeUri(url);
-      logger.d('POST REQUEST to $url: $data');
-      final response = await _client.post(uri, body: data, headers: _headers);
+      if (data != null) {
+        logger.d('$method REQUEST to $url with data = $data');
+      } else if (queryParameters != null) {
+        logger.d('$method REQUEST to $url with params = $queryParameters');
+      } else {
+        logger.d('$method REQUEST to $url');
+      }
+      var responseStream = await _client.send(request);
+      var response = await http.Response.fromStream(responseStream);
+      if (response.statusCode == 401 && url != '/auth/refresh') {
+        // это не запрос на обновление токена и токен протух
+        // пытаемся обновить и послать запрос заново
+        final needSendAgain = await AuthStore().refreshUserToken();
+        if (needSendAgain) {
+          // обновляем заголовки (токены авторизации обновились)
+          request.headers.addAll(_headers);
+          //
+          if (data != null) {
+            logger.d('RETRY $method REQUEST to $url with data = $data');
+          } else if (queryParameters != null) {
+            logger.d(
+                'RETRY $method REQUEST to $url with params = $queryParameters');
+          } else {
+            logger.d('RETRY $method REQUEST to $url');
+          }
+          responseStream = await _client.send(request);
+          response = await http.Response.fromStream(responseStream);
+        }
+      }
       logger.d(
-          'POST RESPONSE status = ${response.statusCode} body = ${response.body}');
+        '$method RESPONSE status = ${response.statusCode} body = ${response.body}',
+      );
       if (response.statusCode == 200) return response;
       final jsonData = json.decode(response.body);
       final message = jsonData['message'];
@@ -60,7 +120,7 @@ class HttpPlugin {
         jsonData['error']?.toString() ?? 'unknown',
       );
     } catch (e) {
-      logger.d('POST RESPONSE exception = ${e.toString()}');
+      logger.d('$method RESPONSE exception = ${e.toString()}');
       if (e is http.ClientException) {
         throw HttpPluginException(-1, e.message, 'ClientException');
       }
@@ -68,62 +128,8 @@ class HttpPlugin {
     }
   }
 
-  Future<http.Response> patch(final String url, final Object? data) async {
-    try {
-      final uri = _makeUri(url);
-      logger.d('PATCH REQUEST to $url: $data');
-      final response = await _client.patch(uri, body: data, headers: _headers);
-      logger.d(
-        'PATCH RESPONSE status = ${response.statusCode} body = ${response.body}',
-      );
-      if (response.statusCode == 200) return response;
-      final jsonData = json.decode(response.body);
-      final message = jsonData['message'];
-      throw HttpPluginException(
-        response.statusCode,
-        message is List<dynamic>
-            ? message.firstOrNull?.toString() ?? 'unknown'
-            : message?.toString() ?? 'unknown',
-        jsonData['error']?.toString() ?? 'unknown',
-      );
-    } catch (e) {
-      logger.d('PATCH RESPONSE exception = ${e.toString()}');
-      if (e is http.ClientException) {
-        throw HttpPluginException(-1, e.message, 'ClientException');
-      }
-      rethrow;
-    }
-  }
-
-  Future<http.Response> get(final String url) async {
-    try {
-      final uri = _makeUri(url);
-      logger.d('GET REQUEST to $url');
-      final response = await _client.get(uri, headers: _headers);
-      logger.d(
-        'GET RESPONSE status = ${response.statusCode} body = ${response.body}',
-      );
-      if (response.statusCode == 200) return response;
-      final jsonData = json.decode(response.body);
-      final message = jsonData['message'];
-      throw HttpPluginException(
-        response.statusCode,
-        message is List<dynamic>
-            ? message.firstOrNull?.toString() ?? 'unknown'
-            : message?.toString() ?? 'unknown',
-        jsonData['error']?.toString() ?? 'unknown',
-      );
-    } catch (e) {
-      logger.d('GET RESPONSE exception = ${e.toString()}');
-      if (e is http.ClientException) {
-        throw HttpPluginException(-1, e.message, 'ClientException');
-      }
-      rethrow;
-    }
-  }
-
-  Uri _makeUri(final String url) {
-    if (_scheme == 'https') return Uri.https(_host, url);
-    return Uri.http(_host, url);
+  Uri _makeUri(final String url, [Map<String, dynamic>? queryParameters]) {
+    if (_scheme == 'https') return Uri.https(_host, url, queryParameters);
+    return Uri.http(_host, url, queryParameters);
   }
 }

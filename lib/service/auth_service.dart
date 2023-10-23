@@ -34,3 +34,14 @@ Future<void> signOut({
     'userId': globalUserId,
   });
 }
+
+Future<OnlyTokensResponse> refreshAccessToken({
+  required final String refreshToken,
+}) async {
+  final response = await HttpPlugin().get('/auth/refresh', {
+    'refreshToken': refreshToken,
+  });
+  final jsonData = json.decode(response.body);
+  final result = OnlyTokensResponse.fromJson(jsonData);
+  return result;
+}
