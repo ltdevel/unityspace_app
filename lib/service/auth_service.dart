@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:unityspace/models/auth_dto.dart';
+import 'package:unityspace/models/auth_models.dart';
 import 'package:unityspace/plugins/http_plugin.dart';
 
 Future<OnlyTokensResponse> login({

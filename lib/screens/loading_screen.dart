@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/widgets/color_button_widget.dart';
 import 'package:wstore/wstore.dart';
 
@@ -14,14 +15,23 @@ class LoadingScreenStore extends WStore {
       loading = true;
     });
     //
-    setTimer(
-      onTimer: () {
+    subscribe(
+      subscriptionId: 1,
+      future: UserStore().getUserData(),
+      onData: (_) {
         setStore(() {
-          error = 'Не удалось загрузить данные';
           loading = false;
+          error = '';
         });
       },
-      duration: const Duration(seconds: 2),
+      onError: (e, __) {
+        String errorText =
+            'При загрузке данных возникла проблема, пожалуйста, попробуйте ещё раз';
+        setStore(() {
+          loading = false;
+          error = errorText;
+        });
+      },
     );
   }
 
