@@ -97,12 +97,6 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
                           ),
                         );
                         break;
-                      case LoginByEmailScreenStore.statusOk:
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/loading',
-                          (route) => false,
-                        );
-                        break;
                     }
                   },
                 ),

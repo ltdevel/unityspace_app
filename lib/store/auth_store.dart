@@ -5,6 +5,7 @@ import 'package:unityspace/models/auth_models.dart';
 import 'package:unityspace/plugins/http_plugin.dart';
 import 'package:unityspace/plugins/store.dart';
 import 'package:unityspace/service/auth_service.dart' as api;
+import 'package:unityspace/store/user_store.dart';
 
 class AuthStore extends GStore {
   static AuthStore? _instance;
@@ -93,6 +94,18 @@ class AuthStore extends GStore {
   Future<void> login(final String email, final String password) async {
     final tokens = await api.login(email: email, password: password);
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
+  }
+
+  Future<void> signOut() async {
+    final refreshToken = getUserTokens().refreshToken;
+    final globalUserId = UserStore().user?.globalId;
+    if (refreshToken.isNotEmpty && globalUserId != null) {
+      await api.signOut(
+        refreshToken: refreshToken,
+        globalUserId: globalUserId,
+      );
+    }
+    await removeUserTokens();
   }
 
   void _updateHttpAuthorizationHeader(final String token) {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/home_screen.dart';
 import 'package:unityspace/screens/loading_screen.dart';
@@ -17,7 +19,7 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool isAuthenticated;
 
   const MyApp({
@@ -26,16 +28,50 @@ class MyApp extends StatelessWidget {
   });
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  late StreamSubscription<bool> isAuthenticatedSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    isAuthenticatedSubscription = AuthStore().observeIsAuthenticated.listen(
+      (isAuthenticated) {
+        if (isAuthenticated) {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            '/loading',
+            (route) => false,
+          );
+        } else {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            '/login',
+            (route) => false,
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    isAuthenticatedSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'UnitySpace',
       theme: ThemeData(
         fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/loading',
-      // initialRoute: isAuthenticated ? '/loading' : '/login',
+      initialRoute: widget.isAuthenticated ? '/loading' : '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
         '/email': (context) => const LoginByEmailScreen(),

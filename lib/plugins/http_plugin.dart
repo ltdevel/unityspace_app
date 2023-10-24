@@ -74,7 +74,8 @@ class HttpPlugin {
     final request = http.Request(method, uri);
     request.headers.addAll(_headers);
     if (data != null) {
-      request.bodyFields = data.cast<String, String>();
+      request.headers['Content-Type'] = 'application/json; charset=UTF-8';
+      request.body = jsonEncode(data);
     }
     try {
       if (data != null) {
