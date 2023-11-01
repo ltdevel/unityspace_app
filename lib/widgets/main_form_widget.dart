@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/widgets/main_form_button_widget.dart';
+import 'package:unityspace/widgets/main_form_text_button_widget.dart';
 
 class MainFormWidget extends StatefulWidget {
   final String submitButtonText;
   final VoidCallback onSubmit;
+  final VoidCallback? onAdditionalButton;
+  final String additionalButtonText;
   final bool submittingNow;
   final List<Widget> Function(VoidCallback submit) children;
 
@@ -13,6 +16,8 @@ class MainFormWidget extends StatefulWidget {
     required this.onSubmit,
     required this.submittingNow,
     required this.children,
+    this.onAdditionalButton,
+    this.additionalButtonText = '',
   });
 
   @override
@@ -51,6 +56,18 @@ class _MainFormWidgetState extends State<MainFormWidget> {
             text: widget.submitButtonText,
             onPressed: submit,
           ),
+          if (widget.onAdditionalButton != null &&
+              widget.additionalButtonText.isNotEmpty)
+            const SizedBox(height: 4),
+          if (widget.onAdditionalButton != null &&
+              widget.additionalButtonText.isNotEmpty)
+            SizedBox(
+              width: double.infinity,
+              child: MainFormTextButtonWidget(
+                text: widget.additionalButtonText,
+                onPressed: widget.onAdditionalButton!,
+              ),
+            ),
           const SizedBox(height: 12),
         ],
       ),

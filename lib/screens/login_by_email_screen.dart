@@ -4,6 +4,7 @@ import 'package:unityspace/widgets/main_form_input_field.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
 import 'package:unityspace/widgets/main_form_widget.dart';
+import 'package:unityspace/widgets/main_form_text_button_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginByEmailScreenStore extends WStore {
@@ -120,6 +121,10 @@ class LoginByEmailForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainFormWidget(
+      additionalButtonText: 'Другой способ входа',
+      onAdditionalButton: () {
+        Navigator.of(context).pop();
+      },
       submitButtonText: 'Войти',
       onSubmit: () {
         FocusScope.of(context).unfocus();
@@ -180,6 +185,14 @@ class LoginByEmailForm extends StatelessWidget {
               },
             );
           },
+        ),
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: MainFormTextButtonWidget(
+            text: 'Забыли пароль?',
+            onPressed: () {},
+          ),
         ),
       ],
     );
