@@ -1,15 +1,11 @@
-// 1. По умолчанию
-// 2. Загружается
-// 3. Загружено
-// 4. Ошибка
 import 'package:flutter/material.dart';
 import 'package:wstore/wstore.dart';
 
 enum WStoreStatus {
-  init,
-  loading,
-  loaded,
-  error,
+  init, // По умолчанию
+  loading, // Загружается
+  loaded, // Загружено
+  error, // Ошибка
 }
 
 class WStoreStatusBuilder<T extends WStore> extends StatelessWidget {
