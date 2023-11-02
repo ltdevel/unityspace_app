@@ -5,6 +5,7 @@ import 'package:unityspace/screens/home_screen.dart';
 import 'package:unityspace/screens/loading_screen.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
+import 'package:unityspace/screens/restore_password_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
 
 void main() async {
@@ -77,6 +78,7 @@ class _MyAppState extends State<MyApp> {
         '/email': (context) => const LoginByEmailScreen(),
         '/home': (context) => const HomeScreen(),
         '/loading': (context) => const LoadingScreen(),
+        '/restore': (context) => const RestorePasswordScreen(),
       },
     );
   }

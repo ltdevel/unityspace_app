@@ -191,7 +191,9 @@ class LoginByEmailForm extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: MainFormTextButtonWidget(
             text: 'Забыли пароль?',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/restore');
+            },
           ),
         ),
       ],

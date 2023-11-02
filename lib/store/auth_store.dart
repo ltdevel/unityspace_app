@@ -96,6 +96,10 @@ class AuthStore extends GStore {
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
   }
 
+  Future<void> restorePasswordByEmail(final String email) async {
+    await api.restorePasswordByEmail(email: email);
+  }
+
   Future<void> signOut() async {
     final refreshToken = getUserTokens().refreshToken;
     final globalUserId = UserStore().user?.globalId;

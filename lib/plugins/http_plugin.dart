@@ -110,7 +110,9 @@ class HttpPlugin {
       logger.d(
         '$method RESPONSE status = ${response.statusCode} body = ${response.body}',
       );
-      if (response.statusCode == 200) return response;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      }
       final jsonData = json.decode(response.body);
       final message = jsonData['message'];
       throw HttpPluginException(

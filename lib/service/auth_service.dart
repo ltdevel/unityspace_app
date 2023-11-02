@@ -45,3 +45,28 @@ Future<OnlyTokensResponse> refreshAccessToken({
   final result = OnlyTokensResponse.fromJson(jsonData);
   return result;
 }
+
+Future<void> restorePasswordByEmail({
+  required final String email,
+}) async {
+  try {
+    final response = await HttpPlugin().post('/auth/reset-password', {
+      'email': email,
+    });
+    final jsonData = json.decode(response.body);
+    final result = ResetPasswordResponse.fromJson(jsonData);
+    if (result.status != 'ok') {
+      if (result.message == 'Credentials incorrect') {
+        throw 'Incorrect user name';
+      }
+      throw '${result.status}: ${result.message}';
+    }
+  } catch (e) {
+    if (e is HttpPluginException) {
+      if (e.message == 'Credentials incorrect') {
+        throw 'Incorrect user name';
+      }
+    }
+    rethrow;
+  }
+}
