@@ -125,7 +125,7 @@ class ConfirmForm extends StatelessWidget {
           enabled: !loading,
           autofocus: true,
           labelText: 'Введите код',
-          iconAssetName: 'assets/icons/email.svg',
+          iconAssetName: 'assets/icons/code.svg',
           textInputAction: TextInputAction.done,
           keyboardType: TextInputType.number,
           autocorrect: false,
