@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/widgets/main_form_button_widget.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
+import 'package:unityspace/widgets/main_form_text_button_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
 import 'package:wstore/wstore.dart';
 
@@ -47,6 +48,16 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                 onPressed: () {
                   Navigator.pushNamed(context, '/email');
                 },
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                width: double.infinity,
+                child: MainFormTextButtonWidget(
+                  text: 'Нет учетной записи? Зарегистрируйтесь',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                ),
               ),
             ],
           ),

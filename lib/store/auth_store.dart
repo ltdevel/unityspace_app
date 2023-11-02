@@ -91,6 +91,10 @@ class AuthStore extends GStore {
     }
   }
 
+  Future<void> register(final String email, final String password) async {
+    await api.register(email: email, password: password);
+  }
+
   Future<void> login(final String email, final String password) async {
     final tokens = await api.login(email: email, password: password);
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
@@ -98,6 +102,11 @@ class AuthStore extends GStore {
 
   Future<void> restorePasswordByEmail(final String email) async {
     await api.restorePasswordByEmail(email: email);
+  }
+
+  Future<void> confirmEmail(final String email, final String code) async {
+    final tokens = await api.confirmEmail(email: email, code: code);
+    await setUserTokens(tokens.accessToken, tokens.refreshToken);
   }
 
   Future<void> signOut() async {

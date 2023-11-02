@@ -1,3 +1,20 @@
+class RegisterResponse {
+  final String status;
+  final String message;
+
+  RegisterResponse({
+    required this.status,
+    required this.message,
+  });
+
+  factory RegisterResponse.fromJson(Map<String, dynamic> jsonData) {
+    return RegisterResponse(
+      status: jsonData['status'] as String,
+      message: jsonData['message'] as String,
+    );
+  }
+}
+
 class ResetPasswordResponse {
   final String status;
   final String message;

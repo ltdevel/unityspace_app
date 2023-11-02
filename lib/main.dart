@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/confirm_screen.dart';
 import 'package:unityspace/screens/home_screen.dart';
 import 'package:unityspace/screens/loading_screen.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
+import 'package:unityspace/screens/register_screen.dart';
 import 'package:unityspace/screens/restore_password_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
 
@@ -79,6 +81,11 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => const HomeScreen(),
         '/loading': (context) => const LoadingScreen(),
         '/restore': (context) => const RestorePasswordScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/confirm': (context) => ConfirmScreen(
+              email:
+                  ModalRoute.of(context)?.settings.arguments as String? ?? '',
+            ),
       },
     );
   }
