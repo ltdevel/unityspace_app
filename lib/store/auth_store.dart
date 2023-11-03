@@ -100,6 +100,14 @@ class AuthStore extends GStore {
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
   }
 
+  Future<void> googleAuth(final String credential) async {
+    final googleData = await api.googleAuth(credential: credential);
+    await setUserTokens(
+      googleData.tokens.accessToken,
+      googleData.tokens.refreshToken,
+    );
+  }
+
   Future<void> restorePasswordByEmail(final String email) async {
     await api.restorePasswordByEmail(email: email);
   }

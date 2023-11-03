@@ -1,12 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:unityspace/plugins/logger_plugin.dart';
+import 'package:unityspace/plugins/wstore_plugin.dart';
+import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/widgets/main_form_button_widget.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/widgets/main_form_text_button_widget.dart';
 import 'package:unityspace/widgets/main_form_text_title_widget.dart';
+import 'package:unityspace/widgets/sign_in_button_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginScreenStore extends WStore {
-  // TODO: add data here...
+  WStoreStatus statusGoogle = WStoreStatus.init;
+  String googleError = '';
+  GoogleSignIn googleSignIn = GoogleSignIn();
+
+  void google() {
+    if (statusGoogle == WStoreStatus.loading) return;
+    //
+    setStore(() {
+      statusGoogle = WStoreStatus.loading;
+    });
+    //
+    subscribe(
+      future: _googleSignInAction(),
+      subscriptionId: 1,
+      onData: (_) {
+        setStore(() {
+          statusGoogle = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, __) {
+        logger.d('google sign in error=$error');
+        setStore(() {
+          statusGoogle = WStoreStatus.error;
+          googleError =
+              'При входе через Google возникла проблема, пожалуйста, попробуйте ещё раз';
+        });
+      },
+    );
+  }
+
+  Future<void> _googleSignInAction() async {
+    GoogleSignInAccount? account = await googleSignIn.signIn();
+    if (account != null) {
+      GoogleSignInAuthentication auth = await account.authentication;
+      if (auth.accessToken != null) {
+        await AuthStore().googleAuth(auth.accessToken!);
+        googleSignIn.disconnect();
+      } else {
+        googleSignIn.disconnect();
+        throw 'no accessToken';
+      }
+    }
+  }
 
   @override
   LoginScreen get widget => super.widget as LoginScreen;
@@ -34,6 +81,35 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               const SizedBox(height: 32),
               const MainFormTextTitleWidget(text: 'Войдите через'),
               const SizedBox(height: 32),
+              Row(
+                children: [
+                  WStoreStatusBuilder(
+                    store: store,
+                    watch: (store) => store.statusGoogle,
+                    builder: (context) {
+                      final loading =
+                          store.statusGoogle == WStoreStatus.loading;
+                      return SignInButtonWidget(
+                        loading: loading,
+                        iconAssetName: 'assets/icons/google.svg',
+                        width: 0,
+                        text: 'Google',
+                        onPressed: () {
+                          store.google();
+                        },
+                      );
+                    },
+                    onStatusError: (context) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(store.googleError),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
               Text(
                 'или с помощью электронной почты',
                 style: TextStyle(

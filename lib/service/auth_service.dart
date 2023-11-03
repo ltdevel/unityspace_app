@@ -122,3 +122,15 @@ Future<void> restorePasswordByEmail({
     rethrow;
   }
 }
+
+Future<GoogleAuthResponse> googleAuth(
+    {required final String credential}) async {
+  final response = await HttpPlugin().post('/google/auth', {
+    'credential': credential,
+    'inviteToken': '',
+    'referrer': null,
+  });
+  final jsonData = json.decode(response.body);
+  final result = GoogleAuthResponse.fromJson(jsonData);
+  return result;
+}

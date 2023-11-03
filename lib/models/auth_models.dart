@@ -49,6 +49,30 @@ class OnlyTokensResponse {
   }
 }
 
+class GoogleAuthResponse {
+  final OnlyTokensResponse tokens;
+  final bool registered;
+  final String? picture;
+  final int? spaceId;
+
+  const GoogleAuthResponse({
+    required this.tokens,
+    required this.registered,
+    required this.picture,
+    required this.spaceId,
+  });
+
+  factory GoogleAuthResponse.fromJson(Map<String, dynamic> jsonData) {
+    return GoogleAuthResponse(
+      tokens: OnlyTokensResponse.fromJson(
+          jsonData['tokens'] as Map<String, dynamic>),
+      registered: jsonData['registered'] as bool,
+      picture: jsonData['picture'] as String?,
+      spaceId: jsonData['spaceId'] as int?,
+    );
+  }
+}
+
 class AuthTokens {
   final String accessToken;
   final String refreshToken;
