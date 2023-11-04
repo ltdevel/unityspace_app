@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/plugins/wstore_plugin.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/widgets/main_form_input_field.dart';
 import 'package:unityspace/widgets/main_form_logo_widget.dart';
@@ -8,12 +9,7 @@ import 'package:unityspace/widgets/main_form_text_button_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class LoginByEmailScreenStore extends WStore {
-  static const statusInit = 0;
-  static const statusProcessing = 1;
-  static const statusError = 2;
-  static const statusOk = 3;
-
-  int status = statusInit;
+  WStoreStatus status = WStoreStatus.init;
   bool showPassword = false;
   String loginError = '';
   String email = '';
@@ -26,10 +22,10 @@ class LoginByEmailScreenStore extends WStore {
   }
 
   void login() {
-    if (status == statusProcessing) return;
+    if (status == WStoreStatus.loading) return;
     //
     setStore(() {
-      status = statusProcessing;
+      status = WStoreStatus.loading;
     });
     //
     subscribe(
@@ -37,7 +33,7 @@ class LoginByEmailScreenStore extends WStore {
       subscriptionId: 1,
       onData: (_) {
         setStore(() {
-          status = statusOk;
+          status = WStoreStatus.loaded;
         });
       },
       onError: (error, __) {
@@ -47,7 +43,7 @@ class LoginByEmailScreenStore extends WStore {
           errorText = 'Неправильный email или пароль!';
         }
         setStore(() {
-          status = statusError;
+          status = WStoreStatus.error;
           loginError = errorText;
         });
       },
@@ -81,24 +77,19 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               const MainFormTextTitleWidget(text: 'Войти по емайл'),
               const SizedBox(height: 32),
               Expanded(
-                child: WStoreConsumer(
+                child: WStoreStatusBuilder(
                   store: store,
-                  watch: () => [store.status],
-                  builder: (context, _) {
-                    final loading = store.status ==
-                        LoginByEmailScreenStore.statusProcessing;
+                  watch: (store) => store.status,
+                  builder: (context) {
+                    final loading = store.status == WStoreStatus.loading;
                     return LoginByEmailForm(loading: loading);
                   },
-                  onChange: (context) {
-                    switch (store.status) {
-                      case LoginByEmailScreenStore.statusError:
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(store.loginError),
-                          ),
-                        );
-                        break;
-                    }
+                  onStatusError: (context) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(store.loginError),
+                      ),
+                    );
                   },
                 ),
               ),
