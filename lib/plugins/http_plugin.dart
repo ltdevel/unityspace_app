@@ -18,7 +18,7 @@ class HttpPluginException implements Exception {
 }
 
 class HttpPlugin {
-  static const _baseURL = 'https://server.unityspace.ru';
+  static const baseURL = 'https://server.unityspace.ru';
 
   static HttpPlugin? _instance;
 
@@ -30,7 +30,7 @@ class HttpPlugin {
   final Map<String, String> _headers = {};
 
   HttpPlugin._() {
-    final uri = Uri.parse(_baseURL);
+    final uri = Uri.parse(baseURL);
     _host = uri.host;
     _scheme = uri.scheme;
   }

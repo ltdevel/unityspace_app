@@ -9,3 +9,10 @@ Future<UserResponse> getUserData() async {
   final result = UserResponse.fromJson(jsonData);
   return result;
 }
+
+Future<OrganizationResponse> getOrganizationData() async {
+  final response = await HttpPlugin().get('/user/organization');
+  final jsonData = json.decode(response.body);
+  final result = OrganizationResponse.fromJson(jsonData);
+  return result;
+}

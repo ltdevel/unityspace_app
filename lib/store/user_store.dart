@@ -4,26 +4,27 @@ import 'package:unityspace/service/user_service.dart' as api;
 
 class UserStore extends GStore {
   static UserStore? _instance;
+
   factory UserStore() => _instance ??= UserStore._();
+
   UserStore._();
 
   User? user;
+  Organization? organization;
 
   Future<void> getUserData() async {
     final userData = await api.getUserData();
-    final user = User(
-      id: userData.id,
-      globalId: userData.globalId,
-      name: userData.name,
-      email: userData.email,
-      avatar: userData.avatar ?? '',
-      phoneNumber: userData.phoneNumber ?? '',
-      telegramLink: userData.telegramLink ?? '',
-      githubLink: userData.githubLink ?? '',
-      birthDate: userData.birthDate ?? '',
-    );
+    final user = User.fromResponse(userData);
     setStore(() {
       this.user = user;
+    });
+  }
+
+  Future<void> getOrganizationData() async {
+    final organizationData = await api.getOrganizationData();
+    final organization = Organization.fromResponse(organizationData);
+    setStore(() {
+      this.organization = organization;
     });
   }
 }
