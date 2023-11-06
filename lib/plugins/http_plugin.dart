@@ -108,7 +108,7 @@ class HttpPlugin {
         }
       }
       logger.d(
-        '$method RESPONSE status = ${response.statusCode} body = ${response.body}',
+        '$method RESPONSE from $url\nstatus = ${response.statusCode}\nbody = ${response.body}',
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
@@ -123,7 +123,7 @@ class HttpPlugin {
         jsonData['error']?.toString() ?? 'unknown',
       );
     } catch (e) {
-      logger.d('$method RESPONSE exception = ${e.toString()}');
+      logger.d('$method RESPONSE from $url exception = ${e.toString()}');
       if (e is http.ClientException) {
         throw HttpPluginException(-1, e.message, 'ClientException');
       }
