@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/app_navigaion_drawer.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/widgets/color_button_widget.dart';
 import 'package:wstore/wstore.dart';
@@ -21,6 +22,10 @@ class HomeScreen extends WStoreWidget<HomeScreenStore> {
   @override
   Widget build(BuildContext context, HomeScreenStore store) {
     return Scaffold(
+      drawer: const AppNavigationDrawer(),
+      appBar: AppBar(
+        title: const Text('Главная'),
+      ),
       body: Center(
         child: ColorButtonWidget(
           width: double.infinity,

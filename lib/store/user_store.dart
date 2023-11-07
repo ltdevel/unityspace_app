@@ -12,6 +12,14 @@ class UserStore extends GStore {
   User? user;
   Organization? organization;
 
+  Stream<User?> get observeUser => observe(() => user);
+
+  bool get hasLicense {
+    final license = organization?.licenseEndDate;
+    if (license == null) return false;
+    return license.isAfter(DateTime.now());
+  }
+
   Future<void> getUserData() async {
     final userData = await api.getUserData();
     final user = User.fromResponse(userData);
