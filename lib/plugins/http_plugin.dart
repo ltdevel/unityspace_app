@@ -70,13 +70,6 @@ class HttpPlugin {
     final Map<String, dynamic>? data,
     Map<String, dynamic>? queryParameters,
   ]) async {
-    final uri = _makeUri(url, queryParameters);
-    final request = http.Request(method, uri);
-    request.headers.addAll(_headers);
-    if (data != null) {
-      request.headers['Content-Type'] = 'application/json; charset=UTF-8';
-      request.body = jsonEncode(data);
-    }
     try {
       if (data != null) {
         logger.d('$method REQUEST to $url with data = $data');
@@ -85,6 +78,7 @@ class HttpPlugin {
       } else {
         logger.d('$method REQUEST to $url');
       }
+      var request = _makeRequest(method, url, data, queryParameters);
       var responseStream = await _client.send(request);
       var response = await http.Response.fromStream(responseStream);
       if (response.statusCode == 401 && url != '/auth/refresh') {
@@ -92,9 +86,6 @@ class HttpPlugin {
         // пытаемся обновить и послать запрос заново
         final needSendAgain = await AuthStore().refreshUserToken();
         if (needSendAgain) {
-          // обновляем заголовки (токены авторизации обновились)
-          request.headers.addAll(_headers);
-          //
           if (data != null) {
             logger.d('RETRY $method REQUEST to $url with data = $data');
           } else if (queryParameters != null) {
@@ -103,6 +94,8 @@ class HttpPlugin {
           } else {
             logger.d('RETRY $method REQUEST to $url');
           }
+          // заново собираем изначальный заброс (токены авторизации обновились)
+          request = _makeRequest(method, url, data, queryParameters);
           responseStream = await _client.send(request);
           response = await http.Response.fromStream(responseStream);
         }
@@ -131,8 +124,21 @@ class HttpPlugin {
     }
   }
 
-  Uri _makeUri(final String url, [Map<String, dynamic>? queryParameters]) {
-    if (_scheme == 'https') return Uri.https(_host, url, queryParameters);
-    return Uri.http(_host, url, queryParameters);
+  http.Request _makeRequest(
+    final String method,
+    final String url,
+    final Map<String, dynamic>? data,
+    final Map<String, dynamic>? queryParameters,
+  ) {
+    final uri = _scheme == 'https'
+        ? Uri.https(_host, url, queryParameters)
+        : Uri.http(_host, url, queryParameters);
+    final request = http.Request(method, uri);
+    request.headers.addAll(_headers);
+    if (data != null) {
+      request.headers['Content-Type'] = 'application/json; charset=UTF-8';
+      request.body = jsonEncode(data);
+    }
+    return request;
   }
 }
