@@ -1,4 +1,4 @@
-import 'package:unityspace/plugins/http_plugin.dart';
+import 'package:unityspace/plugins/helpers.dart' as helpers;
 
 class UserResponse {
   final int id;
@@ -67,9 +67,7 @@ class User {
       globalId: data.globalId,
       name: data.name,
       email: data.email,
-      avatarLink: data.avatar != null
-          ? '${HttpPlugin.baseURL}/files/avatar/${data.avatar}'
-          : null,
+      avatarLink: helpers.makeAvatarUrl(data.avatar),
       phoneNumber: data.phoneNumber,
       telegramLink: data.telegramLink,
       githubLink: data.githubLink,
@@ -265,9 +263,7 @@ class OrganizationMember {
       phoneNumber: data.phoneNumber,
       telegramLink: data.telegramLink,
       githubLink: data.githubLink,
-      avatarLink: data.avatar != null
-          ? '${HttpPlugin.baseURL}/files/avatar/${data.avatar}'
-          : null,
+      avatarLink: helpers.makeAvatarUrl(data.avatar),
       birthDate:
           data.birthDate != null ? DateTime.parse(data.birthDate!) : null,
     );
