@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/widgets/user_avatar_widget.dart';
 import 'package:wstore/wstore.dart';
@@ -10,6 +12,30 @@ class AppNavigationDrawerStore extends WStore {
         stream: UserStore().observeUser,
         initialData: UserStore().user,
         keyName: 'currentUser',
+      );
+
+  List<Space>? get spaces => computedFromStream<List<Space>?>(
+        stream: SpacesStore().observeSpaces,
+        initialData: SpacesStore().spaces,
+        keyName: 'spaces',
+      );
+
+  List<Space> get allSortedSpaces => computed(
+        getValue: () {
+          final spaces = (this.spaces ?? []).toList();
+          spaces.sort((a, b) {
+            if (a.favorite == b.favorite) {
+              return (a.order - b.order).sign.toInt();
+            }
+            if (a.favorite && !b.favorite) {
+              return -1;
+            }
+            return 1;
+          });
+          return spaces;
+        },
+        watch: () => [spaces],
+        keyName: 'allSortedSpaces',
       );
 
   String get currentUserName => computed<String>(
@@ -89,22 +115,31 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: Column(
-                  children: [
-                    const NavigatorMenuListTitle(title: 'Все пространства'),
-                    NavigatorMenuItem(
-                      iconAssetName: 'assets/icons/navigator_space.svg',
-                      title: 'Моё первое пространство',
-                      selected: currentRoute == '/notifications',
-                      favorite: false,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        if (currentRoute != '/space') {
-                          Navigator.of(context).pushReplacementNamed('/space');
-                        }
-                      },
-                    ),
-                  ],
+                child: WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.allSortedSpaces,
+                  builder: (context, spaces) {
+                    return Column(
+                      children: [
+                        const NavigatorMenuListTitle(title: 'Все пространства'),
+                        ...spaces.map(
+                          (space) => NavigatorMenuItem(
+                            iconAssetName: 'assets/icons/navigator_space.svg',
+                            title: space.name,
+                            selected: currentRoute == '/space',
+                            favorite: space.favorite,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              if (currentRoute != '/space') {
+                                Navigator.of(context)
+                                    .pushReplacementNamed('/space');
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 16),
