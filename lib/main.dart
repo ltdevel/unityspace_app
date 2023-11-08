@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     // мы пропускаем первое значение потому что оно возвращается сразу
     // а нам нужно мониторить только изменения
     isAuthenticatedSubscription =
-        AuthStore().observeIsAuthenticated.skip(1).listen(
+        AuthStore().observe(() => AuthStore().isAuthenticated).skip(1).listen(
       (isAuthenticated) {
         if (isAuthenticated) {
           navigatorKey.currentState?.pushNamedAndRemoveUntil(

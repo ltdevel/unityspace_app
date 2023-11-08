@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/plugins/wstore_plugin.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/widgets/user_avatar_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class AppNavigationDrawerStore extends WStore {
-  User? get currentUser => computedFromStream<User?>(
-        stream: UserStore().observeUser,
-        initialData: UserStore().user,
+  User? get currentUser => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.user,
         keyName: 'currentUser',
       );
 
-  List<Space>? get spaces => computedFromStream<List<Space>?>(
-        stream: SpacesStore().observeSpaces,
-        initialData: SpacesStore().spaces,
+  List<Space>? get spaces => computedFromStore(
+        store: SpacesStore(),
+        getValue: (store) => store.spaces,
         keyName: 'spaces',
       );
 
@@ -57,6 +58,12 @@ class AppNavigationDrawerStore extends WStore {
         ),
         initialData: UserStore().hasLicense,
         keyName: 'hasLicense',
+      );
+
+  bool get isOrganizationOwner => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.isOrganizationOwner,
+        keyName: 'isOrganizationOwner',
       );
 
   int get currentUserId => computed<int>(
@@ -115,14 +122,17 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: WStoreValueBuilder(
+                child: WStoreBuilder(
                   store: store,
-                  watch: (store) => store.allSortedSpaces,
-                  builder: (context, spaces) {
+                  watch: (store) => [
+                    store.allSortedSpaces,
+                    store.isOrganizationOwner,
+                  ],
+                  builder: (context, store) {
                     return Column(
                       children: [
                         const NavigatorMenuListTitle(title: 'Все пространства'),
-                        ...spaces.map(
+                        ...store.allSortedSpaces.map(
                           (space) => NavigatorMenuItem(
                             iconAssetName: 'assets/icons/navigator_space.svg',
                             title: space.name,
@@ -137,6 +147,12 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                             },
                           ),
                         ),
+                        if (store.isOrganizationOwner)
+                          const SizedBox(height: 16),
+                        if (store.isOrganizationOwner)
+                          AddSpaceButtonWidget(
+                            onTap: () {},
+                          ),
                       ],
                     );
                   },
@@ -168,6 +184,50 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AddSpaceButtonWidget extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const AddSpaceButtonWidget({
+    super.key,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      minWidth: double.infinity,
+      height: 40,
+      elevation: 2,
+      color: const Color(0xFF141314),
+      onPressed: onTap,
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            'assets/icons/navigator_plus.svg',
+            width: 32,
+            height: 32,
+            fit: BoxFit.scaleDown,
+            theme: SvgTheme(
+              currentColor: Colors.white.withOpacity(0.5),
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Text(
+            'Добавить пространство',
+            style: TextStyle(
+              color: Color(0xE6FFFFFF),
+              fontSize: 16,
+            ),
+          ),
+        ],
       ),
     );
   }

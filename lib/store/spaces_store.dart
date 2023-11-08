@@ -11,8 +11,6 @@ class SpacesStore extends GStore {
 
   List<Space>? spaces;
 
-  Stream<List<Space>?> get observeSpaces => observe(() => spaces);
-
   Future<void> getSpacesData() async {
     final spacesData = await api.getSpacesData();
     final spaces = spacesData.map(Space.fromResponse).toList();

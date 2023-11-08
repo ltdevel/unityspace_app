@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/plugins/wstore_plugin.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
 
 class UserAvatarWidgetStore extends WStore {
-  Map<int, OrganizationMember> get organizationMembers => computedFromStream(
-        stream: UserStore().observeOrganizationMembers,
-        initialData: UserStore().organizationMembers,
+  Map<int, OrganizationMember> get organizationMembers => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.organizationMembers,
         keyName: 'organizationMembers',
       );
 

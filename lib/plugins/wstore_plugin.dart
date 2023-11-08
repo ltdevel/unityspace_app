@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/plugins/gstore.dart';
 import 'package:wstore/wstore.dart';
 
 enum WStoreStatus {
@@ -65,5 +66,21 @@ class WStoreStatusBuilder<T extends WStore> extends StatelessWidget {
       case WStoreStatus.error:
         onStatusError?.call(context);
     }
+  }
+}
+
+extension WStoreComputedGStore on WStore {
+  @protected
+  V computedFromStore<T extends GStore, V>({
+    required V Function(T) getValue,
+    required T store,
+    required String keyName,
+  }) {
+    // ignore: invalid_use_of_protected_member
+    return computedFromStream<V>(
+      stream: store.observe(() => getValue(store)),
+      initialData: getValue(store),
+      keyName: keyName,
+    );
   }
 }

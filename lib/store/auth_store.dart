@@ -20,13 +20,6 @@ class AuthStore extends GStore {
 
   bool get isAuthenticated => _currentTokens.accessToken.isNotEmpty;
 
-  AuthTokens getUserTokens() {
-    return _currentTokens;
-  }
-
-  Stream<bool> get observeIsAuthenticated =>
-      observe(() => _currentTokens.accessToken.isNotEmpty);
-
   Future<void> removeUserTokens() async {
     // удалить из локал стореджа
     final sp = await SharedPreferences.getInstance();
@@ -75,7 +68,7 @@ class AuthStore extends GStore {
       return await _refreshUserTokenCompleteEvent.future;
     }
     _refreshUserTokenCompleteEvent = Completer<bool>();
-    final refreshToken = getUserTokens().refreshToken;
+    final refreshToken = _currentTokens.refreshToken;
     if (refreshToken.isEmpty) {
       _refreshUserTokenCompleteEvent.complete(false);
       return false;
@@ -118,7 +111,7 @@ class AuthStore extends GStore {
   }
 
   Future<void> signOut() async {
-    final refreshToken = getUserTokens().refreshToken;
+    final refreshToken = _currentTokens.refreshToken;
     final globalUserId = UserStore().user?.globalId;
     if (refreshToken.isNotEmpty && globalUserId != null) {
       await api.signOut(

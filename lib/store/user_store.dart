@@ -12,12 +12,15 @@ class UserStore extends GStore {
   User? user;
   Organization? organization;
 
-  Stream<User?> get observeUser => observe(() => user);
-
   bool get hasLicense {
     final license = organization?.licenseEndDate;
     if (license == null) return false;
     return license.isAfter(DateTime.now());
+  }
+
+  bool get isOrganizationOwner {
+    if (user == null || organization == null) return false;
+    return organization?.ownerId == user?.id;
   }
 
   Map<int, OrganizationMember> get organizationMembers {
@@ -27,9 +30,6 @@ class UserStore extends GStore {
       return map;
     });
   }
-
-  Stream<Map<int, OrganizationMember>> get observeOrganizationMembers =>
-      observe(() => organizationMembers);
 
   Future<void> getUserData() async {
     final userData = await api.getUserData();
