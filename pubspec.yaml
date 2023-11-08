@@ -27,6 +27,8 @@ dev_dependencies:
 
   flutter_lints: ^3.0.0
   change_app_package_name: ^1.1.0
+  # for icons change
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -66,3 +68,8 @@ flutter:
         - asset: fonts/Roboto-ThinItalic.ttf
           weight: 100
           style: italic
+
+flutter_launcher_icons:
+  ios: true
+  android: true
+  image_path: assets/icons/unityspace_logo.png
