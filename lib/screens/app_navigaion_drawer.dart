@@ -253,6 +253,7 @@ class NavigatorMenuCurrentUser extends StatelessWidget {
         id: currentUserId,
         width: 32,
         height: 32,
+        fontSize: 14,
       ),
       trailing: license
           ? SvgPicture.asset(

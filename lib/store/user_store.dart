@@ -20,6 +20,17 @@ class UserStore extends GStore {
     return license.isAfter(DateTime.now());
   }
 
+  Map<int, OrganizationMember> get organizationMembers {
+    final members = organization?.members ?? [];
+    return members.fold(<int, OrganizationMember>{}, (map, member) {
+      map[member.id] = member;
+      return map;
+    });
+  }
+
+  Stream<Map<int, OrganizationMember>> get observeOrganizationMembers =>
+      observe(() => organizationMembers);
+
   Future<void> getUserData() async {
     final userData = await api.getUserData();
     final user = User.fromResponse(userData);
@@ -33,6 +44,13 @@ class UserStore extends GStore {
     final organization = Organization.fromResponse(organizationData);
     setStore(() {
       this.organization = organization;
+    });
+  }
+
+  void clear() {
+    setStore(() {
+      user = null;
+      organization = null;
     });
   }
 }
