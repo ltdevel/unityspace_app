@@ -12,7 +12,6 @@ import 'package:unityspace/store/auth_store.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await AuthStore().loadUserTokens();
 
   runApp(
