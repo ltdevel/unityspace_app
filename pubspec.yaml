@@ -78,5 +78,5 @@ flutter_launcher_icons:
 flutter_native_splash:
   ios: true
   android: true
-  color: '#FFFFFF'
-  image: assets/images/unityspace_logo_256.jpeg
+  color: '#212022'
+  image: assets/images/unityspace_logo_256.png
