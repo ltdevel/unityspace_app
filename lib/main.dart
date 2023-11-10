@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
       title: 'UnitySpace',
       theme: ThemeData(
         fontFamily: 'Roboto',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),
         useMaterial3: true,
       ),
       initialRoute: widget.isAuthenticated ? '/loading' : '/login',

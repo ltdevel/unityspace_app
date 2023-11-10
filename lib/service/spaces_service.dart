@@ -10,3 +10,13 @@ Future<List<SpaceResponse>> getSpacesData() async {
       jsonDataList.map((data) => SpaceResponse.fromJson(data)).toList();
   return result;
 }
+
+Future<SpaceResponse> createSpaces(final String title, final int order) async {
+  final response = await HttpPlugin().post('/spaces', {
+    'name': title,
+    'order': order
+  });
+  final jsonData = json.decode(response.body);
+  final result = SpaceResponse.fromJson(jsonData);
+  return result;
+}

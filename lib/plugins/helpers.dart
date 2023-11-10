@@ -7,3 +7,7 @@ String? makeAvatarUrl(final String? avatar) {
 double makeOrderFromInt(final int order) {
   return order / 1000000.0;
 }
+
+int makeIntFromOrder(final double order) {
+  return (order * 1000000).toInt();
+}

@@ -3,12 +3,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/plugins/wstore_plugin.dart';
+import 'package:unityspace/screens/dialogs/add_space_dialog.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/widgets/user_avatar_widget.dart';
 import 'package:wstore/wstore.dart';
 
 class AppNavigationDrawerStore extends WStore {
+  bool spaceCreating = false;
+  int? newSpaceId;
+
+  void setSpaceId(final int? id) {
+    setStore(() {
+      newSpaceId = id;
+    });
+  }
+
   User? get currentUser => computedFromStore(
         store: UserStore(),
         getValue: (store) => store.user,
@@ -87,6 +97,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
   @override
   Widget build(BuildContext context, AppNavigationDrawerStore store) {
     final currentRoute = ModalRoute.of(context)?.settings.name;
+    final currentArguments = ModalRoute.of(context)?.settings.arguments;
     return Drawer(
       shape: const RoundedRectangleBorder(),
       backgroundColor: const Color(0xFF212022),
@@ -136,13 +147,17 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                           (space) => NavigatorMenuItem(
                             iconAssetName: 'assets/icons/navigator_space.svg',
                             title: space.name,
-                            selected: currentRoute == '/space',
+                            selected: currentRoute == '/space' &&
+                                currentArguments == space.id,
                             favorite: space.favorite,
                             onTap: () {
                               Navigator.of(context).pop();
-                              if (currentRoute != '/space') {
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/space');
+                              if (currentRoute != '/space' &&
+                                  currentArguments != space.id) {
+                                Navigator.of(context).pushReplacementNamed(
+                                  '/space',
+                                  arguments: space.id,
+                                );
                               }
                             },
                           ),
@@ -150,8 +165,30 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                         if (store.isOrganizationOwner)
                           const SizedBox(height: 16),
                         if (store.isOrganizationOwner)
-                          AddSpaceButtonWidget(
-                            onTap: () {},
+                          WStoreValueListener(
+                            store: store,
+                            watch: (store) => store.newSpaceId,
+                            onChange: (context, spaceId) {
+                              if (spaceId != null) {
+                                store.setSpaceId(null);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacementNamed(
+                                  '/space',
+                                  arguments: spaceId,
+                                );
+                              }
+                            },
+                            child: AddSpaceButtonWidget(
+                              onTap: () async {
+                                if (store.spaceCreating) return;
+                                store.spaceCreating = true;
+                                final spaceId = await showAddSpaceDialog(
+                                  context,
+                                );
+                                store.setSpaceId(spaceId);
+                                store.spaceCreating = false;
+                              },
+                            ),
                           ),
                       ],
                     );
