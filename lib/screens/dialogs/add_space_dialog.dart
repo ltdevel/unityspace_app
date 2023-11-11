@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/plugins/wstore_plugin.dart';
+import 'package:unityspace/screens/widgets/color_button_widget.dart';
 import 'package:unityspace/store/spaces_store.dart';
-import 'package:unityspace/widgets/color_button_widget.dart';
 import 'package:wstore/wstore.dart';
 
 Future<int?> showAddSpaceDialog(BuildContext context) async {

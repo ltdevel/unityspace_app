@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unityspace/widgets/main_form_button_widget.dart';
-import 'package:unityspace/widgets/main_form_text_button_widget.dart';
+import 'package:unityspace/screens/widgets/main_form_button_widget.dart';
+import 'package:unityspace/screens/widgets/main_form_text_button_widget.dart';
 
 class MainFormWidget extends StatefulWidget {
   final String submitButtonText;

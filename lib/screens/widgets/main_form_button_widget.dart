@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unityspace/widgets/color_button_widget.dart';
+import 'package:unityspace/screens/widgets/color_button_widget.dart';
 
 class MainFormButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
