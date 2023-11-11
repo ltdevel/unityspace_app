@@ -1,4 +1,4 @@
-import 'package:unityspace/plugins/http_plugin.dart';
+import 'package:unityspace/utils/http_plugin.dart';
 
 String? makeAvatarUrl(final String? avatar) {
   return avatar != null ? '${HttpPlugin.baseURL}/files/avatar/$avatar' : null;

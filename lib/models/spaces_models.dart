@@ -1,4 +1,4 @@
-import 'package:unityspace/plugins/helpers.dart' as helpers;
+import 'package:unityspace/utils/helpers.dart' as helpers;
 
 class SpaceResponse {
   final int id;

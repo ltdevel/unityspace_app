@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:unityspace/plugins/logger_plugin.dart';
+import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:unityspace/store/auth_store.dart';
 
 class HttpPluginException implements Exception {

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unityspace/models/auth_models.dart';
-import 'package:unityspace/plugins/http_plugin.dart';
-import 'package:unityspace/plugins/gstore.dart';
+import 'package:unityspace/utils/http_plugin.dart';
+import 'package:unityspace/utils/gstore.dart';
 import 'package:unityspace/service/auth_service.dart' as api;
 import 'package:unityspace/store/user_store.dart';
 

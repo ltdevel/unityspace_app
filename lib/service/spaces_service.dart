@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:unityspace/models/spaces_models.dart';
-import 'package:unityspace/plugins/http_plugin.dart';
+import 'package:unityspace/utils/http_plugin.dart';
 
 Future<List<SpaceResponse>> getSpacesData() async {
   final response = await HttpPlugin().get('/spaces');

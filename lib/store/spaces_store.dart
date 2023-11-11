@@ -1,7 +1,7 @@
 import 'package:unityspace/models/spaces_models.dart';
-import 'package:unityspace/plugins/gstore.dart';
-import 'package:unityspace/plugins/helpers.dart';
-import 'package:unityspace/plugins/http_plugin.dart';
+import 'package:unityspace/utils/gstore.dart';
+import 'package:unityspace/utils/helpers.dart';
+import 'package:unityspace/utils/http_plugin.dart';
 import 'package:unityspace/service/spaces_service.dart' as api;
 
 class SpacesStore extends GStore {

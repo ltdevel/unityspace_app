@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unityspace/models/user_models.dart';
-import 'package:unityspace/plugins/wstore_plugin.dart';
+import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
 

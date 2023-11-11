@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:unityspace/models/auth_models.dart';
-import 'package:unityspace/plugins/http_plugin.dart';
+import 'package:unityspace/utils/http_plugin.dart';
 
 Future<RegisterResponse> register({
   required final String email,

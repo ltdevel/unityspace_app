@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:unityspace/plugins/logger_plugin.dart';
-import 'package:unityspace/plugins/wstore_plugin.dart';
+import 'package:unityspace/utils/logger_plugin.dart';
+import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:unityspace/screens/widgets/main_form_button_widget.dart';
 import 'package:unityspace/screens/widgets/main_form_logo_widget.dart';
 import 'package:unityspace/screens/widgets/main_form_text_button_widget.dart';

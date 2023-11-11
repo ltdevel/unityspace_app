@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unityspace/plugins/gstore.dart';
+import 'package:unityspace/utils/gstore.dart';
 import 'package:wstore/wstore.dart';
 
 enum WStoreStatus {
