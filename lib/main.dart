@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/account_screen.dart';
 import 'package:unityspace/screens/confirm_screen.dart';
 import 'package:unityspace/screens/home_screen.dart';
 import 'package:unityspace/screens/loading_screen.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
+import 'package:unityspace/screens/notifications_screen.dart';
 import 'package:unityspace/screens/register_screen.dart';
 import 'package:unityspace/screens/restore_password_screen.dart';
+import 'package:unityspace/screens/space_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
 
 void main() async {
@@ -88,6 +91,12 @@ class _MyAppState extends State<MyApp> {
               email:
                   ModalRoute.of(context)?.settings.arguments as String? ?? '',
             ),
+        '/space': (context) => SpaceScreen(
+              spaceId:
+                  ModalRoute.of(context)?.settings.arguments as int? ?? 0,
+            ),
+        '/notifications': (context) => const NotificationsScreen(),
+        '/account': (context) => const AccountScreen(),
       },
     );
   }

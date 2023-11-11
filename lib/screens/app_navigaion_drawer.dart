@@ -152,7 +152,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                             favorite: space.favorite,
                             onTap: () {
                               Navigator.of(context).pop();
-                              if (currentRoute != '/space' &&
+                              if (currentRoute != '/space' ||
                                   currentArguments != space.id) {
                                 Navigator.of(context).pushReplacementNamed(
                                   '/space',
