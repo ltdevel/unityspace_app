@@ -49,6 +49,9 @@ class AddSpaceDialogStore extends WStore {
       onError: (error, __) {
         String errorText =
             'При создании пространства возникла проблема, пожалуйста, попробуйте ещё раз';
+        if (error == 'paid tariff') {
+          errorText = 'Для создания еще одного пространства нужно перейти на платный тариф';
+        }
         setStore(() {
           status = WStoreStatus.error;
           addError = errorText;

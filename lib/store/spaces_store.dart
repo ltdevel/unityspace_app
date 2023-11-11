@@ -1,6 +1,7 @@
 import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/plugins/gstore.dart';
 import 'package:unityspace/plugins/helpers.dart';
+import 'package:unityspace/plugins/http_plugin.dart';
 import 'package:unityspace/service/spaces_service.dart' as api;
 
 class SpacesStore extends GStore {
@@ -21,22 +22,29 @@ class SpacesStore extends GStore {
   }
 
   Future<int> createSpace(final String title) async {
-    final maxOrder = this.spaces?.fold<double>(
-              0,
-              (max, space) => max > space.order ? max : space.order,
-            ) ??
-        0;
-    final newOrder = maxOrder + 1;
-    final spaceData = await api.createSpaces(
-      title,
-      makeIntFromOrder(newOrder),
-    );
-    final newSpace = Space.fromResponse(spaceData);
-    final spaces = [...?this.spaces, newSpace];
-    setStore(() {
-      this.spaces = spaces;
-    });
-    return newSpace.id;
+    try {
+      final maxOrder = this.spaces?.fold<double>(
+                0,
+                (max, space) => max > space.order ? max : space.order,
+              ) ??
+          0;
+      final newOrder = maxOrder + 1;
+      final spaceData = await api.createSpaces(
+        title,
+        makeIntFromOrder(newOrder),
+      );
+      final newSpace = Space.fromResponse(spaceData);
+      final spaces = [...?this.spaces, newSpace];
+      setStore(() {
+        this.spaces = spaces;
+      });
+      return newSpace.id;
+    } on HttpPluginException catch (e) {
+      if (e.message == 'Cannot add more spaces, check paid tariff or remove spaces') {
+        throw 'paid tariff';
+      }
+      rethrow;
+    }
   }
 
   void clear() {
