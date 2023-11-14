@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
-import 'package:unityspace/screens/widgets/main_form_input_field.dart';
-import 'package:unityspace/screens/widgets/main_form_logo_widget.dart';
-import 'package:unityspace/screens/widgets/main_form_text_subtitle_widget.dart';
-import 'package:unityspace/screens/widgets/main_form_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_input_field.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_logo_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_text_subtitle_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
 

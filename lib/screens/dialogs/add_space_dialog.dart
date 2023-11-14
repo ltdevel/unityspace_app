@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/widgets/app_dialog/app_dialog.dart';
+import 'package:unityspace/screens/widgets/app_dialog/app_dialog_primary_button.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
-import 'package:unityspace/screens/widgets/color_button_widget.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:wstore/wstore.dart';
 
@@ -50,7 +51,8 @@ class AddSpaceDialogStore extends WStore {
         String errorText =
             'При создании пространства возникла проблема, пожалуйста, попробуйте ещё раз';
         if (error == 'paid tariff') {
-          errorText = 'Для создания еще одного пространства нужно перейти на платный тариф';
+          errorText =
+              'Для создания еще одного пространства нужно перейти на платный тариф';
         }
         setStore(() {
           status = WStoreStatus.error;
@@ -80,74 +82,62 @@ class AddSpaceDialog extends WStoreWidget<AddSpaceDialogStore> {
 
   @override
   Widget build(BuildContext context, AddSpaceDialogStore store) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        side: BorderSide(color: Color(0xFF212022), width: 2),
-      ),
-      title: const Text('Добавить пространство'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Создайте пространство и добавьте в него ваших коллег, чтобы организовать совместную работу над задачами',
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Название:',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.sentences,
-            controller: store.textEditingController,
-            onEditingComplete: () {
-              store.addSpace();
-            },
-          ),
-          WStoreValueBuilder(
-            store: store,
-            watch: (store) => store.addError,
-            builder: (context, error) {
-              if (error.isEmpty) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  error,
-                  style: const TextStyle(
-                    color: Color(0xFFBE4500),
-                  ),
+    return AppDialog(
+      title: 'Добавить пространство',
+      buttons: [
+        WStoreStatusBuilder(
+          store: store,
+          watch: (store) => store.status,
+          builder: (context) {
+            final loading = store.status == WStoreStatus.loading;
+            return AppDialogPrimaryButton(
+              onPressed: () {
+                store.addSpace();
+              },
+              text: 'Добавить пространство',
+              loading: loading,
+            );
+          },
+          onStatusLoaded: (context) {
+            Navigator.of(context).pop(store.newSpaceId);
+          },
+        )
+      ],
+      children: [
+        const Text(
+          'Создайте пространство и добавьте в него ваших коллег, чтобы организовать совместную работу над задачами',
+        ),
+        const SizedBox(height: 12),
+        const Text(
+          'Название:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        TextField(
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+          controller: store.textEditingController,
+          onEditingComplete: () {
+            store.addSpace();
+          },
+        ),
+        WStoreValueBuilder(
+          store: store,
+          watch: (store) => store.addError,
+          builder: (context, error) {
+            if (error.isEmpty) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Text(
+                error,
+                style: const TextStyle(
+                  color: Color(0xFFBE4500),
                 ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          WStoreStatusBuilder(
-            store: store,
-            watch: (store) => store.status,
-            builder: (context) {
-              final loading = store.status == WStoreStatus.loading;
-              return ColorButtonWidget(
-                width: double.infinity,
-                onPressed: () {
-                  store.addSpace();
-                },
-                text: 'Добавить пространство',
-                loading: loading,
-                colorBackground: const Color(0xFF111012),
-                colorText: Colors.white,
-              );
-            },
-            onStatusLoaded: (context) {
-              Navigator.of(context).pop(store.newSpaceId);
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

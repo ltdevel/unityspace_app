@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
-import 'package:unityspace/screens/widgets/main_form_button_widget.dart';
-import 'package:unityspace/screens/widgets/main_form_logo_widget.dart';
-import 'package:unityspace/screens/widgets/main_form_text_button_widget.dart';
-import 'package:unityspace/screens/widgets/main_form_text_title_widget.dart';
-import 'package:unityspace/screens/widgets/sign_in_button_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_button_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_logo_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_text_button_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget.dart';
+import 'package:unityspace/screens/widgets/main_form/main_form_sign_in_button_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
 
@@ -101,7 +101,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                     builder: (context) {
                       final loading =
                           store.statusGoogle == WStoreStatus.loading;
-                      return SignInButtonWidget(
+                      return MainFormSignInButtonWidget(
                         loading: loading,
                         iconAssetName: 'assets/icons/google.svg',
                         width: 0,

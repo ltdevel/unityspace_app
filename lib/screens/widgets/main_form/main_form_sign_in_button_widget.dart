@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SignInButtonWidget extends StatelessWidget {
+class MainFormSignInButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
   final bool loading;
@@ -10,7 +10,7 @@ class SignInButtonWidget extends StatelessWidget {
   final Color colorText;
   final String iconAssetName;
 
-  const SignInButtonWidget({
+  const MainFormSignInButtonWidget({
     super.key,
     required this.onPressed,
     required this.text,
