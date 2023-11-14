@@ -18,6 +18,16 @@ class UserStore extends GStore {
     return license.isAfter(DateTime.now());
   }
 
+  bool get hasTrial {
+    final trial = organization?.trialEndDate;
+    if (trial == null) return false;
+    return trial.isAfter(DateTime.now());
+  }
+
+  bool get trialNeverStarted {
+    return organization?.trialEndDate == null;
+  }
+
   bool get isOrganizationOwner {
     if (user == null || organization == null) return false;
     return organization?.ownerId == user?.id;

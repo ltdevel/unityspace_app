@@ -7,6 +7,7 @@ class ColorButtonWidget extends StatelessWidget {
   final double width;
   final Color colorBackground;
   final Color colorText;
+  final double elevation;
 
   const ColorButtonWidget({
     super.key,
@@ -16,6 +17,7 @@ class ColorButtonWidget extends StatelessWidget {
     required this.width,
     required this.colorBackground,
     required this.colorText,
+    this.elevation = 2,
   });
 
   @override
@@ -26,7 +28,7 @@ class ColorButtonWidget extends StatelessWidget {
       ),
       minWidth: width,
       height: 40,
-      elevation: 2,
+      elevation: elevation,
       color: colorBackground,
       onPressed: loading ? null : onPressed,
       child: loading

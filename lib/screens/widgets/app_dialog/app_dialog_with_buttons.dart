@@ -37,7 +37,7 @@ class AppDialogWithButtons extends StatelessWidget {
             loading: primaryButtonLoading,
           ),
         if (secondaryButtonText.isNotEmpty && primaryButtonText.isNotEmpty)
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
         if (secondaryButtonText.isNotEmpty)
           AppDialogSecondaryButton(
             onPressed: onSecondaryButtonPressed,

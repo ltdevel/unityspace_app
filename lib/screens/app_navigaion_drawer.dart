@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/screens/dialogs/add_space_limit_dialog.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:unityspace/screens/dialogs/add_space_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
@@ -12,10 +13,17 @@ import 'package:wstore/wstore.dart';
 class AppNavigationDrawerStore extends WStore {
   bool spaceCreating = false;
   int? newSpaceId;
+  String? redirectTo;
 
   void setSpaceId(final int? id) {
     setStore(() {
       newSpaceId = id;
+    });
+  }
+
+  void setRedirectTo(final String? redirect) {
+    setStore(() {
+      redirectTo = redirect;
     });
   }
 
@@ -29,6 +37,16 @@ class AppNavigationDrawerStore extends WStore {
         store: SpacesStore(),
         getValue: (store) => store.spaces,
         keyName: 'spaces',
+      );
+
+  bool get isAddingSpaceExceededLimit => computed(
+        getValue: () {
+          if (hasLicense || hasTrial) return false;
+          final spacesLength = spaces?.length ?? 0;
+          return spacesLength >= 3;
+        },
+        watch: () => [spaces, hasLicense, hasTrial],
+        keyName: 'isAddingSpaceExceededLimit',
       );
 
   List<Space> get allSortedSpaces => computed(
@@ -70,10 +88,25 @@ class AppNavigationDrawerStore extends WStore {
         keyName: 'hasLicense',
       );
 
+  bool get hasTrial => computedFromStream<bool>(
+        stream: Stream.periodic(
+          const Duration(seconds: 1),
+          (_) => UserStore().hasTrial,
+        ),
+        initialData: UserStore().hasTrial,
+        keyName: 'hasTrial',
+      );
+
   bool get isOrganizationOwner => computedFromStore(
         store: UserStore(),
         getValue: (store) => store.isOrganizationOwner,
         keyName: 'isOrganizationOwner',
+      );
+
+  bool get trialNeverStarted => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.trialNeverStarted,
+        keyName: 'trialNeverStarted',
       );
 
   int get currentUserId => computed<int>(
@@ -165,11 +198,15 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                         if (store.isOrganizationOwner)
                           const SizedBox(height: 16),
                         if (store.isOrganizationOwner)
-                          WStoreValueListener(
+                          WStoreListener(
                             store: store,
-                            watch: (store) => store.newSpaceId,
-                            onChange: (context, spaceId) {
-                              if (spaceId != null) {
+                            watch: (store) => [
+                              store.newSpaceId,
+                              store.redirectTo,
+                            ],
+                            onChange: (context, store) {
+                              if (store.newSpaceId != null) {
+                                final spaceId = store.newSpaceId;
                                 store.setSpaceId(null);
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pushReplacementNamed(
@@ -177,15 +214,43 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                                   arguments: spaceId,
                                 );
                               }
+                              if (store.redirectTo == 'goto_pay') {
+                                store.setRedirectTo(null);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacementNamed(
+                                  '/account',
+                                  arguments: {'page': 'tariff'},
+                                );
+                              }
+                              if (store.redirectTo == 'start_trial') {
+                                store.setRedirectTo(null);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacementNamed(
+                                  '/account',
+                                  arguments: {
+                                    'page': 'tariff',
+                                    'action': 'trial',
+                                  },
+                                );
+                              }
                             },
                             child: AddSpaceButtonWidget(
                               onTap: () async {
                                 if (store.spaceCreating) return;
                                 store.spaceCreating = true;
-                                final spaceId = await showAddSpaceDialog(
-                                  context,
-                                );
-                                store.setSpaceId(spaceId);
+                                if (store.isAddingSpaceExceededLimit) {
+                                  final redirect =
+                                      await showAddSpaceLimitDialog(
+                                    context,
+                                    showTrialButton: store.trialNeverStarted,
+                                  );
+                                  store.setRedirectTo(redirect);
+                                } else {
+                                  final spaceId = await showAddSpaceDialog(
+                                    context,
+                                  );
+                                  store.setSpaceId(spaceId);
+                                }
                                 store.spaceCreating = false;
                               },
                             ),

@@ -17,12 +17,13 @@ class AppDialogSecondaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColorButtonWidget(
       width: double.infinity,
+      elevation: 1,
       onPressed: () {
         onPressed?.call();
       },
       text: text,
       loading: loading,
-      colorBackground: const Color(0x0F111012),
+      colorBackground: const Color(0xFFF1F1F1),
       colorText: Colors.black,
     );
   }
