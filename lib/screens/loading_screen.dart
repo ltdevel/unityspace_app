@@ -102,7 +102,7 @@ class LoadingScreen extends WStoreWidget<LoadingScreenStore> {
                 height: 200,
               );
             },
-            builder: (context) {
+            builder: (context, _) {
               return const SizedBox.shrink();
             },
             onStatusLoaded: (context) {

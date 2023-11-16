@@ -98,9 +98,8 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
                   WStoreStatusBuilder(
                     store: store,
                     watch: (store) => store.statusGoogle,
-                    builder: (context) {
-                      final loading =
-                          store.statusGoogle == WStoreStatus.loading;
+                    builder: (context, status) {
+                      final loading = status == WStoreStatus.loading;
                       return MainFormSignInButtonWidget(
                         loading: loading,
                         iconAssetName: 'assets/icons/google.svg',

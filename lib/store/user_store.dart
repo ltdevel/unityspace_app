@@ -1,6 +1,6 @@
 import 'package:unityspace/models/user_models.dart';
-import 'package:unityspace/utils/gstore.dart';
 import 'package:unityspace/service/user_service.dart' as api;
+import 'package:unityspace/utils/wstore_plugin.dart';
 
 class UserStore extends GStore {
   static UserStore? _instance;

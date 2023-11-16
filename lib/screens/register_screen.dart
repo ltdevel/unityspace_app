@@ -88,8 +88,8 @@ class RegisterScreen extends WStoreWidget<RegisterScreenStore> {
                 child: WStoreStatusBuilder(
                   store: store,
                   watch: (store) => store.status,
-                  builder: (context) {
-                    final loading = store.status == WStoreStatus.loading;
+                  builder: (context, status) {
+                    final loading = status == WStoreStatus.loading;
                     return RegisterByEmailForm(loading: loading);
                   },
                   onStatusLoaded: (context) {
