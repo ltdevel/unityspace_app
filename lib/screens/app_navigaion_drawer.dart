@@ -176,6 +176,10 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                     return Column(
                       children: [
                         const NavigatorMenuListTitle(title: 'Все пространства'),
+                        if (store.allSortedSpaces.isEmpty)
+                          NavigatorMenuEmptySpacesHint(
+                            isOrganizationOwner: store.isOrganizationOwner,
+                          ),
                         ...store.allSortedSpaces.map(
                           (space) => NavigatorMenuItem(
                             iconAssetName: 'assets/icons/navigator_space.svg',
@@ -285,6 +289,48 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NavigatorMenuEmptySpacesHint extends StatelessWidget {
+  final bool isOrganizationOwner;
+
+  const NavigatorMenuEmptySpacesHint({
+    super.key,
+    required this.isOrganizationOwner,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const ownerText = ''
+        'Кажется, у вас нет ни одного пространства. '
+        'Создайте пространство, чтобы '
+        'приступить к работе';
+    const empText = ''
+        'Кажется, у вас нет доступных пространств. '
+        'Свяжитесь с администратором, чтобы '
+        'получить доступ и приступить к работе';
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF111012),
+        border: Border.all(
+          color: const Color(0xFF0C5B35),
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
+      child: Text(
+        isOrganizationOwner ? ownerText : empText,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.95),
+          height: 1.5,
+          fontSize: 16,
         ),
       ),
     );
