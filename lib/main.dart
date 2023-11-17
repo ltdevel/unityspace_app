@@ -92,11 +92,17 @@ class _MyAppState extends State<MyApp> {
                   ModalRoute.of(context)?.settings.arguments as String? ?? '',
             ),
         '/space': (context) => SpaceScreen(
-              spaceId:
-                  ModalRoute.of(context)?.settings.arguments as int? ?? 0,
+              spaceId: ModalRoute.of(context)?.settings.arguments as int? ?? 0,
             ),
         '/notifications': (context) => const NotificationsScreen(),
-        '/account': (context) => const AccountScreen(),
+        '/account': (context) {
+          final arguments = ModalRoute.of(context)?.settings.arguments
+              as Map<String, String>?;
+          return AccountScreen(
+            tab: arguments?['page'] ?? '',
+            action: arguments?['action'] ?? '',
+          );
+        },
       },
     );
   }
