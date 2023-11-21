@@ -4,11 +4,30 @@ import 'package:unityspace/screens/app_navigation_drawer.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tab_button.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:unityspace/store/auth_store.dart';
+import 'package:unityspace/store/user_store.dart';
+import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountScreenStore extends WStore {
   bool isExiting = false;
   String selectedTab = AccountScreenTab.account.name;
+
+  bool get isOrganizationOwner => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.isOrganizationOwner,
+        keyName: 'isOrganizationOwner',
+      );
+
+  List<AccountScreenTab> get currentUserTabs => computed(
+        getValue: () {
+          if (isOrganizationOwner) return AccountScreenTab.values;
+          return AccountScreenTab.values
+              .where((tab) => tab.adminOnly == false)
+              .toList();
+        },
+        watch: () => [isOrganizationOwner],
+        keyName: 'currentUserTabs',
+      );
 
   void selectTab(final String tab) {
     setStore(() {
@@ -26,20 +45,26 @@ class AccountScreenStore extends WStore {
 }
 
 enum AccountScreenTab {
-  account(title: 'Аккаунт'),
-  achievements(title: 'Достижения'),
-  actions(title: 'Мои действия'),
-  settings(title: 'Настройки'),
-  members(title: 'Участники организации'),
-  tariff(title: 'Оплата и тарифы', iconAsset: 'assets/icons/tab_license.svg');
+  account(title: 'Аккаунт', adminOnly: false),
+  achievements(title: 'Достижения', adminOnly: false),
+  actions(title: 'Мои действия', adminOnly: false),
+  settings(title: 'Настройки', adminOnly: false),
+  members(title: 'Участники организации', adminOnly: true),
+  tariff(
+    title: 'Оплата и тарифы',
+    iconAsset: 'assets/icons/tab_license.svg',
+    adminOnly: true,
+  );
 
   const AccountScreenTab({
     required this.title,
+    required this.adminOnly,
     this.iconAsset,
   });
 
   final String title;
   final String? iconAsset;
+  final bool adminOnly;
 }
 
 class AccountScreen extends WStoreWidget<AccountScreenStore> {
@@ -85,12 +110,12 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
       ),
       body: Column(
         children: [
-          WStoreValueBuilder(
+          WStoreBuilder(
             store: store,
-            watch: (store) => store.selectedTab,
-            builder: (context, selectedTab) => TabsListRow(
+            watch: (store) => [store.selectedTab, store.currentUserTabs],
+            builder: (context, store) => TabsListRow(
               children: [
-                ...AccountScreenTab.values.map(
+                ...store.currentUserTabs.map(
                   (tab) => TabButton(
                     iconAsset: tab.iconAsset,
                     title: tab.title,
