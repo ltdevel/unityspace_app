@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/screens/app_navigation_drawer.dart';
+import 'package:unityspace/screens/pages/account_page.dart';
+import 'package:unityspace/screens/pages/achievements_page.dart';
+import 'package:unityspace/screens/pages/actions_page.dart';
+import 'package:unityspace/screens/pages/members_page.dart';
+import 'package:unityspace/screens/pages/settings_page.dart';
+import 'package:unityspace/screens/pages/tariff_page.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tab_button.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:unityspace/store/auth_store.dart';
@@ -10,7 +16,7 @@ import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountScreenStore extends WStore {
-  String selectedTab = AccountScreenTab.account.name;
+  AccountScreenTab selectedTab = AccountScreenTab.account;
   WStoreStatus statusExiting = WStoreStatus.init;
   String exitingError = '';
 
@@ -31,7 +37,7 @@ class AccountScreenStore extends WStore {
         keyName: 'currentUserTabs',
       );
 
-  void selectTab(final String tab) {
+  void selectTab(final AccountScreenTab tab) {
     setStore(() {
       selectedTab = tab;
     });
@@ -39,7 +45,7 @@ class AccountScreenStore extends WStore {
 
   void init(final String tab) {
     final tabName = tab.isEmpty ? AccountScreenTab.account.name : tab;
-    selectTab(AccountScreenTab.values.byName(tabName).name);
+    selectTab(AccountScreenTab.values.byName(tabName));
   }
 
   void signOut() {
@@ -148,13 +154,29 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
                     iconAsset: tab.iconAsset,
                     title: tab.title,
                     onPressed: () {
-                      store.selectTab(tab.name);
+                      store.selectTab(tab);
                     },
-                    selected: tab.name == store.selectedTab,
+                    selected: tab == store.selectedTab,
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: WStoreValueBuilder(
+                store: store,
+                watch: (store) => store.selectedTab,
+                builder: (context, selectedTab) {
+                  return switch (selectedTab) {
+                    AccountScreenTab.account => const AccountPage(),
+                    AccountScreenTab.achievements => const AchievementsPage(),
+                    AccountScreenTab.actions => const ActionsPage(),
+                    AccountScreenTab.settings => const SettingsPage(),
+                    AccountScreenTab.members => const MembersPage(),
+                    AccountScreenTab.tariff => const TariffPage(),
+                  };
+                }),
           ),
         ],
       ),
