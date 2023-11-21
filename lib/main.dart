@@ -77,6 +77,10 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFF5F5F5),
+        ),
         useMaterial3: true,
       ),
       initialRoute: widget.isAuthenticated ? '/loading' : '/login',
