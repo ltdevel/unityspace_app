@@ -143,6 +143,7 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           WStoreBuilder(
             store: store,
