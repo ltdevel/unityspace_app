@@ -20,6 +20,17 @@ class _TabsListRowState extends State<TabsListRow> {
   void initState() {
     super.initState();
     tabsKeys = List.generate(widget.children.length, (index) => GlobalKey());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedTab = widget.children.indexWhere((tab) => tab.selected);
+      if (selectedTab == -1) return;
+      final selectedTabContext = tabsKeys[selectedTab].currentContext;
+      if (selectedTabContext != null) {
+        Scrollable.ensureVisible(
+          selectedTabContext,
+          alignment: 0.5,
+        );
+      }
+    });
   }
 
   @override
@@ -35,6 +46,7 @@ class _TabsListRowState extends State<TabsListRow> {
     final selectedTabOld = oldWidget.children.indexWhere((tab) => tab.selected);
     if (selectedTab != selectedTabOld) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (selectedTab == -1) return;
         final selectedTabContext = tabsKeys[selectedTab].currentContext;
         if (selectedTabContext != null) {
           Scrollable.ensureVisible(
