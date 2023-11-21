@@ -15,11 +15,6 @@ class MainFormTextButtonWidget extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
         minimumSize: MaterialStateProperty.all(const Size(40, 40)),
         overlayColor: MaterialStateProperty.all<Color>(Colors.white10),
       ),

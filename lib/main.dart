@@ -81,6 +81,15 @@ class _MyAppState extends State<MyApp> {
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFF5F5F5),
         ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            )
+          )
+        ),
         useMaterial3: true,
       ),
       initialRoute: widget.isAuthenticated ? '/loading' : '/login',

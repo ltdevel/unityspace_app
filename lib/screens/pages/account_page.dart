@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
+import 'package:unityspace/store/user_store.dart';
+import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountPageStore extends WStore {
-  // TODO: add data here...
+  User? get currentUser => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.user,
+        keyName: 'currentUser',
+      );
+
+  int get currentUserId => computed<int>(
+        getValue: () => currentUser?.id ?? 0,
+        watch: () => [currentUser],
+        keyName: 'currentUserId',
+      );
 
   @override
   AccountPage get widget => super.widget as AccountPage;
@@ -29,10 +43,10 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
           ),
           constraints: const BoxConstraints(maxWidth: 660),
           child: AccountContentWidget(
-            avatar: Container(
-              width: 40,
-              height: 40,
-              color: Colors.deepPurple,
+            avatar: AccountAvatarWidget(
+              currentUserId: store.currentUserId,
+              onChangeAvatar: () {},
+              onClearAvatar: () {},
             ),
             children: const [
               Text('Имя'),
@@ -46,6 +60,61 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AccountAvatarWidget extends StatelessWidget {
+  final int currentUserId;
+  final VoidCallback onChangeAvatar;
+  final VoidCallback onClearAvatar;
+
+  const AccountAvatarWidget({
+    super.key,
+    required this.currentUserId,
+    required this.onChangeAvatar,
+    required this.onClearAvatar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        UserAvatarWidget(
+          id: currentUserId,
+          width: 120,
+          height: 120,
+          fontSize: 48,
+          radius: 16,
+        ),
+        MenuAnchor(
+          menuChildren: [
+            MenuItemButton(
+              onPressed: onChangeAvatar,
+              child: const Text('Обновить фото'),
+            ),
+            MenuItemButton(
+              onPressed: onClearAvatar,
+              child: const Text('Удалить фото'),
+            ),
+          ],
+          builder: (context, controller, _) {
+            return TextButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(const Size(120, 40)),
+              ),
+              onPressed: () {
+                if (controller.isOpen) {
+                  controller.close();
+                } else {
+                  controller.open();
+                }
+              },
+              child: const Text('Изменить'),
+            );
+          },
+        ),
+      ],
     );
   }
 }
