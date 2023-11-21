@@ -5,12 +5,14 @@ import 'package:unityspace/screens/widgets/tabs_list/tab_button.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/store/user_store.dart';
+import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountScreenStore extends WStore {
-  bool isExiting = false;
   String selectedTab = AccountScreenTab.account.name;
+  WStoreStatus statusExiting = WStoreStatus.init;
+  String exitingError = '';
 
   bool get isOrganizationOwner => computedFromStore(
         store: UserStore(),
@@ -38,6 +40,33 @@ class AccountScreenStore extends WStore {
   void init(final String tab) {
     final tabName = tab.isEmpty ? AccountScreenTab.account.name : tab;
     selectTab(AccountScreenTab.values.byName(tabName).name);
+  }
+
+  void signOut() {
+    if (statusExiting == WStoreStatus.loading) return;
+    //
+    setStore(() {
+      statusExiting = WStoreStatus.loading;
+      exitingError = '';
+    });
+    subscribe(
+      future: AuthStore().signOut(),
+      subscriptionId: 1,
+      onData: (_) {
+        setStore(() {
+          statusExiting = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, stack) {
+        String errorText =
+            'При выходе из учетной записи возникла проблема, пожалуйста, попробуйте ещё раз';
+        logger.d('AccountScreenStore.signOut error: $error stack: $stack');
+        setStore(() {
+          statusExiting = WStoreStatus.error;
+          exitingError = errorText;
+        });
+      },
+    );
   }
 
   @override
@@ -87,23 +116,22 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
       appBar: AppBar(
         title: const Text('Мой профиль'),
         actions: [
-          IconButton(
-            padding: const EdgeInsets.all(2),
-            icon: SvgPicture.asset(
-              'assets/icons/sign_out.svg',
-              width: 20,
-              height: 20,
-              theme: SvgTheme(
-                currentColor:
-                    IconTheme.of(context).color ?? const Color(0xFF111012),
-              ),
-            ),
-            tooltip: 'Выйти из аккаунта',
-            onPressed: () async {
-              if (store.isExiting) return;
-              store.isExiting = true;
-              await AuthStore().signOut();
-              store.isExiting = false;
+          WStoreStatusBuilder(
+            store: store,
+            watch: (store) => store.statusExiting,
+            builder: (context, status) {
+              final loading = status == WStoreStatus.loading;
+              return SignOutIconButton(
+                onPressed: () => store.signOut(),
+                loading: loading,
+              );
+            },
+            onStatusError: (context) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(store.exitingError),
+                ),
+              );
             },
           ),
         ],
@@ -130,6 +158,42 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SignOutIconButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const SignOutIconButton({
+    super.key,
+    required this.onPressed,
+    required this.loading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final currentColor = IconTheme.of(context).color ?? const Color(0xFF111012);
+    return IconButton(
+      padding: EdgeInsets.all(loading ? 4 : 2),
+      icon: loading
+          ? SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: currentColor,
+              ),
+            )
+          : SvgPicture.asset(
+              'assets/icons/sign_out.svg',
+              width: 20,
+              height: 20,
+              theme: SvgTheme(currentColor: currentColor),
+            ),
+      tooltip: 'Выйти из аккаунта',
+      onPressed: loading ? null : onPressed,
     );
   }
 }
