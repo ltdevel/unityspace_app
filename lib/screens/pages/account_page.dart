@@ -21,7 +21,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
     return Container(
       color: Colors.blue,
       child: const Center(
-        child: Text('Достижения'),
+        child: Text('Аккаунт'),
       ),
     );
   }

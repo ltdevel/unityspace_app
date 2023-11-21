@@ -21,7 +21,7 @@ class AchievementsPage extends WStoreWidget<AchievementsPageStore> {
     return Container(
       color: Colors.blue,
       child: const Center(
-        child: Text('Аккаунт'),
+        child: Text('Достижения'),
       ),
     );
   }
