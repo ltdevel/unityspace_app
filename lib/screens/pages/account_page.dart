@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
@@ -48,18 +49,93 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
               onChangeAvatar: () {},
               onClearAvatar: () {},
             ),
-            children: const [
-              Text('Имя'),
-              Text('День рождения'),
-              Text('Email'),
-              Text('Телефон'),
-              Text('Ссылка на профиль в Telegram'),
-              Text('Ссылка на профиль в Github'),
-              Text('Пароль'),
+            children: [
+              AccountItemWidget(
+                text: 'Имя',
+                value:
+                    'Дмитрий Маслов Дмитрий Маслов Дмитрий Маслов Дмитрий Маслов',
+                iconAssetName: 'assets/icons/account_name.svg',
+                onTapChange: () {},
+              ),
+              const Text('День рождения'),
+              const Text('Email'),
+              const Text('Телефон'),
+              const Text('Ссылка на профиль в Telegram'),
+              const Text('Ссылка на профиль в Github'),
+              const Text('Пароль'),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class AccountItemWidget extends StatelessWidget {
+  final String text;
+  final String value;
+  final String iconAssetName;
+  final VoidCallback onTapChange;
+
+  const AccountItemWidget({
+    super.key,
+    required this.text,
+    required this.value,
+    required this.iconAssetName,
+    required this.onTapChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const titleColor = Color(0x99111012);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            SvgPicture.asset(
+              iconAssetName,
+              width: 18,
+              height: 18,
+              theme: const SvgTheme(currentColor: titleColor),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              text,
+              style: const TextStyle(
+                color: titleColor,
+                fontSize: 16,
+              ),
+              maxLines: 1,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Text(
+                value,
+                style: const TextStyle(
+                  color: Color(0xCC111012),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(const Size(40, 40)),
+              ),
+              onPressed: onTapChange,
+              child: const Text('Изменить'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -144,15 +220,11 @@ class AccountContentWidget extends StatelessWidget {
                 thickness: 1,
                 color: Color(0xFFE5E7EB),
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 16,
-                  direction: Axis.vertical,
-                  clipBehavior: Clip.hardEdge,
-                  children: children,
-                ),
+              ...children.expand(
+                (child) => [
+                  const SizedBox(height: 16),
+                  child,
+                ],
               ),
             ],
           );

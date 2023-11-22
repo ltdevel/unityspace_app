@@ -83,7 +83,6 @@ class _MyAppState extends State<MyApp> {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
