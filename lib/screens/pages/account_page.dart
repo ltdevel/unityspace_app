@@ -87,6 +87,7 @@ class AccountAvatarWidget extends StatelessWidget {
           fontSize: 48,
           radius: 16,
         ),
+        const SizedBox(height: 4),
         MenuAnchor(
           menuChildren: [
             MenuItemButton(
