@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:unityspace/models/user_models.dart';
@@ -62,14 +63,24 @@ class AccountPageStore extends WStore {
         keyName: 'currentUserGithub',
       );
 
-  Future<void> gotoLink(final String? link) async {
-    if (link == null) return;
+  Future<void> gotoLink(final String link) async {
+    if (link.isEmpty) return;
     try {
       final url = Uri.parse(link);
       bool result = await launchUrl(url, mode: LaunchMode.externalApplication);
       if (!result) throw 'Could not launch $link';
     } catch (error, stack) {
       logger.e('gotoLink error', error: error, stackTrace: stack);
+    }
+  }
+
+  Future<void> copyToClipboard(final String text) async {
+    if (text.isEmpty) return;
+    try {
+      final data = ClipboardData(text: text);
+      await Clipboard.setData(data);
+    } catch (error, stack) {
+      logger.e('copyToClipboard error', error: error, stackTrace: stack);
     }
   }
 
@@ -116,6 +127,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   value: name.isNotEmpty ? name : 'Не указано',
                   iconAssetName: 'assets/icons/account_name.svg',
                   onTapChange: () {},
+                  onTapValue: name.isNotEmpty
+                      ? () => store.copyToClipboard(name)
+                      : null,
                 ),
               ),
               WStoreValueBuilder(
@@ -126,6 +140,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   value: birthday.isNotEmpty ? birthday : 'Не указано',
                   iconAssetName: 'assets/icons/account_birthday.svg',
                   onTapChange: () {},
+                  onTapValue: birthday.isNotEmpty
+                      ? () => store.copyToClipboard(birthday)
+                      : null,
                 ),
               ),
               WStoreValueBuilder(
@@ -136,6 +153,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   value: email.isNotEmpty ? email : 'Не указано',
                   iconAssetName: 'assets/icons/account_email.svg',
                   onTapChange: () {},
+                  onTapValue: email.isNotEmpty
+                      ? () => store.copyToClipboard(email)
+                      : null,
                 ),
               ),
               WStoreValueBuilder(
@@ -146,6 +166,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   value: phone.isNotEmpty ? phone : 'Не указано',
                   iconAssetName: 'assets/icons/account_phone.svg',
                   onTapChange: () {},
+                  onTapValue: phone.isNotEmpty
+                      ? () => store.copyToClipboard(phone)
+                      : null,
                 ),
               ),
               WStoreValueBuilder(
@@ -159,6 +182,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   onTapValue: telegram.isNotEmpty
                       ? () => store.gotoLink(telegram)
                       : null,
+                  onLongTapValue: telegram.isNotEmpty
+                      ? () => store.copyToClipboard(telegram)
+                      : null,
                 ),
               ),
               WStoreValueBuilder(
@@ -171,6 +197,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   onTapChange: () {},
                   onTapValue:
                       github.isNotEmpty ? () => store.gotoLink(github) : null,
+                  onLongTapValue: github.isNotEmpty
+                      ? () => store.copyToClipboard(github)
+                      : null,
                 ),
               ),
               AccountItemWidget(
