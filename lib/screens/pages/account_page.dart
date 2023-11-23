@@ -37,7 +37,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
       padding: const EdgeInsets.all(16),
       child: Center(
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: Colors.white,
@@ -52,17 +52,46 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
             children: [
               AccountItemWidget(
                 text: 'Имя',
-                value:
-                    'Дмитрий Маслов Дмитрий Маслов Дмитрий Маслов Дмитрий Маслов',
+                value: 'Дмитрий Маслов',
                 iconAssetName: 'assets/icons/account_name.svg',
                 onTapChange: () {},
               ),
-              const Text('День рождения'),
-              const Text('Email'),
-              const Text('Телефон'),
-              const Text('Ссылка на профиль в Telegram'),
-              const Text('Ссылка на профиль в Github'),
-              const Text('Пароль'),
+              AccountItemWidget(
+                text: 'День рождения',
+                value: 'Не указано',
+                iconAssetName: 'assets/icons/account_birthday.svg',
+                onTapChange: () {},
+              ),
+              AccountItemWidget(
+                text: 'Email',
+                value: 'dmitry.maslov.home@gmail.com',
+                iconAssetName: 'assets/icons/account_email.svg',
+                onTapChange: () {},
+              ),
+              AccountItemWidget(
+                text: 'Телефон',
+                value: 'Не указано',
+                iconAssetName: 'assets/icons/account_phone.svg',
+                onTapChange: () {},
+              ),
+              AccountItemWidget(
+                text: 'Профиль в Telegram',
+                value: 'https://t.me/ivanov_ivan',
+                iconAssetName: 'assets/icons/account_telegram.svg',
+                onTapChange: () {},
+              ),
+              AccountItemWidget(
+                text: 'Профиль в Github',
+                value: 'https://github.com/devmaslove',
+                iconAssetName: 'assets/icons/account_github.svg',
+                onTapChange: () {},
+              ),
+              AccountItemWidget(
+                text: 'Пароль',
+                value: '********',
+                iconAssetName: 'assets/icons/account_password.svg',
+                onTapChange: () {},
+              ),
             ],
           ),
         ),
@@ -76,6 +105,8 @@ class AccountItemWidget extends StatelessWidget {
   final String value;
   final String iconAssetName;
   final VoidCallback onTapChange;
+  final VoidCallback? onTapValue;
+  final VoidCallback? onLongTapValue;
 
   const AccountItemWidget({
     super.key,
@@ -83,6 +114,8 @@ class AccountItemWidget extends StatelessWidget {
     required this.value,
     required this.iconAssetName,
     required this.onTapChange,
+    this.onTapValue,
+    this.onLongTapValue,
   });
 
   @override
@@ -93,6 +126,7 @@ class AccountItemWidget extends StatelessWidget {
       children: [
         Row(
           children: [
+            const SizedBox(width: 12),
             SvgPicture.asset(
               iconAssetName,
               width: 18,
@@ -100,26 +134,12 @@ class AccountItemWidget extends StatelessWidget {
               theme: const SvgTheme(currentColor: titleColor),
             ),
             const SizedBox(width: 4),
-            Text(
-              text,
-              style: const TextStyle(
-                color: titleColor,
-                fontSize: 16,
-              ),
-              maxLines: 1,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
             Expanded(
               child: Text(
-                value,
+                text,
                 style: const TextStyle(
-                  color: Color(0xCC111012),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
+                  color: titleColor,
+                  fontSize: 16,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -134,6 +154,32 @@ class AccountItemWidget extends StatelessWidget {
               child: const Text('Изменить'),
             ),
           ],
+        ),
+        TextButton(
+          style: ButtonStyle(
+            minimumSize: MaterialStateProperty.all(
+              const Size(double.infinity, 40),
+            ),
+            padding: MaterialStateProperty.all<EdgeInsets>(
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            ),
+            alignment: Alignment.centerLeft,
+          ),
+          onPressed: onTapValue,
+          onLongPress: onLongTapValue,
+          child: FittedBox(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Color(0xCC111012),
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                height: 32 / 20,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
       ],
     );
@@ -210,7 +256,7 @@ class AccountContentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 420) {
+        if (constraints.maxWidth < 496) {
           return Column(
             children: [
               avatar,
@@ -219,6 +265,8 @@ class AccountContentWidget extends StatelessWidget {
                 height: 1,
                 thickness: 1,
                 color: Color(0xFFE5E7EB),
+                indent: 12,
+                endIndent: 12,
               ),
               ...children.expand(
                 (child) => [
@@ -232,6 +280,7 @@ class AccountContentWidget extends StatelessWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(width: 12),
             avatar,
             const SizedBox(width: 32),
             Expanded(
@@ -244,11 +293,18 @@ class AccountContentWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: Wrap(
-                  spacing: 16,
-                  direction: Axis.vertical,
-                  clipBehavior: Clip.hardEdge,
-                  children: children,
+                child: Column(
+                  children: [
+                    if (children.isNotEmpty)
+                      ...children
+                          .expand(
+                            (child) => [
+                              child,
+                              const SizedBox(height: 16),
+                            ],
+                          )
+                          .take(children.length * 2 - 1),
+                  ],
                 ),
               ),
             ),
