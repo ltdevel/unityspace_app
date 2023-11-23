@@ -68,9 +68,9 @@ class User {
       name: data.name,
       email: data.email,
       avatarLink: helpers.makeAvatarUrl(data.avatar),
-      phoneNumber: data.phoneNumber,
-      telegramLink: data.telegramLink,
-      githubLink: data.githubLink,
+      phoneNumber: helpers.getNullStringIfEmpty(data.phoneNumber),
+      telegramLink: helpers.getNullStringIfEmpty(data.telegramLink),
+      githubLink: helpers.getNullStringIfEmpty(data.githubLink),
       birthDate:
           data.birthDate != null ? DateTime.parse(data.birthDate!) : null,
     );

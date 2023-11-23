@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:unityspace/screens/account_screen.dart';
 import 'package:unityspace/screens/confirm_screen.dart';
 import 'package:unityspace/screens/home_screen.dart';
@@ -16,6 +17,7 @@ import 'package:unityspace/store/auth_store.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthStore().loadUserTokens();
+  await initializeDateFormatting('ru_RU', null);
 
   runApp(
     MyApp(
