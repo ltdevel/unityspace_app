@@ -11,6 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountPageStore extends WStore {
+  String message = '';
+
   User? get currentUser => computedFromStore(
         store: UserStore(),
         getValue: (store) => store.user,
@@ -63,25 +65,49 @@ class AccountPageStore extends WStore {
         keyName: 'currentUserGithub',
       );
 
-  Future<void> gotoLink(final String link) async {
-    if (link.isEmpty) return;
-    try {
-      final url = Uri.parse(link);
-      bool result = await launchUrl(url, mode: LaunchMode.externalApplication);
-      if (!result) throw 'Could not launch $link';
-    } catch (error, stack) {
-      logger.e('gotoLink error', error: error, stackTrace: stack);
-    }
+  void copy(final String text, final String successMessage) {
+    listenFuture(
+      _copyToClipboard(text),
+      id: 1,
+      onData: (_) {
+        setStore(() {
+          message = successMessage;
+        });
+      },
+      onError: (error, stack) {
+        logger.e('copyToClipboard error', error: error, stackTrace: stack);
+        setStore(() {
+          message = 'Не удалось скопировать данные';
+        });
+      },
+    );
   }
 
-  Future<void> copyToClipboard(final String text) async {
-    if (text.isEmpty) return;
-    try {
-      final data = ClipboardData(text: text);
-      await Clipboard.setData(data);
-    } catch (error, stack) {
-      logger.e('copyToClipboard error', error: error, stackTrace: stack);
-    }
+  void open(final String link) {
+    listenFuture(
+      _gotoLink(link),
+      id: 2,
+      onData: (_) {},
+      onError: (error, stack) {
+        logger.e('gotoLink error', error: error, stackTrace: stack);
+        setStore(() {
+          message = 'Не удалось открыть ссылку';
+        });
+      },
+    );
+  }
+
+  Future<void> _copyToClipboard(final String text) async {
+    if (text.isEmpty) throw 'Empty text';
+    final data = ClipboardData(text: text);
+    await Clipboard.setData(data);
+  }
+
+  Future<void> _gotoLink(final String link) async {
+    if (link.isEmpty) throw 'Empty link';
+    final url = Uri.parse(link);
+    bool result = await launchUrl(url, mode: LaunchMode.externalApplication);
+    if (!result) throw 'Could not launch $link';
   }
 
   @override
@@ -98,117 +124,147 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
 
   @override
   Widget build(BuildContext context, AccountPageStore store) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
+    return WStoreStringListener(
+      store: store,
+      watch: (store) => store.message,
+      reset: (store) => store.message = '',
+      onNotEmpty: (context, message) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
           ),
-          constraints: const BoxConstraints(maxWidth: 660),
-          child: AccountContentWidget(
-            avatar: WStoreValueBuilder(
-              store: store,
-              watch: (store) => store.currentUserId,
-              builder: (context, id) => AccountAvatarWidget(
-                currentUserId: id,
-                onChangeAvatar: () {},
-                onClearAvatar: () {},
-              ),
+        );
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
             ),
-            children: [
-              WStoreValueBuilder(
+            constraints: const BoxConstraints(maxWidth: 660),
+            child: AccountContentWidget(
+              avatar: WStoreValueBuilder(
                 store: store,
-                watch: (store) => store.currentUserName,
-                builder: (context, name) => AccountItemWidget(
-                  text: 'Имя',
-                  value: name.isNotEmpty ? name : 'Не указано',
-                  iconAssetName: 'assets/icons/account_name.svg',
-                  onTapChange: () {},
-                  onTapValue: name.isNotEmpty
-                      ? () => store.copyToClipboard(name)
-                      : null,
+                watch: (store) => store.currentUserId,
+                builder: (context, id) => AccountAvatarWidget(
+                  currentUserId: id,
+                  onChangeAvatar: () {},
+                  onClearAvatar: () {},
                 ),
               ),
-              WStoreValueBuilder(
-                store: store,
-                watch: (store) => store.currentUserBirthday,
-                builder: (context, birthday) => AccountItemWidget(
-                  text: 'День рождения',
-                  value: birthday.isNotEmpty ? birthday : 'Не указано',
-                  iconAssetName: 'assets/icons/account_birthday.svg',
-                  onTapChange: () {},
-                  onTapValue: birthday.isNotEmpty
-                      ? () => store.copyToClipboard(birthday)
-                      : null,
+              children: [
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserName,
+                  builder: (context, name) => AccountItemWidget(
+                    text: 'Имя',
+                    value: name.isNotEmpty ? name : 'Не указано',
+                    iconAssetName: 'assets/icons/account_name.svg',
+                    onTapChange: () {},
+                    onTapValue: name.isNotEmpty
+                        ? () => store.copy(
+                              name,
+                              'Имя скопировано в буфер обмена',
+                            )
+                        : null,
+                  ),
                 ),
-              ),
-              WStoreValueBuilder(
-                store: store,
-                watch: (store) => store.currentUserEmail,
-                builder: (context, email) => AccountItemWidget(
-                  text: 'Email',
-                  value: email.isNotEmpty ? email : 'Не указано',
-                  iconAssetName: 'assets/icons/account_email.svg',
-                  onTapChange: () {},
-                  onTapValue: email.isNotEmpty
-                      ? () => store.copyToClipboard(email)
-                      : null,
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserBirthday,
+                  builder: (context, birthday) => AccountItemWidget(
+                    text: 'День рождения',
+                    value: birthday.isNotEmpty ? birthday : 'Не указано',
+                    iconAssetName: 'assets/icons/account_birthday.svg',
+                    onTapChange: () {},
+                    onTapValue: birthday.isNotEmpty
+                        ? () => store.copy(
+                              birthday,
+                              'Дата рождения скопирована в буфер обмена',
+                            )
+                        : null,
+                  ),
                 ),
-              ),
-              WStoreValueBuilder(
-                store: store,
-                watch: (store) => store.currentUserPhone,
-                builder: (context, phone) => AccountItemWidget(
-                  text: 'Телефон',
-                  value: phone.isNotEmpty ? phone : 'Не указано',
-                  iconAssetName: 'assets/icons/account_phone.svg',
-                  onTapChange: () {},
-                  onTapValue: phone.isNotEmpty
-                      ? () => store.copyToClipboard(phone)
-                      : null,
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserEmail,
+                  builder: (context, email) => AccountItemWidget(
+                    text: 'Email',
+                    value: email.isNotEmpty ? email : 'Не указано',
+                    iconAssetName: 'assets/icons/account_email.svg',
+                    onTapChange: () {},
+                    onTapValue: email.isNotEmpty
+                        ? () => store.copy(
+                              email,
+                              'Email скопирован в буфер обмена',
+                            )
+                        : null,
+                  ),
                 ),
-              ),
-              WStoreValueBuilder(
-                store: store,
-                watch: (store) => store.currentUserTelegram,
-                builder: (context, telegram) => AccountItemWidget(
-                  text: 'Профиль в Telegram',
-                  value: telegram.isNotEmpty ? telegram : 'Не указано',
-                  iconAssetName: 'assets/icons/account_telegram.svg',
-                  onTapChange: () {},
-                  onTapValue: telegram.isNotEmpty
-                      ? () => store.gotoLink(telegram)
-                      : null,
-                  onLongTapValue: telegram.isNotEmpty
-                      ? () => store.copyToClipboard(telegram)
-                      : null,
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserPhone,
+                  builder: (context, phone) => AccountItemWidget(
+                    text: 'Телефон',
+                    value: phone.isNotEmpty ? phone : 'Не указано',
+                    iconAssetName: 'assets/icons/account_phone.svg',
+                    onTapChange: () {},
+                    onTapValue: phone.isNotEmpty
+                        ? () => store.copy(
+                              phone,
+                              'Телефон скопирован в буфер обмена',
+                            )
+                        : null,
+                  ),
                 ),
-              ),
-              WStoreValueBuilder(
-                store: store,
-                watch: (store) => store.currentUserGithub,
-                builder: (context, github) => AccountItemWidget(
-                  text: 'Профиль в Github',
-                  value: github.isNotEmpty ? github : 'Не указано',
-                  iconAssetName: 'assets/icons/account_github.svg',
-                  onTapChange: () {},
-                  onTapValue:
-                      github.isNotEmpty ? () => store.gotoLink(github) : null,
-                  onLongTapValue: github.isNotEmpty
-                      ? () => store.copyToClipboard(github)
-                      : null,
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserTelegram,
+                  builder: (context, telegram) => AccountItemWidget(
+                    text: 'Профиль в Telegram',
+                    value: telegram.isNotEmpty ? telegram : 'Не указано',
+                    iconAssetName: 'assets/icons/account_telegram.svg',
+                    onTapChange: () {},
+                    onTapValue: telegram.isNotEmpty
+                        ? () => store.open(telegram)
+                        : null,
+                    onLongTapValue: telegram.isNotEmpty
+                        ? () => store.copy(
+                              telegram,
+                              'Ссылка скопирована в буфер обмена',
+                            )
+                        : null,
+                  ),
                 ),
-              ),
-              AccountItemWidget(
-                text: 'Пароль',
-                value: '********',
-                iconAssetName: 'assets/icons/account_password.svg',
-                onTapChange: () {},
-              ),
-            ],
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserGithub,
+                  builder: (context, github) => AccountItemWidget(
+                    text: 'Профиль в Github',
+                    value: github.isNotEmpty ? github : 'Не указано',
+                    iconAssetName: 'assets/icons/account_github.svg',
+                    onTapChange: () {},
+                    onTapValue:
+                        github.isNotEmpty ? () => store.open(github) : null,
+                    onLongTapValue: github.isNotEmpty
+                        ? () => store.copy(
+                              github,
+                              'Ссылка скопирована в буфер обмена',
+                            )
+                        : null,
+                  ),
+                ),
+                AccountItemWidget(
+                  text: 'Пароль',
+                  value: '********',
+                  iconAssetName: 'assets/icons/account_password.svg',
+                  onTapChange: () {},
+                ),
+              ],
+            ),
           ),
         ),
       ),
