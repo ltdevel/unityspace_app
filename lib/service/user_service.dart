@@ -16,3 +16,10 @@ Future<OrganizationResponse> getOrganizationData() async {
   final result = OrganizationResponse.fromJson(jsonData);
   return result;
 }
+
+Future<UserResponse> removeUserAvatar() async {
+  final response = await HttpPlugin().patch('/user/removeAvatar');
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}

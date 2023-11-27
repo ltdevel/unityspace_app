@@ -57,6 +57,22 @@ class UserStore extends GStore {
     });
   }
 
+  Future<void> removeUserAvatar() async {
+    final userData = await api.removeUserAvatar();
+    final user = User.fromResponse(userData);
+    setStore(() {
+      this.user = user;
+      final organizationMembersCount = organization?.members.length ?? 0;
+      for (int i = 0; i < organizationMembersCount; i++) {
+        final member = organization!.members[i];
+        if (member.id == user.id) {
+          organization!.members[i] = member.copyWithNoAvatar();
+          break;
+        }
+      }
+    });
+  }
+
   void clear() {
     setStore(() {
       user = null;

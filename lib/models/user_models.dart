@@ -269,6 +269,19 @@ class OrganizationMember {
     );
   }
 
+  OrganizationMember copyWithNoAvatar() {
+    return OrganizationMember(
+      id: id,
+      avatarLink: null,
+      email: email,
+      name: name,
+      phoneNumber: phoneNumber,
+      telegramLink: telegramLink,
+      githubLink: githubLink,
+      birthDate: birthDate,
+    );
+  }
+
   @override
   String toString() {
     return 'OrganizationMember{id: $id, avatarLink: $avatarLink, email: $email, name: $name, phoneNumber: $phoneNumber, telegramLink: $telegramLink, githubLink: $githubLink, birthDate: $birthDate}';

@@ -12,6 +12,7 @@ import 'package:wstore/wstore.dart';
 
 class AccountPageStore extends WStore {
   String message = '';
+  WStoreStatus statusAvatar = WStoreStatus.init;
 
   User? get currentUser => computedFromStore(
         store: UserStore(),
@@ -23,6 +24,12 @@ class AccountPageStore extends WStore {
         getValue: () => currentUser?.id ?? 0,
         watch: () => [currentUser],
         keyName: 'currentUserId',
+      );
+
+  bool get currentUserHasAvatar => computed(
+        getValue: () => currentUser?.avatarLink != null,
+        watch: () => [currentUser],
+        keyName: 'currentUserHasAvatar',
       );
 
   String get currentUserName => computed(
@@ -64,6 +71,32 @@ class AccountPageStore extends WStore {
         watch: () => [currentUser],
         keyName: 'currentUserGithub',
       );
+
+  void clearAvatar() {
+    if (statusAvatar == WStoreStatus.loading) return;
+    //
+    setStore(() {
+      statusAvatar = WStoreStatus.loading;
+    });
+    //
+    listenFuture(
+      UserStore().removeUserAvatar(),
+      id: 3,
+      onData: (_) {
+        setStore(() {
+          statusAvatar = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, stack) {
+        logger.e('removeUserAvatar error', error: error, stackTrace: stack);
+        setStore(() {
+          statusAvatar = WStoreStatus.error;
+          message =
+              'При удалении аватара возникла проблема, пожалуйста, попробуйте ещё раз';
+        });
+      },
+    );
+  }
 
   void copy(final String text, final String successMessage) {
     listenFuture(
@@ -148,11 +181,13 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
             child: AccountContentWidget(
               avatar: WStoreValueBuilder(
                 store: store,
-                watch: (store) => store.currentUserId,
-                builder: (context, id) => AccountAvatarWidget(
-                  currentUserId: id,
+                watch: (store) => store.currentUserHasAvatar,
+                builder: (context, hasAvatar) => AccountAvatarWidget(
+                  hasAvatar: hasAvatar,
                   onChangeAvatar: () {},
-                  onClearAvatar: () {},
+                  onClearAvatar: () {
+                    store.clearAvatar();
+                  },
                 ),
               ),
               children: [
@@ -228,9 +263,8 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     value: telegram.isNotEmpty ? telegram : 'Не указано',
                     iconAssetName: 'assets/icons/account_telegram.svg',
                     onTapChange: () {},
-                    onTapValue: telegram.isNotEmpty
-                        ? () => store.open(telegram)
-                        : null,
+                    onTapValue:
+                        telegram.isNotEmpty ? () => store.open(telegram) : null,
                     onLongTapValue: telegram.isNotEmpty
                         ? () => store.copy(
                               telegram,
@@ -359,13 +393,13 @@ class AccountItemWidget extends StatelessWidget {
 }
 
 class AccountAvatarWidget extends StatelessWidget {
-  final int currentUserId;
   final VoidCallback onChangeAvatar;
   final VoidCallback onClearAvatar;
+  final bool hasAvatar;
 
   const AccountAvatarWidget({
     super.key,
-    required this.currentUserId,
+    required this.hasAvatar,
     required this.onChangeAvatar,
     required this.onClearAvatar,
   });
@@ -374,12 +408,15 @@ class AccountAvatarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        UserAvatarWidget(
-          id: currentUserId,
-          width: 120,
-          height: 120,
-          fontSize: 48,
-          radius: 16,
+        WStoreValueBuilder<AccountPageStore, int>(
+          watch: (store) => store.currentUserId,
+          builder: (context, currentUserId) => UserAvatarWidget(
+            id: currentUserId,
+            width: 120,
+            height: 120,
+            fontSize: 48,
+            radius: 16,
+          ),
         ),
         const SizedBox(height: 4),
         MenuAnchor(
@@ -388,24 +425,41 @@ class AccountAvatarWidget extends StatelessWidget {
               onPressed: onChangeAvatar,
               child: const Text('Обновить фото'),
             ),
-            MenuItemButton(
-              onPressed: onClearAvatar,
-              child: const Text('Удалить фото'),
-            ),
+            if (hasAvatar)
+              MenuItemButton(
+                onPressed: onClearAvatar,
+                child: const Text('Удалить фото'),
+              ),
           ],
           builder: (context, controller, _) {
-            return TextButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(120, 40)),
-              ),
-              onPressed: () {
-                if (controller.isOpen) {
-                  controller.close();
-                } else {
-                  controller.open();
-                }
+            return WStoreStatusBuilder<AccountPageStore>(
+              watch: (store) => store.statusAvatar,
+              builder: (context, status) {
+                final loading = status == WStoreStatus.loading;
+                return TextButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(const Size(120, 40)),
+                  ),
+                  onPressed: loading
+                      ? null
+                      : () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
+                  child: loading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Изменить'),
+                );
               },
-              child: const Text('Изменить'),
             );
           },
         ),
