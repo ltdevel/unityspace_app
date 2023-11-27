@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
@@ -143,6 +144,11 @@ class AccountPageStore extends WStore {
     if (!result) throw 'Could not launch $link';
   }
 
+  Future<String?> pickImage() async {
+    final xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    return xFile?.path;
+  }
+
   @override
   AccountPage get widget => super.widget as AccountPage;
 }
@@ -184,7 +190,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                 watch: (store) => store.currentUserHasAvatar,
                 builder: (context, hasAvatar) => AccountAvatarWidget(
                   hasAvatar: hasAvatar,
-                  onChangeAvatar: () {},
+                  onChangeAvatar: () {
+                    store.pickImage();
+                  },
                   onClearAvatar: () {
                     store.clearAvatar();
                   },
