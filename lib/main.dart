@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFF5F5F5),
+          surfaceTintColor: Color(0xFFF5F5F5),
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
