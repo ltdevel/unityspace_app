@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:unityspace/models/user_models.dart';
+import 'package:unityspace/screens/crop_image_screen.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
@@ -12,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountPageStore extends WStore {
+  String imageFilePath = '';
   String message = '';
   WStoreStatus statusAvatar = WStoreStatus.init;
 
@@ -99,6 +101,32 @@ class AccountPageStore extends WStore {
     );
   }
 
+  void setAvatar(Uint8List avatarImage) {
+    if (statusAvatar == WStoreStatus.loading) return;
+    //
+    setStore(() {
+      statusAvatar = WStoreStatus.loading;
+    });
+    //
+    listenFuture(
+      UserStore().setUserAvatar(avatarImage),
+      id: 5,
+      onData: (_) {
+        setStore(() {
+          statusAvatar = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, stack) {
+        logger.e('setUserAvatar error', error: error, stackTrace: stack);
+        setStore(() {
+          statusAvatar = WStoreStatus.error;
+          message =
+              'При загрузке аватара возникла проблема, пожалуйста, попробуйте ещё раз';
+        });
+      },
+    );
+  }
+
   void copy(final String text, final String successMessage) {
     listenFuture(
       _copyToClipboard(text),
@@ -144,7 +172,33 @@ class AccountPageStore extends WStore {
     if (!result) throw 'Could not launch $link';
   }
 
-  Future<String?> pickImage() async {
+  void pickAvatar() async {
+    setStore(() {
+      statusAvatar = WStoreStatus.loading;
+    });
+    listenFuture(
+      _pickImage(),
+      id: 4,
+      onData: (filePath) {
+        setStore(() {
+          if (filePath != null) {
+            imageFilePath = filePath;
+          }
+          statusAvatar = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, stack) {
+        logger.e('pickAvatar error', error: error, stackTrace: stack);
+        setStore(() {
+          statusAvatar = WStoreStatus.error;
+          message =
+              'При выборе из галереи возникла проблема, пожалуйста, попробуйте ещё раз';
+        });
+      },
+    );
+  }
+
+  Future<String?> _pickImage() async {
     final xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     return xFile?.path;
   }
@@ -185,17 +239,34 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
             ),
             constraints: const BoxConstraints(maxWidth: 660),
             child: AccountContentWidget(
-              avatar: WStoreValueBuilder(
+              avatar: WStoreStringListener(
                 store: store,
-                watch: (store) => store.currentUserHasAvatar,
-                builder: (context, hasAvatar) => AccountAvatarWidget(
-                  hasAvatar: hasAvatar,
-                  onChangeAvatar: () {
-                    store.pickImage();
-                  },
-                  onClearAvatar: () {
-                    store.clearAvatar();
-                  },
+                watch: (store) => store.imageFilePath,
+                reset: (store) => store.imageFilePath = '',
+                onNotEmpty: (context, imageFilePath) async {
+                  Uint8List? avatarImage = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CropImageScreen(
+                          imageFilePath: imageFilePath,
+                      )
+                    )
+                  );
+                  if (avatarImage != null) {
+                    store.setAvatar(avatarImage);
+                  }
+                },
+                child: WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserHasAvatar,
+                  builder: (context, hasAvatar) => AccountAvatarWidget(
+                    hasAvatar: hasAvatar,
+                    onChangeAvatar: () {
+                      store.pickAvatar();
+                    },
+                    onClearAvatar: () {
+                      store.clearAvatar();
+                    },
+                  ),
                 ),
               ),
               children: [

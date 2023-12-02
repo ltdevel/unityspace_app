@@ -124,6 +124,62 @@ class HttpPlugin {
     }
   }
 
+  Future<http.Response> sendFileFromMemory(
+    final String method,
+    final String url,
+    final List<int> file, [
+    final Map<String, String>? fields,
+  ]) async {
+    try {
+      if (fields != null) {
+        logger.d('$method FILE REQUEST to $url with fields = $fields');
+      } else {
+        logger.d('$method FILE REQUEST to $url');
+      }
+      var request = _makeRequestFile(method, url, file, fields);
+      var responseStream = await _client.send(request);
+      var response = await http.Response.fromStream(responseStream);
+      if (response.statusCode == 401 && url != '/auth/refresh') {
+        // это не запрос на обновление токена и токен протух
+        // пытаемся обновить и послать запрос заново
+        final needSendAgain = await AuthStore().refreshUserToken();
+        if (needSendAgain) {
+          if (fields != null) {
+            logger
+                .d('RETRY $method FILE REQUEST to $url with fields = $fields');
+          } else {
+            logger.d('RETRY $method FILE REQUEST to $url');
+          }
+          // заново собираем изначальный заброс (токены авторизации обновились)
+          request = _makeRequestFile(method, url, file, fields);
+          responseStream = await _client.send(request);
+          response = await http.Response.fromStream(responseStream);
+        }
+      }
+      logger.d(
+        '$method FILE RESPONSE from $url\nstatus = ${response.statusCode}\nbody = ${response.body}',
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      }
+      final jsonData = json.decode(response.body);
+      final message = jsonData['message'];
+      throw HttpPluginException(
+        response.statusCode,
+        message is List<dynamic>
+            ? message.firstOrNull?.toString() ?? 'unknown'
+            : message?.toString() ?? 'unknown',
+        jsonData['error']?.toString() ?? 'unknown',
+      );
+    } catch (e) {
+      logger.d('$method FILE RESPONSE from $url exception = ${e.toString()}');
+      if (e is http.ClientException) {
+        throw HttpPluginException(-1, e.message, 'ClientException');
+      }
+      rethrow;
+    }
+  }
+
   http.Request _makeRequest(
     final String method,
     final String url,
@@ -134,11 +190,34 @@ class HttpPlugin {
         ? Uri.https(_host, url, queryParameters)
         : Uri.http(_host, url, queryParameters);
     final request = http.Request(method, uri);
+    http.MultipartFile;
+    http.MultipartRequest;
     request.headers.addAll(_headers);
     if (data != null) {
       request.headers['Content-Type'] = 'application/json; charset=UTF-8';
       request.body = jsonEncode(data);
     }
+    return request;
+  }
+
+  http.MultipartRequest _makeRequestFile(
+    final String method,
+    final String url,
+    final List<int> fileData,
+    final Map<String, String>? fields,
+  ) {
+    final uri =
+        _scheme == 'https' ? Uri.https(_host, url) : Uri.http(_host, url);
+    final request = http.MultipartRequest(method, uri);
+    fields?.forEach((key, value) {
+      request.fields[key] = value;
+    });
+    final file = http.MultipartFile.fromBytes(
+      'file',
+      fileData,
+    );
+    request.files.add(file);
+    request.headers.addAll(_headers);
     return request;
   }
 }

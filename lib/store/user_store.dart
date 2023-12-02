@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/service/user_service.dart' as api;
 import 'package:unityspace/utils/wstore_plugin.dart';
@@ -66,7 +68,23 @@ class UserStore extends GStore {
       for (int i = 0; i < organizationMembersCount; i++) {
         final member = organization!.members[i];
         if (member.id == user.id) {
-          organization!.members[i] = member.copyWithNoAvatar();
+          organization!.members[i] = member.copyWithAvatar(user.avatarLink);
+          break;
+        }
+      }
+    });
+  }
+
+  Future<void> setUserAvatar(final Uint8List avatarImage) async {
+    final userData = await api.setUserAvatar(avatarImage);
+    final user = User.fromResponse(userData);
+    setStore(() {
+      this.user = user;
+      final organizationMembersCount = organization?.members.length ?? 0;
+      for (int i = 0; i < organizationMembersCount; i++) {
+        final member = organization!.members[i];
+        if (member.id == user.id) {
+          organization!.members[i] = member.copyWithAvatar(user.avatarLink);
           break;
         }
       }

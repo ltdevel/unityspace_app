@@ -269,10 +269,10 @@ class OrganizationMember {
     );
   }
 
-  OrganizationMember copyWithNoAvatar() {
+  OrganizationMember copyWithAvatar(final String? newAvatarLink) {
     return OrganizationMember(
       id: id,
-      avatarLink: null,
+      avatarLink: newAvatarLink,
       email: email,
       name: name,
       phoneNumber: phoneNumber,
