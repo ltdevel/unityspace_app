@@ -133,7 +133,7 @@ class CropImageScreen extends WStoreWidget<CropImageScreenStore> {
                     ),
                     const SizedBox(height: 16),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 48),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: AppDialogPrimaryButton(
                         onPressed: () {
                           store.crop();
