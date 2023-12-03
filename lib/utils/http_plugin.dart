@@ -215,6 +215,7 @@ class HttpPlugin {
     final file = http.MultipartFile.fromBytes(
       'file',
       fileData,
+      filename: 'file',
     );
     request.files.add(file);
     request.headers.addAll(_headers);
