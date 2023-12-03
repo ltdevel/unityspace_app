@@ -118,7 +118,7 @@ class UserAvatarWidget extends WStoreWidget<UserAvatarWidgetStore> {
                 color: colorText,
                 fontSize: fontSize,
               ),
-              textScaleFactor: 1.0,
+              textScaler: TextScaler.noScaling,
             ),
           ),
         );
