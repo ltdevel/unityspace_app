@@ -24,12 +24,6 @@ class UserChangeNameDialogStore extends WStore {
   String changeNameError = '';
   WStoreStatus statusChangeName = WStoreStatus.init;
 
-  bool get nameIsEmpty => computed(
-        getValue: () => name.trim().isEmpty,
-        watch: () => [name],
-        keyName: 'nameIsEmpty',
-      );
-
   void setName(String value) {
     setStore(() {
       name = value;
