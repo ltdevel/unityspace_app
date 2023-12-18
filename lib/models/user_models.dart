@@ -269,16 +269,16 @@ class OrganizationMember {
     );
   }
 
-  OrganizationMember copyWithAvatar(final String? newAvatarLink) {
+  factory OrganizationMember.fromUser(final User data) {
     return OrganizationMember(
-      id: id,
-      avatarLink: newAvatarLink,
-      email: email,
-      name: name,
-      phoneNumber: phoneNumber,
-      telegramLink: telegramLink,
-      githubLink: githubLink,
-      birthDate: birthDate,
+      id: data.id,
+      avatarLink: data.avatarLink,
+      email: data.email,
+      name: data.name,
+      phoneNumber: data.phoneNumber,
+      telegramLink: data.telegramLink,
+      githubLink: data.githubLink,
+      birthDate: data.birthDate,
     );
   }
 

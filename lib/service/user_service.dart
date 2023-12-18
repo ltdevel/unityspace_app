@@ -36,3 +36,12 @@ Future<UserResponse> setUserAvatar(final Uint8List avatarImage) async {
   final result = UserResponse.fromJson(jsonData);
   return result;
 }
+
+Future<UserResponse> setUserName(final String userName) async {
+  final response = await HttpPlugin().patch('/user/name', {
+    'name': userName,
+  });
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}

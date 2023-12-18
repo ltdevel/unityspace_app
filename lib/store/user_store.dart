@@ -62,29 +62,29 @@ class UserStore extends GStore {
   Future<void> removeUserAvatar() async {
     final userData = await api.removeUserAvatar();
     final user = User.fromResponse(userData);
-    setStore(() {
-      this.user = user;
-      final organizationMembersCount = organization?.members.length ?? 0;
-      for (int i = 0; i < organizationMembersCount; i++) {
-        final member = organization!.members[i];
-        if (member.id == user.id) {
-          organization!.members[i] = member.copyWithAvatar(user.avatarLink);
-          break;
-        }
-      }
-    });
+    _updateUserAtStore(user);
   }
 
   Future<void> setUserAvatar(final Uint8List avatarImage) async {
     final userData = await api.setUserAvatar(avatarImage);
     final user = User.fromResponse(userData);
+    _updateUserAtStore(user);
+  }
+
+  Future<void> setUserName(final String userName) async {
+    final userData = await api.setUserName(userName);
+    final user = User.fromResponse(userData);
+    _updateUserAtStore(user);
+  }
+
+  void _updateUserAtStore(final User user) {
     setStore(() {
       this.user = user;
       final organizationMembersCount = organization?.members.length ?? 0;
       for (int i = 0; i < organizationMembersCount; i++) {
         final member = organization!.members[i];
         if (member.id == user.id) {
-          organization!.members[i] = member.copyWithAvatar(user.avatarLink);
+          organization!.members[i] = OrganizationMember.fromUser(user);
           break;
         }
       }
