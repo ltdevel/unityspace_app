@@ -45,3 +45,12 @@ Future<UserResponse> setUserName(final String userName) async {
   final result = UserResponse.fromJson(jsonData);
   return result;
 }
+
+Future<UserResponse> setUserGitHubLink(final String githubLink) async {
+  final response = await HttpPlugin().patch('/user/github-link', {
+    'githubLink': githubLink,
+  });
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}

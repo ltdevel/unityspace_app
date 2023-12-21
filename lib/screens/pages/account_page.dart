@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/crop_image_screen.dart';
+import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
@@ -362,7 +363,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     text: 'Профиль в Github',
                     value: github.isNotEmpty ? github : 'Не указано',
                     iconAssetName: 'assets/icons/account_github.svg',
-                    onTapChange: () {},
+                    onTapChange: () {
+                      showUserChangeGitHubLinkDialog(context, github);
+                    },
                     onTapValue:
                         github.isNotEmpty ? () => store.open(github) : null,
                     onLongTapValue: github.isNotEmpty
