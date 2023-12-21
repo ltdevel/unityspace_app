@@ -83,6 +83,12 @@ class UserStore extends GStore {
     _updateUserAtStore(user);
   }
 
+  Future<void> setUserTelegramLink(final String link) async {
+    final userData = await api.setUserTelegramLink(link);
+    final user = User.fromResponse(userData);
+    _updateUserAtStore(user);
+  }
+
   void _updateUserAtStore(final User user) {
     setStore(() {
       this.user = user;

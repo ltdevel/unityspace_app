@@ -7,22 +7,22 @@ import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
-Future<void> showUserChangeGitHubLinkDialog(
-  BuildContext context,
-  final String link,
-) async {
+Future<void> showUserChangeTgLinkDialog(
+    BuildContext context,
+    final String link,
+    ) async {
   return showDialog(
     context: context,
     builder: (context) {
-      return UserChangeGitHubLinkDialog(link: link);
+      return UserChangeTgLinkDialog(link: link);
     },
   );
 }
 
-class UserChangeGitHubLinkDialogStore extends WStore {
+class UserChangeTgLinkDialogStore extends WStore {
   String link = '';
-  String changeGitHubLinkError = '';
-  WStoreStatus statusChangeGitHubLink = WStoreStatus.init;
+  String changeLinkError = '';
+  WStoreStatus statusChangeLink = WStoreStatus.init;
 
   void setLink(String value) {
     setStore(() {
@@ -30,79 +30,77 @@ class UserChangeGitHubLinkDialogStore extends WStore {
     });
   }
 
-  void changeGitHubLink() {
-    if (statusChangeGitHubLink == WStoreStatus.loading) return;
+  void changeTgLink() {
+    if (statusChangeLink == WStoreStatus.loading) return;
     //
     setStore(() {
-      statusChangeGitHubLink = WStoreStatus.loading;
-      changeGitHubLinkError = '';
+      statusChangeLink = WStoreStatus.loading;
+      changeLinkError = '';
     });
     //
     String formattedLink = link;
     if (formattedLink.isNotEmpty) {
-      if (!formattedLink.startsWith('https://github.com/')) {
-        formattedLink = 'https://github.com/$formattedLink';
+      if (formattedLink.startsWith('@')) {
+        formattedLink = 'https://t.me/${formattedLink.substring(1)}';
       }
       if (!isLinkValid(formattedLink)) {
         setStore(() {
-          changeGitHubLinkError = 'Неверная ссылка';
-          statusChangeGitHubLink = WStoreStatus.error;
+          changeLinkError = 'Неверная ссылка';
+          statusChangeLink = WStoreStatus.error;
         });
         return;
       }
     }
+
     //
     if (formattedLink == widget.link) {
       setStore(() {
-        statusChangeGitHubLink = WStoreStatus.loaded;
+        statusChangeLink = WStoreStatus.loaded;
       });
       return;
     }
     //
     subscribe(
-      future: UserStore().setUserGitHubLink(formattedLink),
+      future: UserStore().setUserTelegramLink(formattedLink),
       subscriptionId: 1,
       onData: (_) {
         setStore(() {
-          statusChangeGitHubLink = WStoreStatus.loaded;
+          statusChangeLink = WStoreStatus.loaded;
         });
       },
       onError: (error, stack) {
         String errorText =
             'При смене ссылки возникла проблема, пожалуйста, попробуйте ещё раз';
         logger.d(
-            'UserChangeGitHubLinkDialogStore.changeGitHubLink error: $error stack: $stack');
+            'UserChangeTgLinkDialogStore.changeTgLink error: $error stack: $stack');
         setStore(() {
-          statusChangeGitHubLink = WStoreStatus.error;
-          changeGitHubLinkError = errorText;
+          statusChangeLink = WStoreStatus.error;
+          changeLinkError = errorText;
         });
       },
     );
   }
 
   @override
-  UserChangeGitHubLinkDialog get widget =>
-      super.widget as UserChangeGitHubLinkDialog;
+  UserChangeTgLinkDialog get widget => super.widget as UserChangeTgLinkDialog;
 }
 
-class UserChangeGitHubLinkDialog
-    extends WStoreWidget<UserChangeGitHubLinkDialogStore> {
+class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
   final String link;
 
-  const UserChangeGitHubLinkDialog({
+  const UserChangeTgLinkDialog({
     super.key,
     required this.link,
   });
 
   @override
-  UserChangeGitHubLinkDialogStore createWStore() =>
-      UserChangeGitHubLinkDialogStore()..link = link;
+  UserChangeTgLinkDialogStore createWStore() => UserChangeTgLinkDialogStore();
 
   @override
-  Widget build(BuildContext context, UserChangeGitHubLinkDialogStore store) {
+  Widget build(BuildContext context, UserChangeTgLinkDialogStore store) {
     return WStoreStatusBuilder(
       store: store,
-      watch: (store) => store.statusChangeGitHubLink,
+      watch: (store) => store.statusChangeLink,
       onStatusLoaded: (context) {
         Navigator.of(context).pop();
       },
@@ -110,11 +108,11 @@ class UserChangeGitHubLinkDialog
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: 'Изменить ссылку Github',
+          title: 'Изменить ссылку Telegram',
           primaryButtonText: 'Сохранить',
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();
-            store.changeGitHubLink();
+            store.changeTgLink();
           },
           primaryButtonLoading: loading,
           secondaryButtonText: '',
@@ -131,13 +129,13 @@ class UserChangeGitHubLinkDialog
               },
               onEditingComplete: () {
                 FocusScope.of(context).unfocus();
-                store.changeGitHubLink();
+                store.changeTgLink();
               },
               labelText: 'Ссылка на профиль или имя профиля',
             ),
             if (error)
               Text(
-                store.changeGitHubLinkError,
+                store.changeLinkError,
                 style: const TextStyle(
                   color: Color(0xFFD83400),
                 ),

@@ -54,3 +54,12 @@ Future<UserResponse> setUserGitHubLink(final String githubLink) async {
   final result = UserResponse.fromJson(jsonData);
   return result;
 }
+
+Future<UserResponse> setUserTelegramLink(final String link) async {
+  final response = await HttpPlugin().patch('/user/link', {
+    'link': link,
+  });
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}

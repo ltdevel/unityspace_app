@@ -7,6 +7,7 @@ import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/crop_image_screen.dart';
 import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
+import 'package:unityspace/screens/dialogs/user_change_tg_link_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
@@ -345,7 +346,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     text: 'Профиль в Telegram',
                     value: telegram.isNotEmpty ? telegram : 'Не указано',
                     iconAssetName: 'assets/icons/account_telegram.svg',
-                    onTapChange: () {},
+                    onTapChange: () {
+                      showUserChangeTgLinkDialog(context, telegram);
+                    },
                     onTapValue:
                         telegram.isNotEmpty ? () => store.open(telegram) : null,
                     onLongTapValue: telegram.isNotEmpty
