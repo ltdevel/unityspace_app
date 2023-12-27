@@ -1,6 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:unityspace/utils/wstore_plugin.dart';
+import 'package:wstore/wstore.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:unityspace/screens/account_screen.dart';
 import 'package:unityspace/screens/confirm_screen.dart';
@@ -26,7 +26,20 @@ void main() async {
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyAppStore extends WStore {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  bool get isAuthenticated => computedFromStore(
+        store: AuthStore(),
+        getValue: (store) => store.isAuthenticated,
+        keyName: 'isAuthenticated',
+      );
+
+  @override
+  MyApp get widget => super.widget as MyApp;
+}
+
+class MyApp extends WStoreWidget<MyAppStore> {
   final bool isAuthenticated;
 
   const MyApp({
@@ -35,92 +48,75 @@ class MyApp extends StatefulWidget {
   });
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  late StreamSubscription<bool> isAuthenticatedSubscription;
+  MyAppStore createWStore() => MyAppStore();
 
   @override
-  void initState() {
-    super.initState();
-    // мы пропускаем первое значение потому что оно возвращается сразу
-    // а нам нужно мониторить только изменения
-    isAuthenticatedSubscription =
-        AuthStore().observe(() => AuthStore().isAuthenticated).skip(1).listen(
-      (isAuthenticated) {
-        if (isAuthenticated) {
-          navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            '/loading',
-            (route) => false,
-          );
-        } else {
-          navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            '/login',
-            (route) => false,
-          );
-        }
+  Widget build(BuildContext context, MyAppStore store) {
+    return WStoreBoolListener(
+      store: store,
+      watch: (store) => store.isAuthenticated,
+      onTrue: (context) {
+        store.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/loading',
+          (route) => false,
+        );
       },
-    );
-  }
-
-  @override
-  void dispose() {
-    isAuthenticatedSubscription.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'UnitySpace',
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF5F5F5),
-          surfaceTintColor: Color(0xFFF5F5F5),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
+      onFalse: (context) {
+        store.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/login',
+          (route) => false,
+        );
+      },
+      child: MaterialApp(
+        navigatorKey: store.navigatorKey,
+        title: 'UnitySpace',
+        theme: ThemeData(
+          fontFamily: 'Roboto',
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),
+          scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFFF5F5F5),
+            surfaceTintColor: Color(0xFFF5F5F5),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8),
+                ),
               ),
             ),
           ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      initialRoute: widget.isAuthenticated ? '/loading' : '/login',
-      routes: {
-        '/login': (context) => const LoginScreen(),
-        '/email': (context) => const LoginByEmailScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/loading': (context) => const LoadingScreen(),
-        '/restore': (context) => const RestorePasswordScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/confirm': (context) => ConfirmScreen(
-              email:
-                  ModalRoute.of(context)?.settings.arguments as String? ?? '',
-            ),
-        '/space': (context) => SpaceScreen(
-              spaceId: ModalRoute.of(context)?.settings.arguments as int? ?? 0,
-            ),
-        '/notifications': (context) => const NotificationsScreen(),
-        '/account': (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments
-              as Map<String, String>?;
-          return AccountScreen(
-            tab: arguments?['page'] ?? '',
-            action: arguments?['action'] ?? '',
-          );
+        initialRoute: isAuthenticated ? '/loading' : '/login',
+        routes: {
+          '/login': (context) => const LoginScreen(),
+          '/email': (context) => const LoginByEmailScreen(),
+          '/home': (context) => const HomeScreen(),
+          '/loading': (context) => const LoadingScreen(),
+          '/restore': (context) => const RestorePasswordScreen(),
+          '/register': (context) => const RegisterScreen(),
+          '/confirm': (context) => ConfirmScreen(
+                email:
+                    ModalRoute.of(context)?.settings.arguments as String? ?? '',
+              ),
+          '/space': (context) => SpaceScreen(
+                spaceId:
+                    ModalRoute.of(context)?.settings.arguments as int? ?? 0,
+              ),
+          '/notifications': (context) => const NotificationsScreen(),
+          '/account': (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                as Map<String, String>?;
+            return AccountScreen(
+              tab: arguments?['page'] ?? '',
+              action: arguments?['action'] ?? '',
+            );
+          },
         },
-      },
+      ),
     );
   }
 }
