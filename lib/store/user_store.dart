@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/service/user_service.dart' as api;
-import 'package:unityspace/utils/wstore_plugin.dart';
+import 'package:wstore/wstore.dart';
 
 class UserStore extends GStore {
   static UserStore? _instance;
@@ -89,6 +89,20 @@ class UserStore extends GStore {
     _updateUserAtStore(user);
   }
 
+  Future<void> setUserBirthday(final DateTime? birthday) async {
+    String birthdayString = '';
+    if (birthday != null) {
+      birthdayString = DateTime.utc(
+        birthday.year,
+        birthday.month,
+        birthday.day,
+      ).toIso8601String();
+    }
+    final userData = await api.setUserBirthday(birthdayString);
+    final user = User.fromResponse(userData);
+    _updateUserAtStore(user);
+  }
+
   void _updateUserAtStore(final User user) {
     setStore(() {
       this.user = user;
@@ -103,7 +117,9 @@ class UserStore extends GStore {
     });
   }
 
+  @override
   void clear() {
+    super.clear();
     setStore(() {
       user = null;
       organization = null;

@@ -5,7 +5,7 @@ import 'package:unityspace/models/auth_models.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:unityspace/service/auth_service.dart' as api;
 import 'package:unityspace/store/user_store.dart';
-import 'package:unityspace/utils/wstore_plugin.dart';
+import 'package:wstore/wstore.dart';
 
 class AuthStore extends GStore {
   static AuthStore? _instance;
@@ -78,7 +78,13 @@ class AuthStore extends GStore {
       await setUserTokens(tokens.accessToken, tokens.refreshToken);
       _refreshUserTokenCompleteEvent.complete(true);
       return true;
-    } catch (_, __) {
+    } catch (e, __) {
+      if (e is HttpPluginException) {
+        if (e.statusCode == 401) {
+          // токен протух - удялем - разлогин
+          await removeUserTokens();
+        }
+      }
       _refreshUserTokenCompleteEvent.complete(false);
       return false;
     }

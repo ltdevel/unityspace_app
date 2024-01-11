@@ -12,7 +12,6 @@ import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
-import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 class AccountScreenStore extends WStore {

@@ -2,7 +2,7 @@ import 'package:unityspace/models/spaces_models.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:unityspace/service/spaces_service.dart' as api;
-import 'package:unityspace/utils/wstore_plugin.dart';
+import 'package:wstore/wstore.dart';
 
 class SpacesStore extends GStore {
   static SpacesStore? _instance;
@@ -47,7 +47,9 @@ class SpacesStore extends GStore {
     }
   }
 
+  @override
   void clear() {
+    super.clear();
     setStore(() {
       spaces = null;
     });

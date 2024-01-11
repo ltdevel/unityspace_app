@@ -5,13 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/crop_image_screen.dart';
+import 'package:unityspace/screens/dialogs/user_change_birthday_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_tg_link_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
-import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
 
@@ -247,13 +247,11 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                 watch: (store) => store.imageFilePath,
                 reset: (store) => store.imageFilePath = '',
                 onNotEmpty: (context, imageFilePath) async {
-                  Uint8List? avatarImage = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CropImageScreen(
-                          imageFilePath: imageFilePath,
-                      )
-                    )
-                  );
+                  Uint8List? avatarImage =
+                      await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CropImageScreen(
+                                imageFilePath: imageFilePath,
+                              )));
                   if (avatarImage != null) {
                     store.setAvatar(avatarImage);
                   }
@@ -298,7 +296,12 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     text: 'День рождения',
                     value: birthday.isNotEmpty ? birthday : 'Не указано',
                     iconAssetName: 'assets/icons/account_birthday.svg',
-                    onTapChange: () {},
+                    onTapChange: () {
+                      showUserChangeBirthdayDialog(
+                        context,
+                        store.currentUser?.birthDate,
+                      );
+                    },
                     onTapValue: birthday.isNotEmpty
                         ? () => store.copy(
                               birthday,

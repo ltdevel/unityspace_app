@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_primary_button.dart';
-import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:wstore/wstore.dart';
 

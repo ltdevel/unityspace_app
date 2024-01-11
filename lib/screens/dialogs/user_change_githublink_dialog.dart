@@ -4,7 +4,6 @@ import 'package:unityspace/screens/widgets/app_dialog/app_dialog_with_buttons.da
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
-import 'package:unityspace/utils/wstore_plugin.dart';
 import 'package:wstore/wstore.dart';
 
 Future<void> showUserChangeGitHubLinkDialog(
