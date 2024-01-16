@@ -90,7 +90,7 @@ class UserStore extends GStore {
   }
 
   Future<void> setUserBirthday(final DateTime? birthday) async {
-    String birthdayString = '';
+    String? birthdayString;
     if (birthday != null) {
       birthdayString = DateTime.utc(
         birthday.year,

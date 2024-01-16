@@ -64,7 +64,7 @@ Future<UserResponse> setUserTelegramLink(final String link) async {
   return result;
 }
 
-Future<UserResponse> setUserBirthday(final String date) async {
+Future<UserResponse> setUserBirthday(final String? date) async {
   final response = await HttpPlugin().patch('/user/edit-birthdate', {
     'birthDate': date,
   });
