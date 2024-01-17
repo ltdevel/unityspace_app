@@ -7,6 +7,7 @@ import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/crop_image_screen.dart';
 import 'package:unityspace/screens/dialogs/user_change_birthday_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
+import 'package:unityspace/screens/dialogs/user_change_job_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_tg_link_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
@@ -65,6 +66,12 @@ class AccountPageStore extends WStore {
         watch: () => [currentUser],
         keyName: 'currentUserPhone',
       );
+
+  String get currentUserJobTitle => computed(
+    getValue: () => currentUser?.jobTitle ?? '',
+    watch: () => [currentUser],
+    keyName: 'currentUserJobTitle',
+  );
 
   String get currentUserTelegram => computed(
         getValue: () => currentUser?.telegramLink ?? '',
@@ -339,6 +346,24 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                               phone,
                               'Телефон скопирован в буфер обмена',
                             )
+                        : null,
+                  ),
+                ),
+                WStoreValueBuilder(
+                  store: store,
+                  watch: (store) => store.currentUserJobTitle,
+                  builder: (context, jobTitle) => AccountItemWidget(
+                    text: 'Должность',
+                    value: jobTitle.isNotEmpty ? jobTitle : 'Не указано',
+                    iconAssetName: 'assets/icons/account_job.svg',
+                    onTapChange: () {
+                      showUserChangeJobDialog(context, jobTitle);
+                    },
+                    onTapValue: jobTitle.isNotEmpty
+                        ? () => store.copy(
+                      jobTitle,
+                      'Должность скопирована в буфер обмена',
+                    )
                         : null,
                   ),
                 ),

@@ -46,6 +46,15 @@ Future<UserResponse> setUserName(final String userName) async {
   return result;
 }
 
+Future<UserResponse> setJobTitle(final String jobTitle) async {
+  final response = await HttpPlugin().patch('/user/job-title', {
+    'jobTitle': jobTitle,
+  });
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}
+
 Future<UserResponse> setUserGitHubLink(final String githubLink) async {
   final response = await HttpPlugin().patch('/user/github-link', {
     'githubLink': githubLink,

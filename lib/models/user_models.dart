@@ -10,6 +10,7 @@ class UserResponse {
   final String? telegramLink;
   final String? githubLink;
   final String? birthDate;
+  final String? jobTitle;
 
   const UserResponse({
     required this.id,
@@ -21,6 +22,7 @@ class UserResponse {
     required this.telegramLink,
     required this.githubLink,
     required this.birthDate,
+    required this.jobTitle,
   });
 
   factory UserResponse.fromJson(Map<String, dynamic> map) {
@@ -34,6 +36,7 @@ class UserResponse {
       telegramLink: map['telegramLink'] as String?,
       githubLink: map['githubLink'] as String?,
       birthDate: map['birthDate'] as String?,
+      jobTitle: map['jobTitle'] as String?,
     );
   }
 }
@@ -48,6 +51,7 @@ class User {
   final String? telegramLink;
   final String? githubLink;
   final DateTime? birthDate;
+  final String? jobTitle;
 
   const User({
     required this.id,
@@ -59,6 +63,7 @@ class User {
     required this.telegramLink,
     required this.githubLink,
     required this.birthDate,
+    required this.jobTitle,
   });
 
   factory User.fromResponse(final UserResponse data) {
@@ -73,12 +78,13 @@ class User {
       githubLink: helpers.getNullStringIfEmpty(data.githubLink),
       birthDate:
           data.birthDate != null ? DateTime.parse(data.birthDate!) : null,
+      jobTitle: helpers.getNullStringIfEmpty(data.jobTitle),
     );
   }
 
   @override
   String toString() {
-    return 'User{id: $id, globalId: $globalId, name: $name, email: $email, avatarLink: $avatarLink, phoneNumber: $phoneNumber, telegramLink: $telegramLink, githubLink: $githubLink, birthDate: $birthDate}';
+    return 'User{id: $id, globalId: $globalId, name: $name, email: $email, avatarLink: $avatarLink, phoneNumber: $phoneNumber, telegramLink: $telegramLink, githubLink: $githubLink, birthDate: $birthDate, jobTitle: $jobTitle}';
   }
 }
 
@@ -134,6 +140,7 @@ class OrganizationMemberResponse {
   final String? telegramLink;
   final String? githubLink;
   final String? birthDate;
+  final String? jobTitle;
   final String lastActivityDate;
 
   OrganizationMemberResponse({
@@ -147,6 +154,7 @@ class OrganizationMemberResponse {
     required this.telegramLink,
     required this.githubLink,
     required this.birthDate,
+    required this.jobTitle,
     required this.lastActivityDate,
   });
 
@@ -165,6 +173,7 @@ class OrganizationMemberResponse {
       telegramLink: map['telegramLink'] as String?,
       githubLink: map['githubLink'] as String?,
       birthDate: map['birthDate'] as String?,
+      jobTitle: map['jobTitle'] as String?,
       lastActivityDate: map['lastActivityDate'] as String,
     );
   }
@@ -241,6 +250,7 @@ class OrganizationMember {
   final String? telegramLink;
   final String? githubLink;
   final DateTime? birthDate;
+  final String? jobTitle;
 
   OrganizationMember({
     required this.id,
@@ -251,6 +261,7 @@ class OrganizationMember {
     required this.telegramLink,
     required this.githubLink,
     required this.birthDate,
+    required this.jobTitle,
   });
 
   factory OrganizationMember.fromResponse(
@@ -260,9 +271,10 @@ class OrganizationMember {
       id: data.id,
       email: data.email,
       name: data.name,
-      phoneNumber: data.phoneNumber,
-      telegramLink: data.telegramLink,
-      githubLink: data.githubLink,
+      phoneNumber: helpers.getNullStringIfEmpty(data.phoneNumber),
+      telegramLink: helpers.getNullStringIfEmpty(data.telegramLink),
+      githubLink: helpers.getNullStringIfEmpty(data.githubLink),
+      jobTitle: helpers.getNullStringIfEmpty(data.jobTitle),
       avatarLink: helpers.makeAvatarUrl(data.avatar),
       birthDate:
           data.birthDate != null ? DateTime.parse(data.birthDate!) : null,
@@ -279,11 +291,12 @@ class OrganizationMember {
       telegramLink: data.telegramLink,
       githubLink: data.githubLink,
       birthDate: data.birthDate,
+      jobTitle: data.jobTitle,
     );
   }
 
   @override
   String toString() {
-    return 'OrganizationMember{id: $id, avatarLink: $avatarLink, email: $email, name: $name, phoneNumber: $phoneNumber, telegramLink: $telegramLink, githubLink: $githubLink, birthDate: $birthDate}';
+    return 'OrganizationMember{id: $id, avatarLink: $avatarLink, email: $email, name: $name, phoneNumber: $phoneNumber, telegramLink: $telegramLink, githubLink: $githubLink, birthDate: $birthDate jobTitle: $jobTitle}';
   }
 }

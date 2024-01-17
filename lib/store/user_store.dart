@@ -77,6 +77,12 @@ class UserStore extends GStore {
     _updateUserAtStore(user);
   }
 
+  Future<void> setJobTitle(final String jobTitle) async {
+    final userData = await api.setJobTitle(jobTitle);
+    final user = User.fromResponse(userData);
+    _updateUserAtStore(user);
+  }
+
   Future<void> setUserGitHubLink(final String githubLink) async {
     final userData = await api.setUserGitHubLink(githubLink);
     final user = User.fromResponse(userData);
