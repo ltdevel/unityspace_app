@@ -17,9 +17,7 @@ class AppDialogPrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColorButtonWidget(
       width: double.infinity,
-      onPressed: () {
-        onPressed?.call();
-      },
+      onPressed: onPressed,
       text: text,
       loading: loading,
       colorBackground: const Color(0xFF111012),

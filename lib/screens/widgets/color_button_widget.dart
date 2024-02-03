@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorButtonWidget extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
   final bool loading;
   final double width;
@@ -30,6 +30,7 @@ class ColorButtonWidget extends StatelessWidget {
       height: 40,
       elevation: elevation,
       color: colorBackground,
+      disabledColor: loading ? null : colorBackground.withOpacity(0.5),
       onPressed: loading ? null : onPressed,
       child: loading
           ? SizedBox(

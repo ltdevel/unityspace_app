@@ -27,6 +27,7 @@ dependencies:
   image_picker: ^1.0.7
   crop_your_image: ^0.7.5
   string_validator: ^1.0.2
+  phone_numbers_parser: ^8.1.2
 
 dev_dependencies:
   flutter_test:

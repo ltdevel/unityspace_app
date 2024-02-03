@@ -9,6 +9,7 @@ import 'package:unityspace/screens/dialogs/user_change_birthday_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_job_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
+import 'package:unityspace/screens/dialogs/user_change_phone_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_tg_link_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/user_store.dart';
@@ -340,7 +341,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     text: 'Телефон',
                     value: phone.isNotEmpty ? phone : 'Не указано',
                     iconAssetName: 'assets/icons/account_phone.svg',
-                    onTapChange: () {},
+                    onTapChange: () {
+                      showUserChangePhoneDialog(context, phone);
+                    },
                     onTapValue: phone.isNotEmpty
                         ? () => store.copy(
                               phone,

@@ -55,6 +55,15 @@ Future<UserResponse> setJobTitle(final String jobTitle) async {
   return result;
 }
 
+Future<UserResponse> setPhone(final String phone) async {
+  final response = await HttpPlugin().patch('/user/phoneNumber', {
+    'phoneNumber': phone,
+  });
+  final jsonData = json.decode(response.body);
+  final result = UserResponse.fromJson(jsonData);
+  return result;
+}
+
 Future<UserResponse> setUserGitHubLink(final String githubLink) async {
   final response = await HttpPlugin().patch('/user/github-link', {
     'githubLink': githubLink,
