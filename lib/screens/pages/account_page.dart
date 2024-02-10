@@ -70,10 +70,10 @@ class AccountPageStore extends WStore {
       );
 
   String get currentUserJobTitle => computed(
-    getValue: () => currentUser?.jobTitle ?? '',
-    watch: () => [currentUser],
-    keyName: 'currentUserJobTitle',
-  );
+        getValue: () => currentUser?.jobTitle ?? '',
+        watch: () => [currentUser],
+        keyName: 'currentUserJobTitle',
+      );
 
   String get currentUserTelegram => computed(
         getValue: () => currentUser?.telegramLink ?? '',
@@ -210,8 +210,39 @@ class AccountPageStore extends WStore {
     );
   }
 
+  void pickPhoto() async {
+    setStore(() {
+      statusAvatar = WStoreStatus.loading;
+    });
+    listenFuture(
+      _pickPhoto(),
+      id: 5,
+      onData: (filePath) {
+        setStore(() {
+          if (filePath != null) {
+            imageFilePath = filePath;
+          }
+          statusAvatar = WStoreStatus.loaded;
+        });
+      },
+      onError: (error, stack) {
+        logger.e('pickPhoto error', error: error, stackTrace: stack);
+        setStore(() {
+          statusAvatar = WStoreStatus.error;
+          message =
+              'При установке фото с камеры возникла проблема, пожалуйста, попробуйте ещё раз';
+        });
+      },
+    );
+  }
+
   Future<String?> _pickImage() async {
     final xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    return xFile?.path;
+  }
+
+  Future<String?> _pickPhoto() async {
+    final xFile = await ImagePicker().pickImage(source: ImageSource.camera);
     return xFile?.path;
   }
 
@@ -272,6 +303,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     hasAvatar: hasAvatar,
                     onChangeAvatar: () {
                       store.pickAvatar();
+                    },
+                    onChangePhoto: () {
+                      store.pickPhoto();
                     },
                     onClearAvatar: () {
                       store.clearAvatar();
@@ -365,9 +399,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     },
                     onTapValue: jobTitle.isNotEmpty
                         ? () => store.copy(
-                      jobTitle,
-                      'Должность скопирована в буфер обмена',
-                    )
+                              jobTitle,
+                              'Должность скопирована в буфер обмена',
+                            )
                         : null,
                   ),
                 ),
@@ -516,6 +550,7 @@ class AccountItemWidget extends StatelessWidget {
 
 class AccountAvatarWidget extends StatelessWidget {
   final VoidCallback onChangeAvatar;
+  final VoidCallback onChangePhoto;
   final VoidCallback onClearAvatar;
   final bool hasAvatar;
 
@@ -523,6 +558,7 @@ class AccountAvatarWidget extends StatelessWidget {
     super.key,
     required this.hasAvatar,
     required this.onChangeAvatar,
+    required this.onChangePhoto,
     required this.onClearAvatar,
   });
 
@@ -544,8 +580,12 @@ class AccountAvatarWidget extends StatelessWidget {
         MenuAnchor(
           menuChildren: [
             MenuItemButton(
+              onPressed: onChangePhoto,
+              child: const Text('Снять новое фото'),
+            ),
+            MenuItemButton(
               onPressed: onChangeAvatar,
-              child: const Text('Обновить фото'),
+              child: const Text('Выбрать фото из галереи'),
             ),
             if (hasAvatar)
               MenuItemButton(

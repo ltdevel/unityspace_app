@@ -62,5 +62,7 @@
 		<false/>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Provide access to gallery to select image file</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Provide access to camera to select image file</string>
 	</dict>
 </plist>
