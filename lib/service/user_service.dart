@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:unityspace/models/auth_models.dart';
 import 'package:unityspace/service/files_service.dart' as api_files;
 
 import 'package:unityspace/models/user_models.dart';
@@ -43,6 +44,19 @@ Future<UserResponse> setUserName(final String userName) async {
   });
   final jsonData = json.decode(response.body);
   final result = UserResponse.fromJson(jsonData);
+  return result;
+}
+
+Future<OnlyTokensResponse> setUserPassword(
+  final String oldPassword,
+  final String newPassword,
+) async {
+  final response = await HttpPlugin().patch('/user/password', {
+    'oldPassword': oldPassword,
+    'password': newPassword,
+  });
+  final jsonData = json.decode(response.body);
+  final result = OnlyTokensResponse.fromJson(jsonData);
   return result;
 }
 

@@ -9,6 +9,7 @@ import 'package:unityspace/screens/dialogs/user_change_birthday_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_githublink_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_job_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_name_dialog.dart';
+import 'package:unityspace/screens/dialogs/user_change_password_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_phone_dialog.dart';
 import 'package:unityspace/screens/dialogs/user_change_tg_link_dialog.dart';
 import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
@@ -414,7 +415,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   text: 'Пароль',
                   value: '********',
                   iconAssetName: 'assets/icons/account_password.svg',
-                  onTapChange: () {},
+                  onTapChange: () {
+                    showUserChangePasswordDialog(context);
+                  },
                 ),
               ],
             ),
