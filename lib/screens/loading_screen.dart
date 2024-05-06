@@ -5,6 +5,7 @@ import 'package:unityspace/screens/widgets/color_button_widget.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoadingScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -57,6 +58,7 @@ class LoadingScreen extends WStoreWidget<LoadingScreenStore> {
 
   @override
   Widget build(BuildContext context, LoadingScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
       body: SafeArea(
@@ -85,7 +87,7 @@ class LoadingScreen extends WStoreWidget<LoadingScreenStore> {
                       onPressed: () {
                         store.loadData();
                       },
-                      text: 'Повтор',
+                      text: localization!.replay,
                       loading: false,
                       colorBackground: const Color(0xFF111012),
                       colorText: Colors.white.withOpacity(0.9),

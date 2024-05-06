@@ -17,6 +17,7 @@ import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AccountPageStore extends WStore {
   String imageFilePath = '';
@@ -260,6 +261,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
 
   @override
   Widget build(BuildContext context, AccountPageStore store) {
+    final localization = AppLocalizations.of(context);
     return WStoreStringListener(
       store: store,
       watch: (store) => store.message,
@@ -318,8 +320,8 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserName,
                   builder: (context, name) => AccountItemWidget(
-                    text: 'Имя',
-                    value: name.isNotEmpty ? name : 'Не указано',
+                    text: localization!.name,
+                    value: name.isNotEmpty ? name : localization.not_specified,
                     iconAssetName: 'assets/icons/account_name.svg',
                     onTapChange: () {
                       showUserChangeNameDialog(context, name);
@@ -327,7 +329,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onTapValue: name.isNotEmpty
                         ? () => store.copy(
                               name,
-                              'Имя скопировано в буфер обмена',
+                              localization.name_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -336,8 +338,10 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserBirthday,
                   builder: (context, birthday) => AccountItemWidget(
-                    text: 'День рождения',
-                    value: birthday.isNotEmpty ? birthday : 'Не указано',
+                    text: localization!.date_of_birth,
+                    value: birthday.isNotEmpty
+                        ? birthday
+                        : localization.not_specified,
                     iconAssetName: 'assets/icons/account_birthday.svg',
                     onTapChange: () {
                       showUserChangeBirthdayDialog(
@@ -348,7 +352,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onTapValue: birthday.isNotEmpty
                         ? () => store.copy(
                               birthday,
-                              'Дата рождения скопирована в буфер обмена',
+                              localization.date_of_birth_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -358,13 +362,14 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   watch: (store) => store.currentUserEmail,
                   builder: (context, email) => AccountItemWidget(
                     text: 'Email',
-                    value: email.isNotEmpty ? email : 'Не указано',
+                    value:
+                        email.isNotEmpty ? email : localization!.not_specified,
                     iconAssetName: 'assets/icons/account_email.svg',
                     onTapChange: () {},
                     onTapValue: email.isNotEmpty
                         ? () => store.copy(
                               email,
-                              'Email скопирован в буфер обмена',
+                              localization!.email_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -373,8 +378,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserPhone,
                   builder: (context, phone) => AccountItemWidget(
-                    text: 'Телефон',
-                    value: phone.isNotEmpty ? phone : 'Не указано',
+                    text: localization!.phone,
+                    value:
+                        phone.isNotEmpty ? phone : localization.not_specified,
                     iconAssetName: 'assets/icons/account_phone.svg',
                     onTapChange: () {
                       showUserChangePhoneDialog(context, phone);
@@ -382,7 +388,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onTapValue: phone.isNotEmpty
                         ? () => store.copy(
                               phone,
-                              'Телефон скопирован в буфер обмена',
+                              localization.phone_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -391,8 +397,10 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserJobTitle,
                   builder: (context, jobTitle) => AccountItemWidget(
-                    text: 'Должность',
-                    value: jobTitle.isNotEmpty ? jobTitle : 'Не указано',
+                    text: localization!.work_position,
+                    value: jobTitle.isNotEmpty
+                        ? jobTitle
+                        : localization.not_specified,
                     iconAssetName: 'assets/icons/account_job.svg',
                     onTapChange: () {
                       showUserChangeJobDialog(context, jobTitle);
@@ -400,7 +408,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onTapValue: jobTitle.isNotEmpty
                         ? () => store.copy(
                               jobTitle,
-                              'Должность скопирована в буфер обмена',
+                              localization.work_position_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -409,8 +417,10 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserTelegram,
                   builder: (context, telegram) => AccountItemWidget(
-                    text: 'Профиль в Telegram',
-                    value: telegram.isNotEmpty ? telegram : 'Не указано',
+                    text: localization!.profile_in_telegram,
+                    value: telegram.isNotEmpty
+                        ? telegram
+                        : localization.not_specified,
                     iconAssetName: 'assets/icons/account_telegram.svg',
                     onTapChange: () {
                       showUserChangeTgLinkDialog(context, telegram);
@@ -420,7 +430,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onLongTapValue: telegram.isNotEmpty
                         ? () => store.copy(
                               telegram,
-                              'Ссылка скопирована в буфер обмена',
+                              localization.link_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -429,8 +439,9 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserGithub,
                   builder: (context, github) => AccountItemWidget(
-                    text: 'Профиль в Github',
-                    value: github.isNotEmpty ? github : 'Не указано',
+                    text: localization!.profile_in_github,
+                    value:
+                        github.isNotEmpty ? github : localization.not_specified,
                     iconAssetName: 'assets/icons/account_github.svg',
                     onTapChange: () {
                       showUserChangeGitHubLinkDialog(context, github);
@@ -440,13 +451,13 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                     onLongTapValue: github.isNotEmpty
                         ? () => store.copy(
                               github,
-                              'Ссылка скопирована в буфер обмена',
+                              localization.link_copied_to_clipboard,
                             )
                         : null,
                   ),
                 ),
                 AccountItemWidget(
-                  text: 'Пароль',
+                  text: localization!.password,
                   value: '********',
                   iconAssetName: 'assets/icons/account_password.svg',
                   onTapChange: () {
@@ -482,6 +493,7 @@ class AccountItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     const titleColor = Color(0x99111012);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,7 +525,9 @@ class AccountItemWidget extends StatelessWidget {
                 minimumSize: MaterialStateProperty.all(const Size(40, 40)),
               ),
               onPressed: onTapChange,
-              child: const Text('Изменить'),
+              child: Text(
+                localization!.change,
+              ),
             ),
           ],
         ),
@@ -564,6 +578,7 @@ class AccountAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return Column(
       children: [
         WStoreValueBuilder<AccountPageStore, int>(
@@ -581,16 +596,16 @@ class AccountAvatarWidget extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: onChangePhoto,
-              child: const Text('Снять новое фото'),
+              child: Text(localization!.take_a_new_photo),
             ),
             MenuItemButton(
               onPressed: onChangeAvatar,
-              child: const Text('Выбрать фото из галереи'),
+              child: Text(localization.select_photo_from_the_gallery),
             ),
             if (hasAvatar)
               MenuItemButton(
                 onPressed: onClearAvatar,
-                child: const Text('Удалить фото'),
+                child: Text(localization.delete_photo),
               ),
           ],
           builder: (context, controller, _) {
@@ -619,7 +634,7 @@ class AccountAvatarWidget extends StatelessWidget {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text('Изменить'),
+                      : Text(localization.change),
                 );
               },
             );

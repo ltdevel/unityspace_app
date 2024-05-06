@@ -3,6 +3,7 @@ import 'package:unityspace/screens/widgets/app_dialog/app_dialog.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_primary_button.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<int?> showAddSpaceDialog(BuildContext context) async {
   return showDialog<int?>(
@@ -81,8 +82,9 @@ class AddSpaceDialog extends WStoreWidget<AddSpaceDialogStore> {
 
   @override
   Widget build(BuildContext context, AddSpaceDialogStore store) {
+    final localization = AppLocalizations.of(context);
     return AppDialog(
-      title: 'Добавить пространство',
+      title: localization!.add_space,
       buttons: [
         WStoreStatusBuilder(
           store: store,
@@ -93,7 +95,7 @@ class AddSpaceDialog extends WStoreWidget<AddSpaceDialogStore> {
               onPressed: () {
                 store.addSpace();
               },
-              text: 'Добавить пространство',
+              text: localization.add_space,
               loading: loading,
             );
           },
@@ -103,13 +105,13 @@ class AddSpaceDialog extends WStoreWidget<AddSpaceDialogStore> {
         )
       ],
       children: [
-        const Text(
-          'Создайте пространство и добавьте в него ваших коллег, чтобы организовать совместную работу над задачами',
+        Text(
+          localization.create_a_space_and_add_your_colleagues,
         ),
         const SizedBox(height: 12),
-        const Text(
-          'Название:',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Text(
+          localization.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         TextField(

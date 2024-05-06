@@ -5,11 +5,12 @@ import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> showUserChangeTgLinkDialog(
-    BuildContext context,
-    final String link,
-    ) async {
+  BuildContext context,
+  final String link,
+) async {
   return showDialog(
     context: context,
     builder: (context) {
@@ -97,6 +98,7 @@ class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
 
   @override
   Widget build(BuildContext context, UserChangeTgLinkDialogStore store) {
+    final localization = AppLocalizations.of(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChangeLink,
@@ -107,8 +109,8 @@ class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: 'Изменить ссылку Telegram',
-          primaryButtonText: 'Сохранить',
+          title: localization!.change_telegram_link,
+          primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();
             store.changeTgLink();
@@ -130,7 +132,7 @@ class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
                 FocusScope.of(context).unfocus();
                 store.changeTgLink();
               },
-              labelText: 'Ссылка на профиль или имя профиля',
+              labelText: localization.link_on_name_profile,
             ),
             if (error)
               Text(

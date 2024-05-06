@@ -5,6 +5,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_subtitle_wid
 import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConfirmScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -57,6 +58,7 @@ class ConfirmScreen extends WStoreWidget<ConfirmScreenStore> {
 
   @override
   Widget build(BuildContext context, ConfirmScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -67,9 +69,8 @@ class ConfirmScreen extends WStoreWidget<ConfirmScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              const MainFormTextSubtitleWidget(
-                text:
-                'Чтобы завершить регистрацию, введите код, отправленный на Ваш адрес электронной почты',
+              MainFormTextSubtitleWidget(
+                text: localization!.to_complete_the_registration,
               ),
               const SizedBox(height: 32),
               Expanded(
@@ -107,12 +108,13 @@ class ConfirmForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MainFormWidget(
-      additionalButtonText: 'Не тот email? Зарегистрируйтесь на другой',
+      additionalButtonText: localization!.not_right_email_register_new,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },
-      submitButtonText: 'Подтвердить',
+      submitButtonText: localization.confirm,
       onSubmit: () {
         FocusScope.of(context).unfocus();
         // загрузка и вход
@@ -123,15 +125,15 @@ class ConfirmForm extends StatelessWidget {
         MainFormInputField(
           enabled: !loading,
           autofocus: true,
-          labelText: 'Введите код',
+          labelText: localization.enter_code,
           iconAssetName: 'assets/icons/code.svg',
           textInputAction: TextInputAction.done,
           keyboardType: TextInputType.number,
           autocorrect: false,
           validator: (text) {
-            if (text.isEmpty) return 'Поле не заполнено';
+            if (text.isEmpty) return localization.the_field_is_not_filled_in;
             if (!RegExp(r'\d{4,}').hasMatch(text)) {
-              return 'Введите корректный код';
+              return localization.enter_correct_code;
             }
             return '';
           },

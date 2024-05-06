@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TariffPageStore extends WStore {
   // TODO: add data here...
@@ -18,10 +19,11 @@ class TariffPage extends WStoreWidget<TariffPageStore> {
 
   @override
   Widget build(BuildContext context, TariffPageStore store) {
+    final localization = AppLocalizations.of(context);
     return Container(
       color: Colors.blue,
-      child: const Center(
-        child: Text('Оплата и тарифы'),
+      child: Center(
+        child: Text(localization!.payment_and_tariffs),
       ),
     );
   }

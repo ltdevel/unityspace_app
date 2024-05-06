@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> showUserChangePhoneDialog(
   BuildContext context,
@@ -108,6 +109,7 @@ class UserChangePhoneDialog extends WStoreWidget<UserChangePhoneDialogStore> {
 
   @override
   Widget build(BuildContext context, UserChangePhoneDialogStore store) {
+    final localization = AppLocalizations.of(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChange,
@@ -118,8 +120,8 @@ class UserChangePhoneDialog extends WStoreWidget<UserChangePhoneDialogStore> {
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: 'Изменить телефон',
-          primaryButtonText: 'Сохранить',
+          title: localization!.change_phone_number,
+          primaryButtonText: localization.save,
           onPrimaryButtonPressed: store.phoneValid
               ? () {
                   FocusScope.of(context).unfocus();
@@ -141,12 +143,12 @@ class UserChangePhoneDialog extends WStoreWidget<UserChangePhoneDialogStore> {
                 FocusScope.of(context).unfocus();
                 store.changePhone();
               },
-              labelText: 'Введите номер телефона',
+              labelText: localization.enter_phone_number,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Номер телефона должен начинаться с кода страны '
-              '(например: +71234567890)',
+            Text(
+              '${localization.phone_number_must_start_from_country_code} '
+              '(${localization.example_number_phone})',
             ),
             if (error)
               Text(

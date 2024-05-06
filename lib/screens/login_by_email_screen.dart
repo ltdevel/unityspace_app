@@ -6,6 +6,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget
 import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginByEmailScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -63,6 +64,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
 
   @override
   Widget build(BuildContext context, LoginByEmailScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -73,7 +75,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              const MainFormTextTitleWidget(text: 'Войти по емайл'),
+              MainFormTextTitleWidget(text: localization!.login_by_email),
               const SizedBox(height: 32),
               Expanded(
                 child: WStoreStatusBuilder(
@@ -110,12 +112,13 @@ class LoginByEmailForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MainFormWidget(
-      additionalButtonText: 'Другой способ входа',
+      additionalButtonText: localization!.another_way_to_log_in,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },
-      submitButtonText: 'Войти',
+      submitButtonText: localization.login,
       onSubmit: () {
         FocusScope.of(context).unfocus();
         // загрузка и вход
@@ -126,15 +129,15 @@ class LoginByEmailForm extends StatelessWidget {
         MainFormInputField(
           enabled: !loading,
           autofocus: true,
-          labelText: 'Ваша электронная почта',
+          labelText: localization.your_email,
           iconAssetName: 'assets/icons/email.svg',
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
           validator: (text) {
-            if (text.isEmpty) return 'Поле не заполнено';
+            if (text.isEmpty) return localization.the_field_is_not_filled_in;
             if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
-              return 'Введите корректный email';
+              return localization.enter_correct_email;
             }
             return '';
           },
@@ -148,7 +151,8 @@ class LoginByEmailForm extends StatelessWidget {
           builder: (context, showPassword) {
             return MainFormInputField(
               enabled: !loading,
-              labelText: 'Ваш пароль (не менее 8 символов)',
+              labelText:
+                  '${localization.your_email} (${localization.at_least_8_characters})',
               iconAssetName: showPassword
                   ? 'assets/icons/password_hide.svg'
                   : 'assets/icons/password_show.svg',
@@ -164,9 +168,11 @@ class LoginByEmailForm extends StatelessWidget {
                 submit();
               },
               validator: (text) {
-                if (text.isEmpty) return 'Поле не заполнено';
+                if (text.isEmpty) {
+                  return localization.the_field_is_not_filled_in;
+                }
                 if (text.length < 8) {
-                  return 'Пароль должен быть не менее 8 символов';
+                  return '${localization.password_must_be_at_least} 8 ${localization.characters}';
                 }
                 return '';
               },
@@ -180,7 +186,7 @@ class LoginByEmailForm extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: MainFormTextButtonWidget(
-            text: 'Забыли пароль?',
+            text: localization.forgot_password,
             onPressed: () {
               Navigator.pushNamed(context, '/restore');
             },

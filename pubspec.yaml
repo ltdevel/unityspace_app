@@ -39,6 +39,7 @@ dev_dependencies:
   flutter_native_splash: ^2.3.10
 
 flutter:
+  generate: true
   uses-material-design: true
 
   assets:

@@ -8,6 +8,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget
 import 'package:unityspace/screens/widgets/main_form/main_form_sign_in_button_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreenStore extends WStore {
   WStoreStatus statusGoogle = WStoreStatus.init;
@@ -80,6 +81,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
 
   @override
   Widget build(BuildContext context, LoginScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -90,7 +92,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              const MainFormTextTitleWidget(text: 'Войдите через'),
+              MainFormTextTitleWidget(text: localization!.login_with),
               const SizedBox(height: 32),
               Row(
                 children: [
@@ -121,7 +123,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               ),
               const SizedBox(height: 12),
               Text(
-                'или с помощью электронной почты',
+                localization.or_with_email,
                 style: TextStyle(
                   fontSize: 14,
                   height: 24 / 14,
@@ -130,7 +132,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               ),
               const SizedBox(height: 12),
               MainFormButtonWidget(
-                text: 'Ввести емайл',
+                text: localization.enter_email,
                 onPressed: () {
                   Navigator.pushNamed(context, '/email');
                 },
@@ -139,7 +141,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               SizedBox(
                 width: double.infinity,
                 child: MainFormTextButtonWidget(
-                  text: 'Нет учетной записи? Зарегистрируйтесь',
+                  text: localization.dont_have_an_account_register,
                   onPressed: () {
                     Navigator.pushNamed(context, '/register');
                   },

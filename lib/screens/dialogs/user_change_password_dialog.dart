@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> showUserChangePasswordDialog(
   BuildContext context,
@@ -124,6 +125,7 @@ class UserChangePasswordDialog
 
   @override
   Widget build(BuildContext context, UserChangePasswordDialogStore store) {
+    final localization = AppLocalizations.of(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChange,
@@ -134,8 +136,8 @@ class UserChangePasswordDialog
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: 'Изменить пароль',
-          primaryButtonText: 'Сохранить',
+          title: localization!.change_password,
+          primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();
             store.changePassword();
@@ -143,9 +145,8 @@ class UserChangePasswordDialog
           primaryButtonLoading: loading,
           secondaryButtonText: '',
           children: [
-            const Text(
-              'Придумайте новый пароль '
-              '(не менее 8 символов)',
+            Text(
+              '${localization.come_up_with_a_new_password} (${localization.at_least_8_characters})',
             ),
             const SizedBox(height: 16),
             AddDialogInputField(
@@ -156,7 +157,7 @@ class UserChangePasswordDialog
               onChanged: (value) {
                 store.setOldPassword(value);
               },
-              labelText: 'Введите старый пароль',
+              labelText: localization.enter_old_password,
             ),
             const SizedBox(height: 16),
             AddDialogInputField(
@@ -166,7 +167,7 @@ class UserChangePasswordDialog
               onChanged: (value) {
                 store.setNewPassword(value);
               },
-              labelText: 'Введите новый пароль',
+              labelText: localization.enter_new_password,
             ),
             const SizedBox(height: 16),
             AddDialogInputField(
@@ -180,7 +181,7 @@ class UserChangePasswordDialog
                 FocusScope.of(context).unfocus();
                 store.changePassword();
               },
-              labelText: 'Повторите новый пароль',
+              labelText: localization.repeat_new_password,
             ),
             if (error)
               Text(

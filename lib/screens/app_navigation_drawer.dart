@@ -8,6 +8,7 @@ import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppNavigationDrawerStore extends WStore {
   bool spaceCreating = false;
@@ -128,6 +129,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
 
   @override
   Widget build(BuildContext context, AppNavigationDrawerStore store) {
+    final localization = AppLocalizations.of(context);
     final currentRoute = ModalRoute.of(context)?.settings.name;
     final currentArguments = ModalRoute.of(context)?.settings.arguments;
     return Drawer(
@@ -140,7 +142,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
             children: [
               NavigatorMenuItem(
                 iconAssetName: 'assets/icons/navigator_main.svg',
-                title: 'Главная',
+                title: localization!.main,
                 selected: currentRoute == '/home',
                 favorite: false,
                 onTap: () {
@@ -152,7 +154,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
               ),
               NavigatorMenuItem(
                 iconAssetName: 'assets/icons/navigator_notifications.svg',
-                title: 'Уведомления',
+                title: localization.notifications,
                 selected: currentRoute == '/notifications',
                 favorite: false,
                 onTap: () {
@@ -174,7 +176,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                   builder: (context, store) {
                     return Column(
                       children: [
-                        const NavigatorMenuListTitle(title: 'Все пространства'),
+                        NavigatorMenuListTitle(title: localization.all_spaces),
                         if (store.allSortedSpaces.isEmpty)
                           NavigatorMenuEmptySpacesHint(
                             isOrganizationOwner: store.isOrganizationOwner,
@@ -304,14 +306,7 @@ class NavigatorMenuEmptySpacesHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const ownerText = ''
-        'Кажется, у вас нет ни одного пространства. '
-        'Создайте пространство, чтобы '
-        'приступить к работе';
-    const empText = ''
-        'Кажется, у вас нет доступных пространств. '
-        'Свяжитесь с администратором, чтобы '
-        'получить доступ и приступить к работе';
+    final localization = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF111012),
@@ -325,7 +320,9 @@ class NavigatorMenuEmptySpacesHint extends StatelessWidget {
         vertical: 12,
       ),
       child: Text(
-        isOrganizationOwner ? ownerText : empText,
+        isOrganizationOwner
+            ? localization!.owner_text
+            : localization!.empt_text,
         style: TextStyle(
           color: Colors.white.withOpacity(0.95),
           height: 1.5,
@@ -346,6 +343,7 @@ class AddSpaceButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MaterialButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -367,9 +365,9 @@ class AddSpaceButtonWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          const Text(
-            'Добавить пространство',
-            style: TextStyle(
+          Text(
+            localization!.add_space,
+            style: const TextStyle(
               color: Color(0xE6FFFFFF),
               fontSize: 16,
             ),

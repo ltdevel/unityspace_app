@@ -7,6 +7,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -71,6 +72,7 @@ class RegisterScreen extends WStoreWidget<RegisterScreenStore> {
 
   @override
   Widget build(BuildContext context, RegisterScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -81,7 +83,7 @@ class RegisterScreen extends WStoreWidget<RegisterScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              const MainFormTextTitleWidget(text: 'Создание аккаунта'),
+              MainFormTextTitleWidget(text: localization!.creating_account),
               const SizedBox(height: 32),
               Expanded(
                 child: WStoreStatusBuilder(
@@ -126,12 +128,13 @@ class RegisterByEmailForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MainFormWidget(
-      additionalButtonText: 'У вас есть учетная запись? Выполните вход',
+      additionalButtonText: localization!.you_already_have_account_login,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },
-      submitButtonText: 'Создать аккаунт',
+      submitButtonText: localization.create_account,
       onSubmit: () {
         FocusScope.of(context).unfocus();
         // загрузка и вход
@@ -142,15 +145,15 @@ class RegisterByEmailForm extends StatelessWidget {
         MainFormInputField(
           enabled: !loading,
           autofocus: true,
-          labelText: 'Ваша электронная почта',
+          labelText: localization.your_email,
           iconAssetName: 'assets/icons/email.svg',
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
           validator: (text) {
-            if (text.isEmpty) return 'Поле не заполнено';
+            if (text.isEmpty) return localization.the_field_is_not_filled_in;
             if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
-              return 'Введите корректный email';
+              return localization.enter_correct_email;
             }
             return '';
           },
@@ -164,7 +167,8 @@ class RegisterByEmailForm extends StatelessWidget {
           builder: (context, showPassword) {
             return MainFormInputField(
               enabled: !loading,
-              labelText: 'Придумайте пароль (не менее 8 символов)',
+              labelText:
+                  '${localization.come_up_with_a_new_password} (${localization.at_least_8_characters})',
               iconAssetName: showPassword
                   ? 'assets/icons/password_hide.svg'
                   : 'assets/icons/password_show.svg',
@@ -180,9 +184,11 @@ class RegisterByEmailForm extends StatelessWidget {
                 submit();
               },
               validator: (text) {
-                if (text.isEmpty) return 'Поле не заполнено';
+                if (text.isEmpty) {
+                  return localization.the_field_is_not_filled_in;
+                }
                 if (text.length < 8) {
-                  return 'Пароль должен быть не менее 8 символов';
+                  return '${localization.password_must_be_at_least} 8 ${localization.characters}';
                 }
                 return '';
               },
@@ -196,8 +202,7 @@ class RegisterByEmailForm extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: MainFormTextButtonWidget(
-            text:
-                'Регистрируясь, я принимаю условия Политики конфиденциальности и Публичной оферты',
+            text: localization.by_registering_accept_privacy_policy,
             onPressed: () async {
               final url = Uri.parse('https://www.unityspace.ru/privacy-policy');
               await launchUrl(url, mode: LaunchMode.externalApplication);

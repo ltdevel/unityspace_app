@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPageStore extends WStore {
   // TODO: add data here...
@@ -18,10 +19,11 @@ class SettingsPage extends WStoreWidget<SettingsPageStore> {
 
   @override
   Widget build(BuildContext context, SettingsPageStore store) {
+    final localization = AppLocalizations.of(context);
     return Container(
       color: Colors.blue,
-      child: const Center(
-        child: Text('Настройки'),
+      child: Center(
+        child: Text(localization!.settings),
       ),
     );
   }

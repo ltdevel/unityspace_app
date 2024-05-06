@@ -6,6 +6,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget
 import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RestorePasswordScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -63,6 +64,7 @@ class RestorePasswordScreen extends WStoreWidget<RestorePasswordScreenStore> {
 
   @override
   Widget build(BuildContext context, RestorePasswordScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -73,7 +75,7 @@ class RestorePasswordScreen extends WStoreWidget<RestorePasswordScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              const MainFormTextTitleWidget(text: 'Восстановить пароль'),
+              MainFormTextTitleWidget(text: localization!.recover_password),
               const SizedBox(height: 32),
               Expanded(
                 child: WStoreStatusBuilder(
@@ -113,12 +115,13 @@ class RestorePasswordForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MainFormWidget(
-      additionalButtonText: 'Вспомнили? Выполните вход',
+      additionalButtonText: localization!.remember_login,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },
-      submitButtonText: 'Восстановить пароль',
+      submitButtonText: localization.recover_password,
       onSubmit: () {
         FocusScope.of(context).unfocus();
         // загрузка и вход
@@ -126,23 +129,22 @@ class RestorePasswordForm extends StatelessWidget {
       },
       submittingNow: loading,
       children: (submit) => [
-        const MainFormTextSubtitleWidget(
-          text:
-              'Мы вышлем вам сообщение для восстановления пароля на вашу электронную почту',
+        MainFormTextSubtitleWidget(
+          text: localization.we_will_send_you_password_recovery_message,
         ),
         const SizedBox(height: 12),
         MainFormInputField(
           enabled: !loading,
           autofocus: true,
-          labelText: 'Ваша электронная почта',
+          labelText: localization.your_email,
           iconAssetName: 'assets/icons/email.svg',
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
           validator: (text) {
-            if (text.isEmpty) return 'Поле не заполнено';
+            if (text.isEmpty) return localization.the_field_is_not_filled_in;
             if (!RegExp(r'\S+@\S+\.\S+').hasMatch(text)) {
-              return 'Введите корректный email';
+              return localization.enter_correct_email;
             }
             return '';
           },
@@ -162,19 +164,20 @@ class SentPasswordForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return MainFormWidget(
-      additionalButtonText: 'Не получили email? Отправить повторно',
+      additionalButtonText: localization!.didnt_receive_an_email_resend,
       onAdditionalButton: () {
         context.wstore<RestorePasswordScreenStore>().again();
       },
-      submitButtonText: 'Войти по емайл',
+      submitButtonText: localization.login_by_email,
       onSubmit: () {
         Navigator.of(context).pop();
       },
       submittingNow: false,
       children: (submit) => [
-        const MainFormTextSubtitleWidget(
-          text: 'Письмо отправлено на Ваш емейл',
+        MainFormTextSubtitleWidget(
+          text: localization.letter_has_been_sent_to_your_email,
         ),
       ],
     );

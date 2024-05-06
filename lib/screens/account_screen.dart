@@ -13,6 +13,7 @@ import 'package:unityspace/store/auth_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AccountScreenStore extends WStore {
   AccountScreenTab selectedTab = AccountScreenTab.account;
@@ -116,10 +117,11 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
 
   @override
   Widget build(BuildContext context, AccountScreenStore store) {
+    final localization = AppLocalizations.of(context);
     return Scaffold(
       drawer: const AppNavigationDrawer(),
       appBar: AppBar(
-        title: const Text('Мой профиль'),
+        title: Text(localization!.my_profile),
         actions: [
           WStoreStatusBuilder(
             store: store,
@@ -196,6 +198,7 @@ class SignOutIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     final currentColor = IconTheme.of(context).color ?? const Color(0xFF111012);
     return IconButton(
       padding: EdgeInsets.all(loading ? 4 : 2),
@@ -214,7 +217,7 @@ class SignOutIconButton extends StatelessWidget {
               height: 20,
               theme: SvgTheme(currentColor: currentColor),
             ),
-      tooltip: 'Выйти из аккаунта',
+      tooltip: localization!.logout_from_account,
       onPressed: loading ? null : onPressed,
     );
   }

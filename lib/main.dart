@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wstore/wstore.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:unityspace/screens/account_screen.dart';
@@ -13,6 +12,7 @@ import 'package:unityspace/screens/register_screen.dart';
 import 'package:unityspace/screens/restore_password_screen.dart';
 import 'package:unityspace/screens/space_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,14 +70,9 @@ class MyApp extends WStoreWidget<MyAppStore> {
       child: MaterialApp(
         navigatorKey: store.navigatorKey,
         title: 'UnitySpace',
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('ru'),
-        ],
+        locale: const Locale('ru'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
           fontFamily: 'Roboto',
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),

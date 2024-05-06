@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_with_buttons.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Диалог при достижении лимита добавления пространств
 ///
@@ -31,20 +32,20 @@ class AddSpaceLimitDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return AppDialogWithButtons(
-      title: 'Вы нашли платную функцию',
-      primaryButtonText: 'Обновить',
+      title: localization!.you_found_a_paid_feature,
+      primaryButtonText: localization.update,
       onPrimaryButtonPressed: () {
         Navigator.of(context).pop('goto_pay');
       },
-      secondaryButtonText: showTrialButton ? 'Попробовать бесплатно' : '',
+      secondaryButtonText: showTrialButton ? localization.try_free : '',
       onSecondaryButtonPressed: () {
         Navigator.of(context).pop('start_trial');
       },
-      children: const [
+      children: [
         Text(
-          'Обновите ваш тарифный план, чтобы иметь возможность неограниченно '
-          'добавлять пространства',
+          localization.update_your_tariff_plan,
         ),
       ],
     );

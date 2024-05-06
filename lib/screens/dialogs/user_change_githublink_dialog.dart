@@ -5,6 +5,7 @@ import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> showUserChangeGitHubLinkDialog(
   BuildContext context,
@@ -99,6 +100,7 @@ class UserChangeGitHubLinkDialog
 
   @override
   Widget build(BuildContext context, UserChangeGitHubLinkDialogStore store) {
+    final localization = AppLocalizations.of(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChangeGitHubLink,
@@ -109,8 +111,8 @@ class UserChangeGitHubLinkDialog
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: 'Изменить ссылку Github',
-          primaryButtonText: 'Сохранить',
+          title: localization!.change_github_link,
+          primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();
             store.changeGitHubLink();
@@ -132,7 +134,7 @@ class UserChangeGitHubLinkDialog
                 FocusScope.of(context).unfocus();
                 store.changeGitHubLink();
               },
-              labelText: 'Ссылка на профиль или имя профиля',
+              labelText: localization.link_on_name_profile,
             ),
             if (error)
               Text(
