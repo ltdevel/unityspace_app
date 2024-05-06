@@ -9,7 +9,7 @@ Future<RegisterResponse> register({
 }) async {
   try {
     final response = await HttpPlugin().post('/auth/register', {
-      'email': email.toLowerCase(),
+      'email': email,
       'password': password,
     });
     final jsonData = json.decode(response.body);

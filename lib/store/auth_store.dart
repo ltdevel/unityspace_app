@@ -91,11 +91,12 @@ class AuthStore extends GStore {
   }
 
   Future<void> register(final String email, final String password) async {
-    await api.register(email: email, password: password);
+    await api.register(email: email.toLowerCase(), password: password);
   }
 
   Future<void> login(final String email, final String password) async {
-    final tokens = await api.login(email: email, password: password);
+    final tokens =
+        await api.login(email: email.toLowerCase(), password: password);
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
   }
 
@@ -108,11 +109,12 @@ class AuthStore extends GStore {
   }
 
   Future<void> restorePasswordByEmail(final String email) async {
-    await api.restorePasswordByEmail(email: email);
+    await api.restorePasswordByEmail(email: email.toLowerCase());
   }
 
   Future<void> confirmEmail(final String email, final String code) async {
-    final tokens = await api.confirmEmail(email: email, code: code);
+    final tokens =
+        await api.confirmEmail(email: email.toLowerCase(), code: code);
     await setUserTokens(tokens.accessToken, tokens.refreshToken);
   }
 
