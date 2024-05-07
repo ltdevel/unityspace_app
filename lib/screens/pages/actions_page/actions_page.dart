@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/screens/pages/actions_page/action_card.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 
@@ -21,9 +22,14 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
   Widget build(BuildContext context, ActionsPageStore store) {
     final localization = LocalizationHelper.getLocalizations(context);
     return Container(
-      color: Colors.blue,
+      color: Colors.grey,
       child: Center(
-        child: Text(localization.my_actions),
+        child: ActionCard(
+          title: 'Такой тип истории не определен :( 8177',
+          task: 'Задача: Экран Мой Профиль - Мои Действия',
+          time: 'Вчера 16:40',
+          isSelected: true,
+        ),
       ),
     );
   }
