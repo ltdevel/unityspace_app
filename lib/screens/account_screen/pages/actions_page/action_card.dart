@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unityspace/screens/pages/actions_page/custom_container.dart';
+import 'package:unityspace/screens/account_screen/pages/actions_page/custom_container.dart';
 
 class ActionCard extends StatelessWidget {
   const ActionCard(

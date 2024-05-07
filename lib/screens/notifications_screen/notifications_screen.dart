@@ -6,15 +6,7 @@ import 'package:unityspace/utils/localization_helper.dart';
 
 class NotificationsScreenStore extends WStore {
   void loadData() {
-    subscribe(
-      subscriptionId: 1,
-      debounceDuration: const Duration(milliseconds: 1500),
-      future: Future.wait([NotificationsStore().getNotificationsData(page: 1)]),
-      onData: (_) {
-        setStore(() {});
-      },
-      onError: (e, stack) {},
-    );
+    NotificationsStore().getNotificationsData(page: 1);
   }
 
   @override

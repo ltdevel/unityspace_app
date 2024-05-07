@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:wstore/wstore.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:unityspace/screens/account_screen.dart';
-import 'package:unityspace/screens/confirm_screen.dart';
-import 'package:unityspace/screens/home_screen.dart';
-import 'package:unityspace/screens/loading_screen.dart';
-import 'package:unityspace/screens/login_by_email_screen.dart';
-import 'package:unityspace/screens/login_screen.dart';
+import 'package:unityspace/screens/account_screen/account_screen.dart';
+import 'package:unityspace/screens/confirm_screen/confirm_screen.dart';
+import 'package:unityspace/screens/home_screen/home_screen.dart';
+import 'package:unityspace/screens/loading_screen/loading_screen.dart';
+import 'package:unityspace/screens/login_by_email_screen/login_by_email_screen.dart';
+import 'package:unityspace/screens/login_screen/login_screen.dart';
 import 'package:unityspace/screens/notifications_screen/notifications_screen.dart';
-import 'package:unityspace/screens/register_screen.dart';
-import 'package:unityspace/screens/restore_password_screen.dart';
-import 'package:unityspace/screens/space_screen.dart';
+import 'package:unityspace/screens/register_screen/register_screen.dart';
+import 'package:unityspace/screens/restore_password_screen/restore_password_screen.dart';
+import 'package:unityspace/screens/space_screen/space_screen.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

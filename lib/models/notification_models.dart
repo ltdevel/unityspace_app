@@ -12,13 +12,6 @@ class PaginatedNotifications {
       maxPagesCount: json['maxPagesCount'] as int,
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'notifications': notifications.map((n) => n.toJson()).toList(),
-      'maxPagesCount': maxPagesCount,
-    };
-  }
 }
 
 class NotificationResponse {
@@ -73,25 +66,6 @@ class NotificationResponse {
       text: json['text'] as String,
       unread: json['unread'] as bool,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'archived': archived,
-      'createdAt': createdAt,
-      'id': id,
-      'initiatorId': initiatorId,
-      'locations': locations.map((l) => l.toJson()).toList(),
-      'message': message,
-      'notificationType': notificationType,
-      'parentId': parentId,
-      'parentType': parentType,
-      'recipientId': recipientId,
-      'stageName': stageName,
-      'taskName': taskName,
-      'text': text,
-      'unread': unread,
-    };
   }
 }
 
