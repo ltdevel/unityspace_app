@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_primary_button.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class CropImageScreenStore extends WStore {
   final controller = CropController();
@@ -76,10 +76,10 @@ class CropImageScreen extends WStoreWidget<CropImageScreenStore> {
 
   @override
   Widget build(BuildContext context, CropImageScreenStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(localization!.change_avatar),
+        title: Text(localization.change_avatar),
       ),
       body: SafeArea(
         child: WStoreStatusBuilder(

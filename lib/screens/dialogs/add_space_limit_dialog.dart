@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_with_buttons.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 /// Диалог при достижении лимита добавления пространств
 ///
@@ -32,9 +32,9 @@ class AddSpaceLimitDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return AppDialogWithButtons(
-      title: localization!.you_found_a_paid_feature,
+      title: localization.you_found_a_paid_feature,
       primaryButtonText: localization.update,
       onPrimaryButtonPressed: () {
         Navigator.of(context).pop('goto_pay');

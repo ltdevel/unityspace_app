@@ -3,7 +3,7 @@ import 'package:unityspace/screens/widgets/app_dialog/app_dialog_with_buttons.da
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 Future<void> showUserChangeBirthdayDialog(
   BuildContext context,
@@ -84,7 +84,7 @@ class UserChangeBirthdayDialog
 
   @override
   Widget build(BuildContext context, UserChangeBirthdayDialogStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChangeBirthday,
@@ -95,7 +95,7 @@ class UserChangeBirthdayDialog
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: localization!.change_the_date_of_birth,
+          title: localization.change_the_date_of_birth,
           primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             store.changeBirthday();

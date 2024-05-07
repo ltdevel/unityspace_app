@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 Future<void> showUserChangeJobDialog(
   BuildContext context,
@@ -84,7 +84,7 @@ class UserChangeJobDialog extends WStoreWidget<UserChangeJobDialogStore> {
 
   @override
   Widget build(BuildContext context, UserChangeJobDialogStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChange,
@@ -95,7 +95,7 @@ class UserChangeJobDialog extends WStoreWidget<UserChangeJobDialogStore> {
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: localization!.change_work_position,
+          title: localization.change_work_position,
           primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/app_navigation_drawer.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class HomeScreenStore extends WStore {
   // TODO: add data here...
@@ -20,11 +20,11 @@ class HomeScreen extends WStoreWidget<HomeScreenStore> {
 
   @override
   Widget build(BuildContext context, HomeScreenStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       drawer: const AppNavigationDrawer(),
       appBar: AppBar(
-        title: Text(localization!.main),
+        title: Text(localization.main),
       ),
       body: Container(),
     );

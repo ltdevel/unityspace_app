@@ -5,7 +5,7 @@ import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 Future<void> showUserChangeTgLinkDialog(
   BuildContext context,
@@ -98,7 +98,7 @@ class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
 
   @override
   Widget build(BuildContext context, UserChangeTgLinkDialogStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChangeLink,
@@ -109,7 +109,7 @@ class UserChangeTgLinkDialog extends WStoreWidget<UserChangeTgLinkDialogStore> {
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: localization!.change_telegram_link,
+          title: localization.change_telegram_link,
           primaryButtonText: localization.save,
           onPrimaryButtonPressed: () {
             FocusScope.of(context).unfocus();

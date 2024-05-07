@@ -17,7 +17,7 @@ import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class AccountPageStore extends WStore {
   String imageFilePath = '';
@@ -261,7 +261,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
 
   @override
   Widget build(BuildContext context, AccountPageStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return WStoreStringListener(
       store: store,
       watch: (store) => store.message,
@@ -320,7 +320,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserName,
                   builder: (context, name) => AccountItemWidget(
-                    text: localization!.name,
+                    text: localization.name,
                     value: name.isNotEmpty ? name : localization.not_specified,
                     iconAssetName: 'assets/icons/account_name.svg',
                     onTapChange: () {
@@ -338,7 +338,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserBirthday,
                   builder: (context, birthday) => AccountItemWidget(
-                    text: localization!.date_of_birth,
+                    text: localization.date_of_birth,
                     value: birthday.isNotEmpty
                         ? birthday
                         : localization.not_specified,
@@ -363,13 +363,13 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   builder: (context, email) => AccountItemWidget(
                     text: 'Email',
                     value:
-                        email.isNotEmpty ? email : localization!.not_specified,
+                        email.isNotEmpty ? email : localization.not_specified,
                     iconAssetName: 'assets/icons/account_email.svg',
                     onTapChange: () {},
                     onTapValue: email.isNotEmpty
                         ? () => store.copy(
                               email,
-                              localization!.email_copied_to_clipboard,
+                              localization.email_copied_to_clipboard,
                             )
                         : null,
                   ),
@@ -378,7 +378,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserPhone,
                   builder: (context, phone) => AccountItemWidget(
-                    text: localization!.phone,
+                    text: localization.phone,
                     value:
                         phone.isNotEmpty ? phone : localization.not_specified,
                     iconAssetName: 'assets/icons/account_phone.svg',
@@ -397,7 +397,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserJobTitle,
                   builder: (context, jobTitle) => AccountItemWidget(
-                    text: localization!.work_position,
+                    text: localization.work_position,
                     value: jobTitle.isNotEmpty
                         ? jobTitle
                         : localization.not_specified,
@@ -417,7 +417,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserTelegram,
                   builder: (context, telegram) => AccountItemWidget(
-                    text: localization!.profile_in_telegram,
+                    text: localization.profile_in_telegram,
                     value: telegram.isNotEmpty
                         ? telegram
                         : localization.not_specified,
@@ -439,7 +439,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   store: store,
                   watch: (store) => store.currentUserGithub,
                   builder: (context, github) => AccountItemWidget(
-                    text: localization!.profile_in_github,
+                    text: localization.profile_in_github,
                     value:
                         github.isNotEmpty ? github : localization.not_specified,
                     iconAssetName: 'assets/icons/account_github.svg',
@@ -457,7 +457,7 @@ class AccountPage extends WStoreWidget<AccountPageStore> {
                   ),
                 ),
                 AccountItemWidget(
-                  text: localization!.password,
+                  text: localization.password,
                   value: '********',
                   iconAssetName: 'assets/icons/account_password.svg',
                   onTapChange: () {
@@ -493,7 +493,7 @@ class AccountItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     const titleColor = Color(0x99111012);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,7 +526,7 @@ class AccountItemWidget extends StatelessWidget {
               ),
               onPressed: onTapChange,
               child: Text(
-                localization!.change,
+                localization.change,
               ),
             ),
           ],
@@ -578,7 +578,7 @@ class AccountAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Column(
       children: [
         WStoreValueBuilder<AccountPageStore, int>(
@@ -596,7 +596,7 @@ class AccountAvatarWidget extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: onChangePhoto,
-              child: Text(localization!.take_a_new_photo),
+              child: Text(localization.take_a_new_photo),
             ),
             MenuItemButton(
               onPressed: onChangeAvatar,

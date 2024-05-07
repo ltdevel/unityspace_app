@@ -6,7 +6,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget
 import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class LoginByEmailScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -64,7 +64,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
 
   @override
   Widget build(BuildContext context, LoginByEmailScreenStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -75,7 +75,7 @@ class LoginByEmailScreen extends WStoreWidget<LoginByEmailScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              MainFormTextTitleWidget(text: localization!.login_by_email),
+              MainFormTextTitleWidget(text: localization.login_by_email),
               const SizedBox(height: 32),
               Expanded(
                 child: WStoreStatusBuilder(
@@ -112,9 +112,9 @@ class LoginByEmailForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return MainFormWidget(
-      additionalButtonText: localization!.another_way_to_log_in,
+      additionalButtonText: localization.another_way_to_log_in,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },

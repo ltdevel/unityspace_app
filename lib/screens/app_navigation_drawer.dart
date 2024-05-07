@@ -8,7 +8,7 @@ import 'package:unityspace/screens/widgets/user_avatar_widget.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class AppNavigationDrawerStore extends WStore {
   bool spaceCreating = false;
@@ -129,7 +129,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
 
   @override
   Widget build(BuildContext context, AppNavigationDrawerStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     final currentRoute = ModalRoute.of(context)?.settings.name;
     final currentArguments = ModalRoute.of(context)?.settings.arguments;
     return Drawer(
@@ -142,7 +142,7 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
             children: [
               NavigatorMenuItem(
                 iconAssetName: 'assets/icons/navigator_main.svg',
-                title: localization!.main,
+                title: localization.main,
                 selected: currentRoute == '/home',
                 favorite: false,
                 onTap: () {
@@ -306,7 +306,7 @@ class NavigatorMenuEmptySpacesHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF111012),
@@ -321,8 +321,8 @@ class NavigatorMenuEmptySpacesHint extends StatelessWidget {
       ),
       child: Text(
         isOrganizationOwner
-            ? localization!.owner_text
-            : localization!.empt_text,
+            ? localization.owner_text
+            : localization.empt_text,
         style: TextStyle(
           color: Colors.white.withOpacity(0.95),
           height: 1.5,
@@ -343,7 +343,7 @@ class AddSpaceButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return MaterialButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -366,7 +366,7 @@ class AddSpaceButtonWidget extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            localization!.add_space,
+            localization.add_space,
             style: const TextStyle(
               color: Color(0xE6FFFFFF),
               fontSize: 16,

@@ -8,7 +8,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_text_title_widget
 import 'package:unityspace/screens/widgets/main_form/main_form_sign_in_button_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class LoginScreenStore extends WStore {
   WStoreStatus statusGoogle = WStoreStatus.init;
@@ -81,7 +81,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
 
   @override
   Widget build(BuildContext context, LoginScreenStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -92,7 +92,7 @@ class LoginScreen extends WStoreWidget<LoginScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              MainFormTextTitleWidget(text: localization!.login_with),
+              MainFormTextTitleWidget(text: localization.login_with),
               const SizedBox(height: 32),
               Row(
                 children: [

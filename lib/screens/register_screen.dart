@@ -7,7 +7,7 @@ import 'package:unityspace/screens/widgets/main_form/main_form_widget.dart';
 import 'package:unityspace/store/auth_store.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class RegisterScreenStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -72,7 +72,7 @@ class RegisterScreen extends WStoreWidget<RegisterScreenStore> {
 
   @override
   Widget build(BuildContext context, RegisterScreenStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       backgroundColor: const Color(0xFF111012),
       body: SafeArea(
@@ -83,7 +83,7 @@ class RegisterScreen extends WStoreWidget<RegisterScreenStore> {
               const SizedBox(height: 60),
               const MainFormLogoWidget(),
               const SizedBox(height: 32),
-              MainFormTextTitleWidget(text: localization!.creating_account),
+              MainFormTextTitleWidget(text: localization.creating_account),
               const SizedBox(height: 32),
               Expanded(
                 child: WStoreStatusBuilder(
@@ -128,9 +128,9 @@ class RegisterByEmailForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return MainFormWidget(
-      additionalButtonText: localization!.you_already_have_account_login,
+      additionalButtonText: localization.you_already_have_account_login,
       onAdditionalButton: () {
         Navigator.of(context).pop();
       },

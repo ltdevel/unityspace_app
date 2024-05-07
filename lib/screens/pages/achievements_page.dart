@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 class AchievementsPageStore extends WStore {
   // TODO: add data here...
@@ -19,11 +19,11 @@ class AchievementsPage extends WStoreWidget<AchievementsPageStore> {
 
   @override
   Widget build(BuildContext context, AchievementsPageStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return Container(
       color: Colors.blue,
       child:  Center(
-        child: Text(localization!.achievements),
+        child: Text(localization.achievements),
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 Future<void> showUserChangePhoneDialog(
   BuildContext context,
@@ -109,7 +109,7 @@ class UserChangePhoneDialog extends WStoreWidget<UserChangePhoneDialogStore> {
 
   @override
   Widget build(BuildContext context, UserChangePhoneDialogStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return WStoreStatusBuilder(
       store: store,
       watch: (store) => store.statusChange,
@@ -120,7 +120,7 @@ class UserChangePhoneDialog extends WStoreWidget<UserChangePhoneDialogStore> {
         final loading = status == WStoreStatus.loading;
         final error = status == WStoreStatus.error;
         return AppDialogWithButtons(
-          title: localization!.change_phone_number,
+          title: localization.change_phone_number,
           primaryButtonText: localization.save,
           onPrimaryButtonPressed: store.phoneValid
               ? () {

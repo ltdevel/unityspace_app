@@ -3,7 +3,7 @@ import 'package:unityspace/screens/widgets/app_dialog/app_dialog.dart';
 import 'package:unityspace/screens/widgets/app_dialog/app_dialog_primary_button.dart';
 import 'package:unityspace/store/spaces_store.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 
 Future<int?> showAddSpaceDialog(BuildContext context) async {
   return showDialog<int?>(
@@ -82,9 +82,9 @@ class AddSpaceDialog extends WStoreWidget<AddSpaceDialogStore> {
 
   @override
   Widget build(BuildContext context, AddSpaceDialogStore store) {
-    final localization = AppLocalizations.of(context);
+    final localization = LocalizationHelper.getLocalizations(context);
     return AppDialog(
-      title: localization!.add_space,
+      title: localization.add_space,
       buttons: [
         WStoreStatusBuilder(
           store: store,
