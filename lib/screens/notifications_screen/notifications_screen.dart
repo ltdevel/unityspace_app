@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:unityspace/screens/app_navigation_drawer.dart';
+import 'package:unityspace/store/notifications_store.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 
 class NotificationsScreenStore extends WStore {
-  // TODO: add data here...
+  void loadData() {
+    subscribe(
+      subscriptionId: 1,
+      debounceDuration: const Duration(milliseconds: 1500),
+      future: Future.wait([NotificationsStore().getNotificationsData(page: 1)]),
+      onData: (_) {
+        setStore(() {});
+      },
+      onError: (e, stack) {},
+    );
+  }
 
   @override
   NotificationsScreen get widget => super.widget as NotificationsScreen;
@@ -16,7 +27,8 @@ class NotificationsScreen extends WStoreWidget<NotificationsScreenStore> {
   });
 
   @override
-  NotificationsScreenStore createWStore() => NotificationsScreenStore();
+  NotificationsScreenStore createWStore() =>
+      NotificationsScreenStore()..loadData();
 
   @override
   Widget build(BuildContext context, NotificationsScreenStore store) {

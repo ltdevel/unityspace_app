@@ -7,7 +7,7 @@ import 'package:unityspace/screens/home_screen.dart';
 import 'package:unityspace/screens/loading_screen.dart';
 import 'package:unityspace/screens/login_by_email_screen.dart';
 import 'package:unityspace/screens/login_screen.dart';
-import 'package:unityspace/screens/notifications_screen.dart';
+import 'package:unityspace/screens/notifications_screen/notifications_screen.dart';
 import 'package:unityspace/screens/register_screen.dart';
 import 'package:unityspace/screens/restore_password_screen.dart';
 import 'package:unityspace/screens/space_screen.dart';
