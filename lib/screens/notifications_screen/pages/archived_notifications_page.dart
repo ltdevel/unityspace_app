@@ -36,7 +36,8 @@ class ArchivedNotificationPageStore extends WStore {
         });
       },
       onError: (e, stack) {
-        logger.d('LoadingScreenStore loadData error=$e\nstack=$stack');
+        logger.d('on ArchivedNotificationsPage'
+            'NotificationsStore loadData error=$e\nstack=$stack');
         setStore(() {
           status = WStoreStatus.error;
           error = NotificationErrors.loadingDataError;
