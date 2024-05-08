@@ -58,7 +58,6 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
 
   @override
   Widget build(BuildContext context, ActionsPageStore store) {
-    final colorScheme = Theme.of(context).colorScheme;
     return PaddingHorizontal(
       12,
       child: Expanded(
@@ -70,17 +69,7 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
           },
           onStatusLoaded: (context) {},
           builderLoaded: (context) {
-            print("HISTORY: ${store.history}");
             return ActionsList(actions: store.history);
-            // return SizedBox(
-            //   height: 400,
-            //   child: ListView.builder(
-            //     itemCount: store.history?.length,
-            //     itemBuilder: (BuildContext context, int index) {
-            //       return ActionsList(actions: store.history);
-            //     },
-            //   ),
-            // );
           },
           builderLoading: (context) {
             return Center(
@@ -91,9 +80,6 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
           builderError: (context) {
             return const Text('error');
           },
-          // child: Placeholder(
-
-          // ),
         ),
       ),
     );
@@ -146,7 +132,6 @@ class ActionsList extends StatelessWidget {
                             task: 'Задача: ${action.taskName}',
                             time:
                                 '${timeAgo(dateTime)} ${timeFromDateString(dateTime)}',
-                            // isSelected: true,
                           ),
                         ),
                       ],
