@@ -2,11 +2,13 @@ class PaginatedNotifications {
   final List<NotificationResponse> notifications;
   final int maxPagesCount;
 
-  PaginatedNotifications({required this.notifications, required this.maxPagesCount});
+  PaginatedNotifications(
+      {required this.notifications, required this.maxPagesCount});
 
   factory PaginatedNotifications.fromJson(Map<String, dynamic> json) {
     var list = json['notifications'] as List;
-    List<NotificationResponse> notificationsList = list.map((i) => NotificationResponse.fromJson(i)).toList();
+    List<NotificationResponse> notificationsList =
+        list.map((i) => NotificationResponse.fromJson(i)).toList();
     return PaginatedNotifications(
       notifications: notificationsList,
       maxPagesCount: json['maxPagesCount'] as int,
@@ -49,7 +51,8 @@ class NotificationResponse {
 
   factory NotificationResponse.fromJson(Map<String, dynamic> json) {
     var locList = json['locations'] as List;
-    List<NotificationLocation> locationList = locList.map((i) => NotificationLocation.fromJson(i)).toList();
+    List<NotificationLocation> locationList =
+        locList.map((i) => NotificationLocation.fromJson(i)).toList();
     return NotificationResponse(
       archived: json['archived'] as bool,
       createdAt: json['createdAt'] as String,
@@ -81,11 +84,57 @@ class NotificationLocation {
       projectId: json['projectId'] as int?,
     );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'spaceId': spaceId,
-      'projectId': projectId,
-    };
+class NotificationModel {
+  final bool archived;
+  final String createdAt;
+  final int id;
+  final int initiatorId;
+  final List<NotificationLocation> locations;
+  final int? message;
+  final String notificationType;
+  final int parentId;
+  final String parentType;
+  final int recipientId;
+  final String? stageName;
+  final String? taskName;
+  final String text;
+  final bool unread;
+
+  NotificationModel({
+    required this.archived,
+    required this.createdAt,
+    required this.id,
+    required this.initiatorId,
+    required this.locations,
+    this.message,
+    required this.notificationType,
+    required this.parentId,
+    required this.parentType,
+    required this.recipientId,
+    this.stageName,
+    this.taskName,
+    required this.text,
+    required this.unread,
+  });
+
+  factory NotificationModel.fromResponse(final NotificationResponse data) {
+    return NotificationModel(
+      archived: data.archived,
+      createdAt: data.createdAt,
+      id: data.id,
+      initiatorId: data.initiatorId,
+      locations: data.locations,
+      message: data.message,
+      notificationType: data.notificationType,
+      parentId: data.parentId,
+      parentType: data.parentType,
+      recipientId: data.recipientId,
+      stageName: data.stageName,
+      taskName: data.taskName,
+      text: data.text,
+      unread: data.unread,
+    );
   }
 }

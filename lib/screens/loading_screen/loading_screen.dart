@@ -21,7 +21,6 @@ class LoadingScreenStore extends WStore {
     //
     subscribe(
       subscriptionId: 1,
-      debounceDuration: const Duration(milliseconds: 1500),
       future: Future.wait([
         UserStore().getUserData(),
         UserStore().getOrganizationData(),

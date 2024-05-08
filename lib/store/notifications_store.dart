@@ -9,14 +9,25 @@ class NotificationsStore extends GStore {
 
   NotificationsStore._();
 
-  List<NotificationResponse>? notifications;
+  List<NotificationModel>? notifications;
 
-  Future<void> getNotificationsData({required int page}) async {
-    final notificationsData = await api.getNotificationsOnPage(page: page);
-    final notifications = notificationsData.notifications;
+  Future<int> getNotificationsData({required int page}) async {
+    // Получение данных уведомлений
+    final PaginatedNotifications notificationsData =
+        await api.getNotificationsOnPage(page: page);
+
+    // Преобразование ответа в список моделей NotificationModel
+    List<NotificationModel> newNotifications = notificationsData.notifications
+        .map((notification) => NotificationModel.fromResponse(notification))
+        .toList();
+
+    // Обновление списка уведомлений в сторе
     setStore(() {
-      this.notifications = notifications;
+      notifications = newNotifications;
     });
+
+    // Возврат максимального количества страниц
+    return notificationsData.maxPagesCount;
   }
 
   @override
