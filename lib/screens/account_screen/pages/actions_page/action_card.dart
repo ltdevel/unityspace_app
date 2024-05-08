@@ -18,7 +18,8 @@ class ActionCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return CustomContainer(
       height: 96,
-      hasBorder: isSelected,
+      hasBorder: true,
+      borderColor: isSelected ? Colors.greenAccent : Colors.grey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,

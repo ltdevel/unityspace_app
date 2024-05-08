@@ -15,10 +15,10 @@ class TasksStore extends GStore {
     final response = await api.getMyTasksHistory(page);
     final maxPageCount = response.maxPageCount;
     final historyResponse = response.history;
-    final history =
+    final newHistory =
         historyResponse.map((res) => TaskHistory.fromResponse(res)).toList();
     setStore(() {
-      this.history = history;
+      history = newHistory;
     });
     return maxPageCount;
   }

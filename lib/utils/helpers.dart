@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 
@@ -22,4 +23,41 @@ bool isLinkValid(final String url) {
     'protocols': ['http', 'https'],
     'require_protocol': true
   });
+}
+
+String timeAgo(String date) {
+  DateTime dateTime = dateFromDateString(date);
+  Duration diff = DateTime.now().difference(dateTime);
+  if (diff.inDays > 365) {
+    return "${(diff.inDays / 365).floor()} ${(diff.inDays / 365).floor() == 1 ? "year" : "years"} ago";
+  }
+  if (diff.inDays > 30) {
+    return "${(diff.inDays / 30).floor()} ${(diff.inDays / 30).floor() == 1 ? "month" : "months"} ago";
+  }
+  if (diff.inDays > 7) {
+    return "${(diff.inDays / 7).floor()} ${(diff.inDays / 7).floor() == 1 ? "week" : "weeks"} ago";
+  }
+  if (diff.inDays > 1) {
+    return "${diff.inDays} days ago";
+  }
+  if (diff.inDays == 1) {
+    return "yesterday";
+  }
+  return "today";
+}
+
+DateTime dateFromDateString(String date) {
+  final dateString = date.split('T')[0];
+  final dateList = dateString.split('-');
+  return DateTime(
+    int.parse(dateList[0]),
+    int.parse(dateList[1]),
+    int.parse(dateList[2]),
+  );
+}
+
+String timeFromDateString(String date) {
+  final timeString = date.split('T')[1];
+  final timeList = timeString.split(':');
+  return '${timeList[0].padLeft(2, '0')}:${timeList[1].padRight(2, '0')}';
 }

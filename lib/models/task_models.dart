@@ -79,7 +79,7 @@ class MyTaskHistoryResponse {
     final historyList = map['history'] as List<dynamic>;
 
     return MyTaskHistoryResponse(
-        maxPageCount: map['maxPageCount'] as int,
+        maxPageCount: map['maxPagesCount'] as int,
         history: historyList
             .map((history) => TaskHistoryResponse.fromJson(history))
             .toList());
@@ -108,7 +108,7 @@ class TaskHistoryResponse {
       required this.projectName,
       required this.commitName});
 
-  factory TaskHistoryResponse.fromJson(Map<String, dynamic> map) {
+  factory TaskHistoryResponse.fromJson(Map<dynamic, dynamic> map) {
     return TaskHistoryResponse(
       id: map['id'] as int,
       updateDate: map['updateDate'] as String,

@@ -7,6 +7,6 @@ Future<MyTaskHistoryResponse> getMyTasksHistory(int page) async {
   final response = await HttpPlugin().get('/tasks/myHistory/$page');
   final jsonDataList = json.decode(response.body);
   final MyTaskHistoryResponse result =
-      jsonDataList.map((data) => MyTaskHistoryResponse.fromJson(data));
+      MyTaskHistoryResponse.fromJson(jsonDataList);
   return result;
 }
