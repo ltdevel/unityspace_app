@@ -11,10 +11,12 @@ class NotificationsStore extends GStore {
 
   List<NotificationModel>? notifications;
 
-  Future<int> getNotificationsData({required int page}) async {
+  Future<int> getNotificationsData(
+      {required int page, bool isArchived = false}) async {
     // Получение данных уведомлений
-    final PaginatedNotifications notificationsData =
-        await api.getNotificationsOnPage(page: page);
+    final PaginatedNotifications notificationsData = isArchived
+        ? await api.getArchivedNotificationsOnPage(page: page)
+        : await api.getNotificationsOnPage(page: page);
 
     // Преобразование ответа в список моделей NotificationModel
     List<NotificationModel> newNotifications = notificationsData.notifications

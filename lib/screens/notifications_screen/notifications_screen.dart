@@ -1,51 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/screens/app_navigation_drawer.dart';
-import 'package:unityspace/store/notifications_store.dart';
-import 'package:unityspace/utils/logger_plugin.dart';
+import 'package:unityspace/screens/notifications_screen/pages/archived_notifications_page.dart';
+import 'package:unityspace/screens/notifications_screen/pages/notifications_page.dart';
+import 'package:unityspace/screens/widgets/tabs_list/tab_button.dart';
+import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 
 enum NotificationErrors { none, loadingDataError }
 
 class NotificationsScreenStore extends WStore {
-  NotificationErrors error = NotificationErrors.none;
-  WStoreStatus status = WStoreStatus.init;
-  int maxPageCount = 1;
+  NotificationsScreenTab selectedTab = NotificationsScreenTab.current;
 
-  List<NotificationModel>? get notifications => computedFromStore(
-        store: NotificationsStore(),
-        getValue: (store) => store.notifications,
-        keyName: 'notifcations',
-      );
-  void loadData() {
-    if (status == WStoreStatus.loading) return;
-    //
+  void selectTab(final NotificationsScreenTab tab) {
     setStore(() {
-      status = WStoreStatus.loading;
-      error = NotificationErrors.none;
+      selectedTab = tab;
     });
-    //
-    subscribe(
-      subscriptionId: 1,
-      future: NotificationsStore().getNotificationsData(page: 1),
-      onData: (value) {
-        maxPageCount = value;
-        setStore(() {
-          status = WStoreStatus.loaded;
-        });
-      },
-      onError: (e, stack) {
-        logger.d('LoadingScreenStore loadData error=$e\nstack=$stack');
-        setStore(() {
-          status = WStoreStatus.error;
-          error = NotificationErrors.loadingDataError;
-        });
-      },
-    );
   }
 
+  List<NotificationsScreenTab> get currentUserTabs =>
+      NotificationsScreenTab.values.toList();
   @override
   NotificationsScreen get widget => super.widget as NotificationsScreen;
 }
@@ -56,62 +30,66 @@ class NotificationsScreen extends WStoreWidget<NotificationsScreenStore> {
   });
 
   @override
-  NotificationsScreenStore createWStore() =>
-      NotificationsScreenStore()..loadData();
+  NotificationsScreenStore createWStore() => NotificationsScreenStore();
 
   @override
   Widget build(BuildContext context, NotificationsScreenStore store) {
     final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
-        drawer: const AppNavigationDrawer(),
-        appBar: AppBar(
-          title: Text(localization.notifications),
-        ),
-        body: WStoreStatusBuilder(
-          store: store,
-          watch: (store) => store.status,
-          builderError: (context) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
-              child: Text(
-                "произошла ошибка",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: const Color(0xFF111012).withOpacity(0.8),
-                  fontSize: 20,
-                  height: 1.2,
-                ),
-              ),
-            );
-          },
-          builderLoading: (context) {
-            return Center(
-              child: Lottie.asset(
-                'assets/animations/main_loader.json',
-                width: 200,
-                height: 200,
-              ),
-            );
-          },
-          builder: (context, _) {
-            return WStoreBuilder<NotificationsScreenStore>(
-                store: store,
-                watch: (store) => [store.notifications],
-                builder: (context, store) {
-                  return ListView.builder(
-                    itemCount: store.notifications?.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: SizedBox(
-                            height: 90,
-                            child: Text("${store.notifications?[index].text}")),
-                      );
+      drawer: const AppNavigationDrawer(),
+      appBar: AppBar(
+        title: Text(localization.notifications),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          WStoreBuilder(
+            store: store,
+            watch: (store) => [store.selectedTab, store.currentUserTabs],
+            builder: (context, store) => TabsListRow(
+              children: [
+                ...store.currentUserTabs.map(
+                  (tab) => TabButton(
+                    title: tab.title,
+                    onPressed: () {
+                      store.selectTab(tab);
                     },
-                  );
-                });
-          },
-          onStatusLoaded: (context) {},
-        ));
+                    selected: tab == store.selectedTab,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: WStoreValueBuilder(
+                store: store,
+                watch: (store) => store.selectedTab,
+                builder: (context, selectedTab) {
+                  return switch (selectedTab) {
+                    NotificationsScreenTab.current => const NotificationsPage(),
+                    NotificationsScreenTab.achievements =>
+                      const ArchivedNotificationsPage(),
+                  };
+                }),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+enum NotificationsScreenTab {
+  current(
+    title: 'Текущие',
+  ),
+  achievements(
+    title: 'Архив',
+  );
+
+  const NotificationsScreenTab({
+    required this.title,
+  });
+
+  final String title;
 }
