@@ -1,3 +1,5 @@
+
+import 'package:intl/intl.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 
@@ -59,4 +61,10 @@ String timeFromDateString(String date) {
   final timeString = date.split('T')[1];
   final timeList = timeString.split(':');
   return '${timeList[0].padLeft(2, '0')}:${timeList[1].padRight(2, '0')}';
+}
+
+String formatDate(String dateString) {
+  DateTime date = DateTime.parse(dateString);
+  DateFormat formatter = DateFormat('EEEE, d MMMM');
+  return formatter.format(date);
 }
