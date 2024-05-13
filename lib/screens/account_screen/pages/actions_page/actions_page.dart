@@ -111,7 +111,7 @@ class ActionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return actions != null
-        ? NotificationListener<ScrollNotification>(
+        ? NotificationListener<ScrollEndNotification>(
             onNotification: (notification) {
               if (notification.metrics.atEdge) {
                 // if have scrolled to the bottom
