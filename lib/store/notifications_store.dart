@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/service/notification_service.dart' as api;
 import 'package:wstore/wstore.dart';
@@ -9,7 +11,7 @@ class NotificationsStore extends GStore {
 
   NotificationsStore._();
 
-  List<NotificationModel>? notifications;
+  List<NotificationModel> notifications = [];
 
   Future<int> getNotificationsData(
       {required int page, bool isArchived = false}) async {
@@ -32,11 +34,23 @@ class NotificationsStore extends GStore {
     return notificationsData.maxPagesCount;
   }
 
+  Future<void> changeArchiveStatusNotification(
+      List<int> notificationIds, bool archived) async {
+    await api.archiveNotification(
+        notificationIds: notificationIds, archived: archived);
+    final newNotifications = notifications;
+    newNotifications
+        .removeWhere((element) => notificationIds.contains(element.id));
+    setStore(() {
+      notifications = newNotifications;
+    });
+  }
+
   @override
   void clear() {
     super.clear();
     setStore(() {
-      notifications = null;
+      notifications.clear();
     });
   }
 }

@@ -18,3 +18,69 @@ Future<PaginatedNotifications> getArchivedNotificationsOnPage(
   final result = PaginatedNotifications.fromJson(jsonData);
   return result;
 }
+
+Future<NotificationResponse> readNotification(
+    {required List<int> notificationIds, required bool status}) async {
+  final respone = await HttpPlugin().patch('/notifications/read-many',
+      {"notificationIds": notificationIds, "unread": status});
+  final jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData);
+  return response;
+}
+
+Future<NotificationResponse> archiveNotification(
+    {required List<int> notificationIds, required bool archived}) async {
+  final respone = await HttpPlugin().patch('/notifications/archive-many',
+      {"notificationIds": notificationIds, "archived": archived});
+  final List jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData.last);
+  return response;
+}
+
+Future<NotificationResponse> unarchiveNotification(
+    {required int notificationId, required bool archived}) async {
+  final respone = await HttpPlugin().patch(
+    '/notifications/$notificationId/unarchive',
+  );
+  final jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData);
+  return response;
+}
+
+Future<NotificationResponse> readAllNotifications() async {
+  final respone = await HttpPlugin().patch(
+    '/notifications/read',
+  );
+  final jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData);
+  return response;
+}
+
+Future<NotificationResponse> archiveAllNotifications() async {
+  final respone = await HttpPlugin().patch(
+    '/notifications/archive',
+  );
+  final jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData);
+  return response;
+}
+
+Future<NotificationResponse> deleteAllNotifications() async {
+  final respone = await HttpPlugin().patch(
+    '/notifications/delete',
+  );
+  final jsonData = json.decode(respone.body);
+  final response = NotificationResponse.fromJson(jsonData);
+  return response;
+}
+
+Future<DeleteNotificationsResponse> deleteNotification({
+  required List<int> notificationIds,
+}) async {
+  final respone = await HttpPlugin().patch('notifications/delete-many', {
+    "notificationIds": notificationIds,
+  });
+  final jsonData = json.decode(respone.body);
+  final response = DeleteNotificationsResponse.fromJson(jsonData);
+  return response;
+}

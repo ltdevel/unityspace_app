@@ -19,14 +19,30 @@ class NotificationPageStore extends WStore {
   //
   NotificationErrors error = NotificationErrors.none;
   WStoreStatus status = WStoreStatus.init;
+  int currentPage = 1;
   int maxPageCount = 1;
   NotificationsStore notificationsStore;
-  List<NotificationModel>? get notifications => computedFromStore(
-        store: notificationsStore,
-        getValue: (store) => store.notifications,
-        keyName: 'notifcations',
-      );
+  List<NotificationModel> notifications = [];
   //
+
+  void nextPage() {
+    if (currentPage < maxPageCount) {
+      setStore(() {
+        currentPage += 1;
+      });
+      loadData();
+    }
+  }
+
+  void changeArchiveStatusNotification(
+      List<int> notificationIds, bool archived) async {
+    await notificationsStore.changeArchiveStatusNotification(
+        notificationIds, archived);
+    setStore(() {
+      notifications = notificationsStore.notifications;
+    });
+  }
+
   Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
     setStore(() {
@@ -34,7 +50,9 @@ class NotificationPageStore extends WStore {
       error = NotificationErrors.none;
     });
     try {
-      maxPageCount = await notificationsStore.getNotificationsData(page: 1);
+      maxPageCount =
+          await notificationsStore.getNotificationsData(page: currentPage);
+      notifications = notificationsStore.notifications;
       setStore(() {
         status = WStoreStatus.loaded;
       });
@@ -66,7 +84,6 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
   NotificationPageStore createWStore() =>
       NotificationPageStore(notificationsStore: NotificationsStore())
         ..loadData();
-
   @override
   Widget build(BuildContext context, NotificationPageStore store) {
     final localization = LocalizationHelper.getLocalizations(context);
@@ -101,19 +118,60 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
         );
       },
       builder: (context, _) {
-        return ListView.builder(
-          itemCount: store.notifications?.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              color: Colors.white,
-              child: ListTile(
-                title: Text(store.notifications?[index].taskName ?? ''),
-                subtitle:  Text("${store.notifications?[index].text}"),
-              ),
-            );
-          },
-        );
+        return const SizedBox.shrink();
       },
+      builderLoaded: (context) {
+        return const NotificationsList();
+      },
+    );
+  }
+}
+
+class NotificationsList extends StatelessWidget {
+  const NotificationsList({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollEndNotification>(
+      onNotification: (notification) {
+        if (notification.metrics.atEdge) {
+          if (notification.metrics.pixels != 0) {
+            debugPrint('scrolled down');
+            context.wstore<NotificationPageStore>().nextPage();
+          }
+        }
+        return true;
+      },
+      child: WStoreValueBuilder(
+          watch: (store) => [store.notifications],
+          store: context.wstore<NotificationPageStore>(),
+          builder: (context, store) {
+            final List<NotificationModel> notifications = store[0];
+            return ListView.builder(
+              itemCount: notifications.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  color: Colors.white,
+                  child: ListTile(
+                    title: Text(notifications[index].taskName ?? ''),
+                    subtitle: Text(notifications[index].text),
+                    trailing: InkWell(
+                      onTap: () {
+                        context
+                            .wstore<NotificationPageStore>()
+                            .changeArchiveStatusNotification(
+                                [notifications[index].id],
+                                !notifications[index].archived);
+                      },
+                      child: const Text("Архивировать"),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 }

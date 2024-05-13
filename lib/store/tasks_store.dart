@@ -50,6 +50,7 @@ class TasksStore extends GStore {
         value: (element) => element,
       );
     }
+    return null;
   }
 
   @override

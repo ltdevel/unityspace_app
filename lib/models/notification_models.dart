@@ -1,3 +1,16 @@
+class InitiatorAndRecipient {
+  int id;
+  int organizationId;
+  String name;
+  String? avatar;
+  InitiatorAndRecipient({
+    required this.id,
+    required this.organizationId,
+    required this.name,
+    this.avatar,
+  });
+}
+
 class PaginatedNotifications {
   final List<NotificationResponse> notifications;
   final int maxPagesCount;
@@ -82,6 +95,18 @@ class NotificationLocation {
     return NotificationLocation(
       spaceId: json['spaceId'] as int,
       projectId: json['projectId'] as int?,
+    );
+  }
+}
+
+class DeleteNotificationsResponse {
+  int count;
+  DeleteNotificationsResponse({
+    required this.count,
+  });
+  factory DeleteNotificationsResponse.fromJson(Map<String, dynamic> map) {
+    return DeleteNotificationsResponse(
+      count: map['count'] as int,
     );
   }
 }
