@@ -1,61 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wstore/wstore.dart';
 import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/screens/notifications_screen/utils/notification_errors.dart';
 import 'package:unityspace/store/notifications_store.dart';
-import 'package:unityspace/utils/logger_plugin.dart';
-import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
+import 'package:unityspace/utils/logger_plugin.dart';
 
+/// Стор страницы уведомлений
+///
+/// Слой логики
+///
+/// Содержит в себе методы получения и обработки уведомлений пользователя
 class NotificationPageStore extends WStore {
+  //
+  NotificationPageStore({NotificationsStore? notificationsStore})
+      : notificationsStore = notificationsStore ?? NotificationsStore();
+  //
   NotificationErrors error = NotificationErrors.none;
   WStoreStatus status = WStoreStatus.init;
   int maxPageCount = 1;
-
+  NotificationsStore notificationsStore;
   List<NotificationModel>? get notifications => computedFromStore(
-        store: NotificationsStore(),
+        store: notificationsStore,
         getValue: (store) => store.notifications,
         keyName: 'notifcations',
       );
-  void loadData() {
+  //
+  Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
-    //
     setStore(() {
       status = WStoreStatus.loading;
       error = NotificationErrors.none;
     });
-    //
-    subscribe(
-      subscriptionId: 1,
-      future: NotificationsStore().getNotificationsData(page: 1),
-      onData: (value) {
-        maxPageCount = value;
-        setStore(() {
-          status = WStoreStatus.loaded;
-        });
-      },
-      onError: (e, stack) {
-        logger.d('on NotificationsPage'
-            'NotificationsStore loadData error=$e\nstack=$stack');
-        setStore(() {
-          status = WStoreStatus.error;
-          error = NotificationErrors.loadingDataError;
-        });
-      },
-    );
+    try {
+      maxPageCount = await notificationsStore.getNotificationsData(page: 1);
+      setStore(() {
+        status = WStoreStatus.loaded;
+      });
+    } catch (e, stack) {
+      logger.d('on NotificationsPage'
+          'NotificationsStore loadData error=$e\nstack=$stack');
+      setStore(() {
+        status = WStoreStatus.error;
+        error = NotificationErrors.loadingDataError;
+      });
+    }
   }
 
   @override
   NotificationsPage get widget => super.widget as NotificationsPage;
 }
 
+/// Страница Уведомлений
+///
+/// UI Слой
+///
+/// Наследуется от WstoreWidget,
 class NotificationsPage extends WStoreWidget<NotificationPageStore> {
   const NotificationsPage({
     super.key,
   });
 
   @override
-  NotificationPageStore createWStore() => NotificationPageStore()..loadData();
+  NotificationPageStore createWStore() =>
+      NotificationPageStore(notificationsStore: NotificationsStore())
+        ..loadData();
 
   @override
   Widget build(BuildContext context, NotificationPageStore store) {
@@ -94,16 +104,12 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
         return ListView.builder(
           itemCount: store.notifications?.length,
           itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${store.notifications?[index].text}"),
-                  Text(store.notifications?[index].taskName ?? ''),
-                ],
-              )),
+            return Card(
+              color: Colors.white,
+              child: ListTile(
+                title: Text(store.notifications?[index].taskName ?? ''),
+                subtitle:  Text("${store.notifications?[index].text}"),
+              ),
             );
           },
         );

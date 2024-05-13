@@ -8,42 +8,41 @@ import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 
 class ArchivedNotificationPageStore extends WStore {
+  //
+  ArchivedNotificationPageStore({NotificationsStore? notificationsStore})
+      : notificationsStore = notificationsStore ?? NotificationsStore();
+  //
+  bool isArchived = true;
   NotificationErrors error = NotificationErrors.none;
   WStoreStatus status = WStoreStatus.init;
   int maxPageCount = 1;
-
+  NotificationsStore notificationsStore;
   List<NotificationModel>? get notifications => computedFromStore(
-        store: NotificationsStore(),
+        store: notificationsStore,
         getValue: (store) => store.notifications,
         keyName: 'notifcations',
       );
-  void loadData() {
+  //
+  Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
-    //
     setStore(() {
       status = WStoreStatus.loading;
       error = NotificationErrors.none;
     });
-    //
-    subscribe(
-      subscriptionId: 1,
-      future:
-          NotificationsStore().getNotificationsData(page: 1, isArchived: true),
-      onData: (value) {
-        maxPageCount = value;
-        setStore(() {
-          status = WStoreStatus.loaded;
-        });
-      },
-      onError: (e, stack) {
-        logger.d('on ArchivedNotificationsPage'
-            'NotificationsStore loadData error=$e\nstack=$stack');
-        setStore(() {
-          status = WStoreStatus.error;
-          error = NotificationErrors.loadingDataError;
-        });
-      },
-    );
+    try {
+      maxPageCount = await notificationsStore.getNotificationsData(
+          page: 1, isArchived: isArchived);
+      setStore(() {
+        status = WStoreStatus.loaded;
+      });
+    } catch (e, stack) {
+      logger.d('on NotificationsPage'
+          'NotificationsStore loadData error=$e\nstack=$stack');
+      setStore(() {
+        status = WStoreStatus.error;
+        error = NotificationErrors.loadingDataError;
+      });
+    }
   }
 
   @override
@@ -98,16 +97,12 @@ class ArchivedNotificationsPage
         return ListView.builder(
           itemCount: store.notifications?.length,
           itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${store.notifications?[index].text}"),
-                  Text(store.notifications?[index].taskName ?? ''),
-                ],
-              )),
+            return Card(
+              color: Colors.white,
+              child: ListTile(
+                title: Text(store.notifications?[index].taskName ?? ''),
+                subtitle: Text("${store.notifications?[index].text}"),
+              ),
             );
           },
         );
