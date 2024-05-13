@@ -17,12 +17,7 @@ class ActionsPageStore extends WStore {
   @override
   ActionsPage get widget => super.widget as ActionsPage;
 
-  List<TaskHistory>? get history => computedFromStore(
-        store: TasksStore(),
-        getValue: (store) => store.history,
-        keyName: 'history',
-      );
-
+  List<TaskHistory>? history = [];
   void nextPage() {
     if (currentPage < maxPagesCount) {
       setStore(() {
@@ -36,29 +31,27 @@ class ActionsPageStore extends WStore {
     TasksStore().getTasksHistory(currentPage);
   }
 
-  void loadData() {
+  Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
     setStore(() {
       status = WStoreStatus.loading;
       error = '';
     });
 
-    subscribe(
-        future: TasksStore().getTasksHistory(currentPage),
-        subscriptionId: 1,
-        onData: (value) {
-          maxPagesCount = value;
-          setStore(() {
-            status = WStoreStatus.loaded;
-          });
-        },
-        onError: (e, stack) {
-          logger.d('ActionsPageStore loadData error=$e\nstack=$stack');
-          String errorText =
-              'При загрузке данных возникла проблема, пожалуйста, попробуйте ещё раз';
-          status = WStoreStatus.error;
-          error = errorText;
-        });
+    try {
+      final int pages = await TasksStore().getTasksHistory(currentPage);
+      setStore(() {
+        history = TasksStore().history;
+        maxPagesCount = pages;
+        status = WStoreStatus.loaded;
+      });
+    } catch (e, stack) {
+      logger.d('ActionsPageStore loadData error=$e\nstack=$stack');
+      String errorText =
+          'При загрузке данных возникла проблема, пожалуйста, попробуйте ещё раз';
+      status = WStoreStatus.error;
+      error = errorText;
+    }
   }
 }
 
@@ -81,9 +74,8 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
           builder: (context, _) {
             return const SizedBox.shrink();
           },
-          onStatusLoaded: (context) {},
           builderLoaded: (context) {
-            return ActionsList(actions: store.history);
+            return const ActionsList();
           },
           builderLoading: (context) {
             return Center(
@@ -103,63 +95,65 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
 class ActionsList extends StatelessWidget {
   const ActionsList({
     super.key,
-    required this.actions,
   });
-
-  final List<TaskHistory>? actions;
 
   @override
   Widget build(BuildContext context) {
-    return actions != null
-        ? NotificationListener<ScrollEndNotification>(
-            onNotification: (notification) {
-              if (notification.metrics.atEdge) {
-                // if have scrolled to the bottom
-                if (notification.metrics.pixels != 0) {
-                  context.wstore<ActionsPageStore>().nextPage();
-                }
-              }
-              return true;
-            },
-            child: ListView.builder(
-                itemCount: actions!.length,
-                itemBuilder: (context, index) {
-                  final TaskHistory action = actions![index];
-                  final dateTime = action.updateDate;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LayoutBuilder(builder: (context, _) {
-                        if (index == 0 ||
-                            (dateFromDateString(action.updateDate) !=
-                                dateFromDateString(
-                                    actions![index - 1].updateDate))) {
-                          return Column(
-                            children: [
-                              const PaddingTop(12),
-                              Text(action.updateDate),
-                              const PaddingTop(12),
-                            ],
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      }),
-                      PaddingBottom(
-                        12,
-                        child: ActionCard(
-                          title: action.type.toString(),
-                          task: 'Задача: ${action.taskName}',
-                          time:
-                              '${timeAgo(dateTime)} ${timeFromDateString(dateTime)}',
-                        ),
+    return NotificationListener<ScrollEndNotification>(
+      onNotification: (notification) {
+        if (notification.metrics.atEdge) {
+          // if have scrolled to the bottom
+          if (notification.metrics.pixels != 0) {
+            context.wstore<ActionsPageStore>().nextPage();
+          }
+        }
+        return true;
+      },
+      child: WStoreValueBuilder(
+        watch: (store) => [store.history],
+        store: context.wstore<ActionsPageStore>(),
+        builder: (context, store) {
+          final List<TaskHistory> actions = store[0] ?? [];
+          return ListView.builder(
+              itemCount: actions.length,
+              itemBuilder: (context, index) {
+                final TaskHistory action = actions[index];
+                final dateTime = action.updateDate;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LayoutBuilder(builder: (context, _) {
+                      if (index == 0 ||
+                          (dateFromDateString(action.updateDate) !=
+                              dateFromDateString(
+                                  actions[index - 1].updateDate))) {
+                        return Column(
+                          children: [
+                            const PaddingTop(12),
+                            Text(action.updateDate),
+                            const PaddingTop(12),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    }),
+                    PaddingBottom(
+                      12,
+                      child: ActionCard(
+                        title: action.type.toString(),
+                        task: 'Задача: ${action.taskName}',
+                        time:
+                            '${timeAgo(dateTime)} ${timeFromDateString(dateTime)}',
                       ),
-                    ],
-                  );
-                }),
-          )
-        : const SizedBox.shrink();
+                    ),
+                  ],
+                );
+              });
+        },
+      ),
+    );
   }
 }
