@@ -22,9 +22,13 @@ class NotificationPageStore extends WStore {
   int currentPage = 1;
   int maxPageCount = 1;
   NotificationsStore notificationsStore;
-  List<NotificationModel> notifications = [];
-  //
+  List<NotificationModel> get notifications => computedFromStore(
+        store: notificationsStore,
+        getValue: (store) => store.notifications,
+        keyName: 'notifcations',
+      );
 
+  /// Переход на следующую страницу уведомлений
   void nextPage() {
     if (currentPage < maxPageCount) {
       setStore(() {
@@ -34,13 +38,16 @@ class NotificationPageStore extends WStore {
     }
   }
 
+  ///Изменяет статус архивирования уведомления
   void changeArchiveStatusNotification(
-      List<int> notificationIds, bool archived) async {
-    await notificationsStore.changeArchiveStatusNotification(
+      List<int> notificationIds, bool archived) {
+    notificationsStore.changeArchiveStatusNotification(
         notificationIds, archived);
-    setStore(() {
-      notifications = notificationsStore.notifications;
-    });
+  }
+
+  ///Арзивирует все уведомления
+  void archiveAllNotifications() {
+    notificationsStore.archiveAllNotifications();
   }
 
   Future<void> loadData() async {
@@ -52,7 +59,6 @@ class NotificationPageStore extends WStore {
     try {
       maxPageCount =
           await notificationsStore.getNotificationsData(page: currentPage);
-      notifications = notificationsStore.notifications;
       setStore(() {
         status = WStoreStatus.loaded;
       });
@@ -121,7 +127,30 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
         return const SizedBox.shrink();
       },
       builderLoaded: (context) {
-        return const NotificationsList();
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                    onTap: () {
+                      context
+                          .wstore<NotificationPageStore>()
+                          .archiveAllNotifications();
+                    },
+                    child: Text(localization.archive_all)),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(localization.read_all),
+                const SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            const Expanded(child: NotificationsList()),
+          ],
+        );
       },
     );
   }
@@ -134,6 +163,7 @@ class NotificationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = LocalizationHelper.getLocalizations(context);
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
         if (notification.metrics.atEdge) {
@@ -144,11 +174,11 @@ class NotificationsList extends StatelessWidget {
         }
         return true;
       },
-      child: WStoreValueBuilder(
+      child: WStoreBuilder<NotificationPageStore>(
           watch: (store) => [store.notifications],
           store: context.wstore<NotificationPageStore>(),
           builder: (context, store) {
-            final List<NotificationModel> notifications = store[0];
+            final List<NotificationModel> notifications = store.notifications;
             return ListView.builder(
               itemCount: notifications.length,
               itemBuilder: (BuildContext context, int index) {
@@ -165,7 +195,7 @@ class NotificationsList extends StatelessWidget {
                                 [notifications[index].id],
                                 !notifications[index].archived);
                       },
-                      child: const Text("Архивировать"),
+                      child: Text(localization.archive),
                     ),
                   ),
                 );

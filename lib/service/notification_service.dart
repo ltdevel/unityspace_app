@@ -28,23 +28,25 @@ Future<NotificationResponse> readNotification(
   return response;
 }
 
-Future<NotificationResponse> archiveNotification(
-    {required List<int> notificationIds, required bool archived}) async {
-  final respone = await HttpPlugin().patch('/notifications/archive-many',
-      {"notificationIds": notificationIds, "archived": archived});
-  final List jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData.last);
-  return response;
+Future<List<NotificationResponse>> archiveNotification(
+    {required List<int> notificationIds, required bool isArchived}) async {
+  final response = await HttpPlugin().patch('/notifications/archive-many',
+      {"notificationIds": notificationIds, "archived": isArchived});
+  final List jsonData = json.decode(response.body);
+  return jsonData
+      .map((element) => NotificationResponse.fromJson(element))
+      .toList();
 }
 
-Future<NotificationResponse> unarchiveNotification(
+Future<List<NotificationResponse>> unarchiveNotification(
     {required int notificationId, required bool archived}) async {
-  final respone = await HttpPlugin().patch(
+  final response = await HttpPlugin().patch(
     '/notifications/$notificationId/unarchive',
   );
-  final jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData);
-  return response;
+  final jsonData = json.decode(response.body);
+  return jsonData
+      .map((element) => NotificationResponse.fromJson(element))
+      .toList();
 }
 
 Future<NotificationResponse> readAllNotifications() async {
@@ -56,13 +58,14 @@ Future<NotificationResponse> readAllNotifications() async {
   return response;
 }
 
-Future<NotificationResponse> archiveAllNotifications() async {
+Future<List<NotificationResponse>> archiveAllNotifications() async {
   final respone = await HttpPlugin().patch(
     '/notifications/archive',
   );
-  final jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData);
-  return response;
+  final List jsonData = json.decode(respone.body);
+  return jsonData
+      .map((element) => NotificationResponse.fromJson(element))
+      .toList();
 }
 
 Future<NotificationResponse> deleteAllNotifications() async {

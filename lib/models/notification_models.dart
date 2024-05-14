@@ -7,7 +7,7 @@ class InitiatorAndRecipient {
     required this.id,
     required this.organizationId,
     required this.name,
-    this.avatar,
+    required this.avatar,
   });
 }
 
@@ -51,13 +51,13 @@ class NotificationResponse {
     required this.id,
     required this.initiatorId,
     required this.locations,
-    this.message,
+    required this.message,
     required this.notificationType,
     required this.parentId,
     required this.parentType,
     required this.recipientId,
-    this.stageName,
-    this.taskName,
+    required this.stageName,
+    required this.taskName,
     required this.text,
     required this.unread,
   });
@@ -133,13 +133,13 @@ class NotificationModel {
     required this.id,
     required this.initiatorId,
     required this.locations,
-    this.message,
+    required this.message,
     required this.notificationType,
     required this.parentId,
     required this.parentType,
     required this.recipientId,
-    this.stageName,
-    this.taskName,
+    required this.stageName,
+    required this.taskName,
     required this.text,
     required this.unread,
   });
