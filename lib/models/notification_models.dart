@@ -112,20 +112,20 @@ class DeleteNotificationsResponse {
 }
 
 class NotificationModel {
-  final bool archived;
-  final String createdAt;
-  final int id;
-  final int initiatorId;
-  final List<NotificationLocation> locations;
-  final int? message;
-  final String notificationType;
-  final int parentId;
-  final String parentType;
-  final int recipientId;
-  final String? stageName;
-  final String? taskName;
-  final String text;
-  final bool unread;
+  bool archived;
+  String createdAt;
+  int id;
+  int initiatorId;
+  List<NotificationLocation> locations;
+  int? message;
+  String notificationType;
+  int parentId;
+  String parentType;
+  int recipientId;
+  String? stageName;
+  String? taskName;
+  String text;
+  bool unread;
 
   NotificationModel({
     required this.archived,

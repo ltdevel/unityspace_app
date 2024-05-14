@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/screens/notifications_screen/utils/notification_errors.dart';
+import 'package:unityspace/screens/notifications_screen/widgets/notifications_list.dart';
 import 'package:unityspace/store/notifications_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
@@ -16,13 +17,36 @@ class ArchivedNotificationPageStore extends WStore {
   NotificationErrors error = NotificationErrors.none;
   WStoreStatus status = WStoreStatus.init;
   int maxPageCount = 1;
+  int currentPage = 1;
   NotificationsStore notificationsStore;
-  List<NotificationModel>? get notifications => computedFromStore(
+  List<NotificationModel> get notifications => computedFromStore(
         store: notificationsStore,
         getValue: (store) => store.notifications,
         keyName: 'notifcations',
       );
-  //
+
+  /// Переход на следующую страницу уведомлений
+  void nextPage() {
+    if (currentPage < maxPageCount) {
+      setStore(() {
+        currentPage += 1;
+      });
+      loadData();
+    }
+  }
+
+  ///Изменяет статус архивирования уведомления
+  void changeArchiveStatusNotification(
+      List<int> notificationIds, bool archived) {
+    notificationsStore.changeArchiveStatusNotification(
+        notificationIds, archived);
+  }
+
+  ///Арзивирует все уведомления
+  void archiveAllNotifications() {
+    notificationsStore.archiveAllNotifications();
+  }
+
   Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
     setStore(() {
@@ -31,7 +55,7 @@ class ArchivedNotificationPageStore extends WStore {
     });
     try {
       maxPageCount = await notificationsStore.getNotificationsData(
-          page: 1, isArchived: isArchived);
+          page: currentPage, isArchived: isArchived);
       setStore(() {
         status = WStoreStatus.loaded;
       });
@@ -43,6 +67,12 @@ class ArchivedNotificationPageStore extends WStore {
         error = NotificationErrors.loadingDataError;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    notificationsStore.clear();
+    super.dispose();
   }
 
   @override
@@ -94,17 +124,48 @@ class ArchivedNotificationsPage
         );
       },
       builder: (context, _) {
-        return ListView.builder(
-          itemCount: store.notifications?.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              color: Colors.white,
-              child: ListTile(
-                title: Text(store.notifications?[index].taskName ?? ''),
-                subtitle: Text("${store.notifications?[index].text}"),
-              ),
-            );
-          },
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(onTap: () {}, child: Text(localization.delete_all)),
+                const SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            Expanded(
+                child: NotificationListener<ScrollEndNotification>(
+              onNotification: (notification) {
+                if (notification.metrics.atEdge) {
+                  if (notification.metrics.pixels != 0) {
+                    debugPrint('scrolled down');
+                    context.wstore<ArchivedNotificationPageStore>().nextPage();
+                  }
+                }
+                return true;
+              },
+              child: WStoreBuilder<ArchivedNotificationPageStore>(
+                  watch: (store) => [store.notifications],
+                  store: context.wstore<ArchivedNotificationPageStore>(),
+                  builder: (context, store) {
+                    final List<NotificationModel> notifications =
+                        store.notifications;
+                    return NotificationsList(
+                      items: notifications,
+                      onArchiveButtonTap: (index) {
+                        context
+                            .wstore<ArchivedNotificationPageStore>()
+                            .changeArchiveStatusNotification(
+                                [notifications[index].id],
+                                notifications[index].archived);
+                      },
+                      onOptionalButtonTap: (int index) {},
+                    );
+                  }),
+            )),
+          ],
         );
       },
     );

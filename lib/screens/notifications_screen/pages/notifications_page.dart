@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:unityspace/screens/notifications_screen/widgets/notifications_list.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/screens/notifications_screen/utils/notification_errors.dart';
@@ -45,9 +46,19 @@ class NotificationPageStore extends WStore {
         notificationIds, archived);
   }
 
-  ///Арзивирует все уведомления
+  ///Изменяет статус прочтения уведомления
+  void changeReadStatusNotification(List<int> notificationIds, bool archived) {
+    notificationsStore.changeReadStatusNotification(notificationIds, archived);
+  }
+
+  ///Архивирует все уведомления
   void archiveAllNotifications() {
     notificationsStore.archiveAllNotifications();
+  }
+
+  ///Читает все уведомления
+  void readAllNotifications() {
+    notificationsStore.readAllNotifications();
   }
 
   Future<void> loadData() async {
@@ -70,6 +81,12 @@ class NotificationPageStore extends WStore {
         error = NotificationErrors.loadingDataError;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    notificationsStore.clear();
+    super.dispose();
   }
 
   @override
@@ -142,66 +159,57 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
                 const SizedBox(
                   width: 10,
                 ),
-                Text(localization.read_all),
+                InkWell(
+                    onTap: () {
+                      context
+                          .wstore<NotificationPageStore>()
+                          .readAllNotifications();
+                    },
+                    child: Text(localization.read_all)),
                 const SizedBox(
                   width: 10,
                 ),
               ],
             ),
-            const Expanded(child: NotificationsList()),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class NotificationsList extends StatelessWidget {
-  const NotificationsList({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = LocalizationHelper.getLocalizations(context);
-    return NotificationListener<ScrollEndNotification>(
-      onNotification: (notification) {
-        if (notification.metrics.atEdge) {
-          if (notification.metrics.pixels != 0) {
-            debugPrint('scrolled down');
-            context.wstore<NotificationPageStore>().nextPage();
-          }
-        }
-        return true;
-      },
-      child: WStoreBuilder<NotificationPageStore>(
-          watch: (store) => [store.notifications],
-          store: context.wstore<NotificationPageStore>(),
-          builder: (context, store) {
-            final List<NotificationModel> notifications = store.notifications;
-            return ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  color: Colors.white,
-                  child: ListTile(
-                    title: Text(notifications[index].taskName ?? ''),
-                    subtitle: Text(notifications[index].text),
-                    trailing: InkWell(
-                      onTap: () {
+            Expanded(
+                child: NotificationListener<ScrollEndNotification>(
+              onNotification: (notification) {
+                if (notification.metrics.atEdge) {
+                  if (notification.metrics.pixels != 0) {
+                    debugPrint('scrolled down');
+                    context.wstore<NotificationPageStore>().nextPage();
+                  }
+                }
+                return true;
+              },
+              child: WStoreBuilder<NotificationPageStore>(
+                  watch: (store) => [store.notifications],
+                  store: context.wstore<NotificationPageStore>(),
+                  builder: (context, store) {
+                    final List<NotificationModel> notifications =
+                        store.notifications;
+                    return NotificationsList(
+                      items: notifications,
+                      onOptionalButtonTap: (index) {
+                        context
+                            .wstore<NotificationPageStore>()
+                            .changeReadStatusNotification(
+                                [notifications[index].id],
+                                notifications[index].archived);
+                      },
+                      onArchiveButtonTap: (index) {
                         context
                             .wstore<NotificationPageStore>()
                             .changeArchiveStatusNotification(
                                 [notifications[index].id],
-                                !notifications[index].archived);
+                                notifications[index].archived);
                       },
-                      child: Text(localization.archive),
-                    ),
-                  ),
-                );
-              },
-            );
-          }),
+                    );
+                  }),
+            )),
+          ],
+        );
+      },
     );
   }
 }

@@ -19,13 +19,14 @@ Future<PaginatedNotifications> getArchivedNotificationsOnPage(
   return result;
 }
 
-Future<NotificationResponse> readNotification(
+Future<List<NotificationResponse>> readNotification(
     {required List<int> notificationIds, required bool status}) async {
-  final respone = await HttpPlugin().patch('/notifications/read-many',
+  final response = await HttpPlugin().patch('/notifications/read-many',
       {"notificationIds": notificationIds, "unread": status});
-  final jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData);
-  return response;
+  final List jsonData = json.decode(response.body);
+  return jsonData
+      .map((element) => NotificationResponse.fromJson(element))
+      .toList();
 }
 
 Future<List<NotificationResponse>> archiveNotification(
@@ -49,13 +50,14 @@ Future<List<NotificationResponse>> unarchiveNotification(
       .toList();
 }
 
-Future<NotificationResponse> readAllNotifications() async {
+Future<List<NotificationResponse>> readAllNotifications() async {
   final respone = await HttpPlugin().patch(
     '/notifications/read',
   );
-  final jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData);
-  return response;
+  final List jsonData = json.decode(respone.body);
+  return jsonData
+      .map((element) => NotificationResponse.fromJson(element))
+      .toList();
 }
 
 Future<List<NotificationResponse>> archiveAllNotifications() async {
