@@ -51,41 +51,39 @@ Future<List<NotificationResponse>> unarchiveNotification(
 }
 
 Future<List<NotificationResponse>> readAllNotifications() async {
-  final respone = await HttpPlugin().patch(
+  final response = await HttpPlugin().patch(
     '/notifications/read',
   );
-  final List jsonData = json.decode(respone.body);
+  final List jsonData = json.decode(response.body);
   return jsonData
       .map((element) => NotificationResponse.fromJson(element))
       .toList();
 }
 
 Future<List<NotificationResponse>> archiveAllNotifications() async {
-  final respone = await HttpPlugin().patch(
+  final response = await HttpPlugin().patch(
     '/notifications/archive',
   );
-  final List jsonData = json.decode(respone.body);
+  final List jsonData = json.decode(response.body);
   return jsonData
       .map((element) => NotificationResponse.fromJson(element))
       .toList();
 }
 
-Future<NotificationResponse> deleteAllNotifications() async {
-  final respone = await HttpPlugin().patch(
+Future<DeleteNotificationsResponse> deleteAllNotifications() async {
+  final response = await HttpPlugin().patch(
     '/notifications/delete',
   );
-  final jsonData = json.decode(respone.body);
-  final response = NotificationResponse.fromJson(jsonData);
-  return response;
+  final jsonData = json.decode(response.body);
+  return DeleteNotificationsResponse.fromJson(jsonData);
 }
 
 Future<DeleteNotificationsResponse> deleteNotification({
   required List<int> notificationIds,
 }) async {
-  final respone = await HttpPlugin().patch('notifications/delete-many', {
+  final response = await HttpPlugin().delete('notifications/delete-many', {
     "notificationIds": notificationIds,
   });
-  final jsonData = json.decode(respone.body);
-  final response = DeleteNotificationsResponse.fromJson(jsonData);
-  return response;
+  final jsonData = json.decode(response.body);
+  return DeleteNotificationsResponse.fromJson(jsonData);
 }

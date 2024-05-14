@@ -57,6 +57,13 @@ class HttpPlugin {
     return send('PATCH', url, data);
   }
 
+  Future<http.Response> delete(
+    final String url, [
+    final Map<String, dynamic>? data,
+  ]) {
+    return send('DELETE', url, data);
+  }
+
   Future<http.Response> get(
     final String url, [
     Map<String, dynamic>? queryParameters,

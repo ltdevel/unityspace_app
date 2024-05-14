@@ -36,15 +36,25 @@ class ArchivedNotificationPageStore extends WStore {
   }
 
   ///Изменяет статус архивирования уведомления
-  void changeArchiveStatusNotification(
+  void changeArchiveStatusNotifications(
       List<int> notificationIds, bool archived) {
-    notificationsStore.changeArchiveStatusNotification(
+    notificationsStore.changeArchiveStatusNotifications(
         notificationIds, archived);
   }
 
-  ///Арзивирует все уведомления
+  ///Архивирует все уведомления
   void archiveAllNotifications() {
     notificationsStore.archiveAllNotifications();
+  }
+
+  ///Удаляет уведомления
+  void deleteNotifications(List<int> notificationIds) {
+    notificationsStore.deleteNotifications(notificationIds);
+  }
+
+  ///Удаляет все уведомления из архива
+  void deleteAllNotifications() {
+    notificationsStore.deleteAllNotifications();
   }
 
   Future<void> loadData() async {
@@ -129,7 +139,13 @@ class ArchivedNotificationsPage
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                InkWell(onTap: () {}, child: Text(localization.delete_all)),
+                InkWell(
+                    onTap: () {
+                      context
+                          .wstore<ArchivedNotificationPageStore>()
+                          .deleteAllNotifications();
+                    },
+                    child: Text(localization.delete_all)),
                 const SizedBox(
                   width: 10,
                 ),
@@ -157,11 +173,17 @@ class ArchivedNotificationsPage
                       onArchiveButtonTap: (index) {
                         context
                             .wstore<ArchivedNotificationPageStore>()
-                            .changeArchiveStatusNotification(
+                            .changeArchiveStatusNotifications(
                                 [notifications[index].id],
                                 notifications[index].archived);
                       },
-                      onOptionalButtonTap: (int index) {},
+                      onOptionalButtonTap: (int index) {
+                        context
+                            .wstore<ArchivedNotificationPageStore>()
+                            .deleteNotifications(
+                          [notifications[index].id],
+                        );
+                      },
                     );
                   }),
             )),

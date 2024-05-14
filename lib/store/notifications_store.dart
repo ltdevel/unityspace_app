@@ -16,7 +16,7 @@ class NotificationsStore extends GStore {
   /// Возвращает отформатированный список,
   /// из которого уже убраны отформатированные/вернувшиеся из форматирования
   /// уведомления
-  List<NotificationModel> _archiveLocally({
+  List<NotificationModel> _removeFromListLocally({
     required List<NotificationResponse> notificationsToRemove,
     required List<NotificationModel> notifications,
   }) {
@@ -48,6 +48,19 @@ class NotificationsStore extends GStore {
     return newNotifications;
   }
 
+  /// Возвращает отформатированный список,
+  /// из которого уже убраны отформатированные/вернувшиеся из форматирования
+  /// уведомления
+  List<NotificationModel> _deleteLocally({
+    required List<NotificationModel> notifications,
+    required List<int> notificationIdsToRemove,
+  }) {
+    return notifications
+        .where((notification) =>
+            !notificationIdsToRemove.contains(notification.id))
+        .toList();
+  }
+
   Future<int> getNotificationsData(
       {required int page, bool isArchived = false}) async {
     // Получение данных уведомлений
@@ -73,12 +86,12 @@ class NotificationsStore extends GStore {
 
   /// Меняет статус по Архивированию уведомлений по id тех уведомлений,
   /// которые мы укажем
-  Future<void> changeArchiveStatusNotification(
+  Future<void> changeArchiveStatusNotifications(
       List<int> notificationIds, bool isArchived) async {
     final archivedList = await api.archiveNotification(
         notificationIds: notificationIds, isArchived: !isArchived);
     setStore(() {
-      notifications = _archiveLocally(
+      notifications = _removeFromListLocally(
           notificationsToRemove: archivedList, notifications: notifications);
     });
   }
@@ -95,11 +108,24 @@ class NotificationsStore extends GStore {
     });
   }
 
+  /// Удаляет уведомления по id тех уведомлений,
+  /// которые мы укажем
+  Future<void> deleteNotifications(List<int> notificationIds) async {
+    await api.deleteNotification(
+      notificationIds: notificationIds,
+    );
+    setStore(() {
+      notifications = _deleteLocally(
+          notifications: notifications,
+          notificationIdsToRemove: notificationIds);
+    });
+  }
+
   /// Архивирует все уведомления
   Future<void> archiveAllNotifications() async {
     final archivedList = await api.archiveAllNotifications();
     setStore(() {
-      notifications = _archiveLocally(
+      notifications = _removeFromListLocally(
           notificationsToRemove: archivedList, notifications: notifications);
     });
   }
@@ -110,6 +136,14 @@ class NotificationsStore extends GStore {
     setStore(() {
       notifications = _readLocally(
           notificationsToUpdate: readList, notifications: notifications);
+    });
+  }
+
+  /// Удаляет все уведомления
+  Future<void> deleteAllNotifications() async {
+    await api.deleteAllNotifications();
+    setStore(() {
+      notifications = [];
     });
   }
 

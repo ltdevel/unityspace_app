@@ -42,7 +42,7 @@ class NotificationPageStore extends WStore {
   ///Изменяет статус архивирования уведомления
   void changeArchiveStatusNotification(
       List<int> notificationIds, bool archived) {
-    notificationsStore.changeArchiveStatusNotification(
+    notificationsStore.changeArchiveStatusNotifications(
         notificationIds, archived);
   }
 
