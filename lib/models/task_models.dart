@@ -31,6 +31,225 @@ enum TaskChangesTypes {
   const TaskChangesTypes(this.value);
 }
 
+class Task {
+  final int id;
+  final String name;
+  final List<TaskStages> stages;
+  final String? color;
+  final String createdAt;
+  final int creatorId;
+  final List<int> tags;
+  final List<int> responsibleUsersId;
+  final bool hasMessages;
+  final bool hasDescription;
+  final int status;
+  final String? dateBegin;
+  final String? dateEnd;
+  final String dateMove;
+  final TaskImportance importance;
+  final String? dateStatusChanged;
+  final String? blockReason;
+  final List<int> members;
+  final TaskCover? cover;
+
+  Task({
+    required this.id,
+    required this.name,
+    required this.stages,
+    required this.color,
+    required this.createdAt,
+    required this.creatorId,
+    required this.tags,
+    required this.responsibleUsersId,
+    required this.hasMessages,
+    required this.hasDescription,
+    required this.status,
+    required this.dateBegin,
+    required this.dateEnd,
+    required this.dateMove,
+    required this.importance,
+    required this.dateStatusChanged,
+    required this.blockReason,
+    required this.members,
+    required this.cover,
+  });
+
+  factory Task.fromResponse(TaskResponse response) {
+    return Task(
+        id: response.id,
+        name: response.name,
+        stages: response.stages,
+        color: response.color,
+        createdAt: response.createdAt,
+        creatorId: response.creatorId,
+        tags: response.tags,
+        responsibleUsersId: response.responsibleUserId,
+        hasMessages: response.hasMessages,
+        hasDescription: response.hasDescription,
+        status: response.status,
+        dateBegin: response.dateBegin,
+        dateEnd: response.dateEnd,
+        dateMove: response.dateMove ?? '',
+        importance: response.importance,
+        dateStatusChanged: response.dateStatusChanged,
+        blockReason: response.blockReason,
+        members: response.members,
+        cover: response.cover);
+  }
+}
+
+enum TaskImportance {
+  high(1),
+  default_(0),
+  low(-1);
+
+  final int value;
+
+  const TaskImportance(this.value);
+}
+
+class TaskCover {
+  final int id;
+  final String dominantColor;
+  final int height;
+  final String pictureUid;
+  final int taskId;
+  final int width;
+  final String? fullLink;
+
+  TaskCover({
+    required this.id,
+    required this.dominantColor,
+    required this.height,
+    required this.pictureUid,
+    required this.taskId,
+    required this.width,
+    required this.fullLink,
+  });
+
+  factory TaskCover.fromJson(Map<String, dynamic> json) {
+    return TaskCover(
+      id: json['id'] as int,
+      dominantColor: json['dominantColor'] as String,
+      height: json['height'] as int,
+      pictureUid: json['pictureUid'] as String,
+      taskId: json['taskId'] as int,
+      width: json['width'] as int,
+      fullLink: json['fullLink'] as String?,
+    );
+  }
+}
+
+class TaskStages {
+  final int stageId;
+  final int order;
+  final int projectId;
+
+  TaskStages({
+    required this.stageId,
+    required this.order,
+    required this.projectId,
+  });
+
+  factory TaskStages.fromJson(Map<String, dynamic> json) {
+    return TaskStages(
+      stageId: json['stageId'] as int,
+      order: int.parse(json['order'] as String),
+      projectId: json['projectId'] as int,
+    );
+  }
+}
+
+class TaskResponse {
+  final int id;
+  final String name;
+  final String? color;
+  final List<TaskStages> stages;
+  final TaskImportance importance;
+  final String createdAt;
+  final int creatorId;
+  final List<int> tags;
+  final List<int> responsibleUserId;
+  final bool hasMessages;
+  final bool hasDescription;
+  final int status;
+  final String? dateBegin;
+  final String? dateEnd;
+  final String? dateStatusChanged;
+  final String? blockReason;
+  final String? dateMove;
+  final List<int> members;
+  final TaskCover? cover;
+
+  TaskResponse({
+    required this.id,
+    required this.name,
+    required this.color,
+    required this.stages,
+    required this.importance,
+    required this.createdAt,
+    required this.creatorId,
+    required this.tags,
+    required this.responsibleUserId,
+    required this.hasMessages,
+    required this.hasDescription,
+    required this.status,
+    required this.dateBegin,
+    required this.dateEnd,
+    required this.dateStatusChanged,
+    required this.blockReason,
+    required this.dateMove,
+    required this.members,
+    required this.cover,
+  });
+
+  factory TaskResponse.fromJson(Map<String, dynamic> json) {
+    return TaskResponse(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      color: json['color'] as String?,
+      stages: (json['stages'] as List<dynamic>)
+          .map((e) => TaskStages.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      importance: TaskImportance.values[json['importance'] as int],
+      createdAt: json['createdAt'] as String,
+      creatorId: json['creatorId'] as int,
+      tags: (json['tags'] as List<dynamic>).map((e) => e as int).toList(),
+      responsibleUserId: (json['responsibleUserId'] as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
+      hasMessages: json['hasMessages'] as bool,
+      hasDescription: json['hasDescription'] as bool,
+      status: json['status'] as int,
+      dateBegin: json['dateBegin'] as String?,
+      dateEnd: json['dateEnd'] as String?,
+      dateStatusChanged: json['dateStatusChanged'] as String?,
+      blockReason: json['blockReason'] as String?,
+      dateMove: json['dateMove'] as String?,
+      members: (json['members'] as List<dynamic>).map((e) => e as int).toList(),
+      cover: json['cover'] != null
+          ? TaskCover.fromJson(json['cover'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+class TaskResponses {
+  final List<TaskResponse> tasks;
+
+  TaskResponses({
+    required this.tasks,
+  });
+
+  factory TaskResponses.fromJson(List<dynamic> json) {
+    return TaskResponses(
+      tasks: json
+          .map((e) => TaskResponse.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
 class TaskHistory {
   final int id;
   final String? state;
@@ -73,16 +292,20 @@ class TaskHistory {
 class MyTaskHistoryResponse {
   final int maxPageCount;
   final List<TaskHistoryResponse> history;
-  MyTaskHistoryResponse({required this.maxPageCount, required this.history});
+  final List<TaskResponse> tasks;
+  MyTaskHistoryResponse(
+      {required this.maxPageCount, required this.history, required this.tasks});
 
   factory MyTaskHistoryResponse.fromJson(Map<String, dynamic> map) {
     final historyList = map['history'] as List<dynamic>;
+    final tasksList = map['tasks'] as List<dynamic>;
 
     return MyTaskHistoryResponse(
         maxPageCount: map['maxPagesCount'] as int,
         history: historyList
             .map((history) => TaskHistoryResponse.fromJson(history))
-            .toList());
+            .toList(),
+        tasks: tasksList.map((task) => TaskResponse.fromJson(task)).toList());
   }
 }
 

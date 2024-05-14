@@ -12,46 +12,90 @@ class TasksStore extends GStore {
   TasksStore._();
 
   List<TaskHistory>? history;
+  List<Task>? tasks;
 
   Future<int> getTasksHistory(int page) async {
     final response = await api.getMyTasksHistory(page);
     final maxPageCount = response.maxPageCount;
-    final historyResponse = response.history;
-    final historyPage =
-        historyResponse.map((res) => TaskHistory.fromResponse(res)).toList();
-    HashMap<int, TaskHistory>? historyMap = _historyToMap(history);
-
-    setStore(() {
-      if (historyMap == null || historyMap.isEmpty) {
-        history = historyPage;
-      } else {
-        for (TaskHistory history in historyPage) {
-          if (historyMap.containsKey(history.id)) {
-            historyMap.update(history.id, (value) => history);
-          } else {
-            historyMap[history.id] = history;
-          }
-        }
-        final List<TaskHistory> historyList =
-            historyMap.entries.map((element) => element.value).toList();
-
-        historyList.sort((a, b) => a.updateDate.compareTo(b.updateDate));
-        final newHistory = historyList.reversed.toList();
-        history = newHistory;
-      }
-    });
+    _setHistory(response);
+    _setTasks(response);
     return maxPageCount;
   }
 
-  HashMap<int, TaskHistory>? _historyToMap(List<TaskHistory>? history) {
-    if (history != null && history.isNotEmpty) {
-      return HashMap.fromIterable(
-        history,
-        key: (element) => element.id,
-        value: (element) => element,
-      );
+  Task? getTaskById(int id) {
+    return tasks?.firstWhere((element) => element.id == id);
+  }
+
+  void _setTasks(MyTaskHistoryResponse response) {
+    final tasksResponse = response.tasks;
+    final List<Task> tasksList =
+        tasksResponse.map((res) => Task.fromResponse(res)).toList();
+    HashMap<int, Task>? tasksMap = HashMap.fromIterable(
+      tasksList,
+      key: (element) => element.id,
+      value: (element) => element,
+    );
+
+    setStore(() {
+      if (tasksMap.isEmpty) {
+        tasks = tasksList;
+      } else {
+        List<Task> updatedTasksList =
+            _updateTasksListLocally(tasksList, tasksMap);
+        tasks = updatedTasksList;
+      }
+    });
+  }
+
+  void _setHistory(MyTaskHistoryResponse response) {
+    final historyResponse = response.history;
+    final historyPage =
+        historyResponse.map((res) => TaskHistory.fromResponse(res)).toList();
+    HashMap<int, TaskHistory>? historyMap = HashMap.fromIterable(
+      historyPage,
+      key: (element) => element.id,
+      value: (element) => element,
+    );
+
+    setStore(() {
+      if (historyMap.isEmpty) {
+        history = historyPage;
+      } else {
+        List<TaskHistory> updatedHistoryList =
+            _updateHistoryListLocally(historyPage, historyMap);
+
+        updatedHistoryList.sort((a, b) => a.updateDate.compareTo(b.updateDate));
+        history = updatedHistoryList.reversed.toList();
+      }
+    });
+  }
+
+  List<TaskHistory> _updateHistoryListLocally(
+      List<TaskHistory> historyPage, HashMap<int, TaskHistory> historyMap) {
+    for (TaskHistory history in historyPage) {
+      if (historyMap.containsKey(history.id)) {
+        historyMap.update(history.id, (_) => history);
+      } else {
+        historyMap[history.id] = history;
+      }
     }
-    return null;
+    final List<TaskHistory> newHistory =
+        historyMap.entries.map((element) => element.value).toList();
+    return newHistory;
+  }
+
+  List<Task> _updateTasksListLocally(
+      List<Task> tasks, HashMap<int, Task> tasksMap) {
+    for (Task tasks in tasks) {
+      if (tasksMap.containsKey(tasks.id)) {
+        tasksMap.update(tasks.id, (_) => tasks);
+      } else {
+        tasksMap[tasks.id] = tasks;
+      }
+    }
+    final List<Task> newTasks =
+        tasksMap.entries.map((element) => element.value).toList();
+    return newTasks;
   }
 
   @override
