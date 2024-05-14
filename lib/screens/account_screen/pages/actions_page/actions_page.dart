@@ -16,8 +16,11 @@ class ActionsPageStore extends WStore {
   int currentPage = 1;
   @override
   ActionsPage get widget => super.widget as ActionsPage;
-
-  List<TaskHistory>? history = [];
+  List<TaskHistory>? get history => computedFromStore(
+        store: TasksStore(),
+        getValue: (store) => store.history,
+        keyName: 'history',
+      );
   void nextPage() {
     if (currentPage < maxPagesCount) {
       setStore(() {
@@ -41,7 +44,6 @@ class ActionsPageStore extends WStore {
     try {
       final int pages = await TasksStore().getTasksHistory(currentPage);
       setStore(() {
-        history = TasksStore().history;
         maxPagesCount = pages;
         status = WStoreStatus.loaded;
       });
@@ -109,11 +111,10 @@ class ActionsList extends StatelessWidget {
         }
         return true;
       },
-      child: WStoreValueBuilder(
-        watch: (store) => [store.history],
+      child: WStoreValueBuilder<ActionsPageStore, List<TaskHistory>>(
+        watch: (store) => store.history ?? [],
         store: context.wstore<ActionsPageStore>(),
-        builder: (context, store) {
-          final List<TaskHistory> actions = store[0] ?? [];
+        builder: (context, actions) {
           return ListView.builder(
               itemCount: actions.length,
               itemBuilder: (context, index) {
@@ -132,7 +133,7 @@ class ActionsList extends StatelessWidget {
                         return Column(
                           children: [
                             const PaddingTop(12),
-                            Text(action.updateDate),
+                            Text(formatDate(action.updateDate)),
                             const PaddingTop(12),
                           ],
                         );

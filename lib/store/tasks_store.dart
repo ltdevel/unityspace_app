@@ -36,7 +36,8 @@ class TasksStore extends GStore {
             historyMap.entries.map((element) => element.value).toList();
 
         historyList.sort((a, b) => a.updateDate.compareTo(b.updateDate));
-        history = historyList.reversed.toList();
+        final newHistory = historyList.reversed.toList();
+        history = newHistory;
       }
     });
     return maxPageCount;
