@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unityspace/models/task_models.dart';
-import 'package:unityspace/screens/account_screen/pages/actions_page/action_card.dart';
-import 'package:unityspace/screens/account_screen/pages/actions_page/paddings.dart';
+import 'package:unityspace/screens/account_screen/pages/actions_page/widgets/action_card.dart';
+import 'package:unityspace/screens/widgets/common/paddings.dart';
 import 'package:unityspace/store/tasks_store.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/logger_plugin.dart';

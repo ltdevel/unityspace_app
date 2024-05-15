@@ -100,7 +100,7 @@ class Task {
 
 enum TaskImportance {
   high(1),
-  default_(0),
+  normal(0),
   low(-1);
 
   final int value;
@@ -211,7 +211,8 @@ class TaskResponse {
       stages: (json['stages'] as List<dynamic>)
           .map((e) => TaskStages.fromJson(e as Map<String, dynamic>))
           .toList(),
-      importance: TaskImportance.values[json['importance'] as int],
+      importance: TaskImportance.values
+          .firstWhere((type) => type.value == json['importance'] as int),
       createdAt: json['createdAt'] as String,
       creatorId: json['creatorId'] as int,
       tags: (json['tags'] as List<dynamic>).map((e) => e as int).toList(),

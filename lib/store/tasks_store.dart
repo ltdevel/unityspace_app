@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:unityspace/models/task_models.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/service/task_service.dart' as api;
+import 'package:collection/collection.dart';
 
 class TasksStore extends GStore {
   static TasksStore? _instance;
@@ -23,7 +24,7 @@ class TasksStore extends GStore {
   }
 
   Task? getTaskById(int id) {
-    return tasks?.firstWhere((element) => element.id == id);
+    return tasks?.firstWhereOrNull((element) => element.id == id);
   }
 
   void _setTasks(MyTaskHistoryResponse response) {
