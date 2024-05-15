@@ -31,6 +31,7 @@ class ActionCard extends StatelessWidget {
           ),
           Text(
             task,
+            overflow: TextOverflow.ellipsis,
             style: textTheme.bodySmall,
           ),
           Text(

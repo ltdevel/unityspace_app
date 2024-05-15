@@ -26,7 +26,9 @@ enum TaskChangesTypes {
   deleteStage(20),
   removeMember(21),
   addResponsible(22),
-  removeResponsible(23);
+  removeResponsible(23),
+  defaultValue(-1),
+  ;
 
   final int value;
 
@@ -214,8 +216,9 @@ class TaskResponse {
       stages: (json['stages'] as List<dynamic>)
           .map((e) => TaskStages.fromJson(e as Map<String, dynamic>))
           .toList(),
-      importance: TaskImportance.values
-          .firstWhere((type) => type.value == json['importance'] as int),
+      importance: TaskImportance.values.firstWhere(
+          (type) => type.value == json['importance'] as int,
+          orElse: () => TaskImportance.normal),
       createdAt: json['createdAt'] as String,
       creatorId: json['creatorId'] as int,
       tags: (json['tags'] as List<dynamic>).map((e) => e as int).toList(),
@@ -283,8 +286,9 @@ class TaskHistory implements BaseModel {
       id: response.id,
       state: response.state,
       taskId: response.taskId,
-      type: TaskChangesTypes.values
-          .firstWhere((type) => type.value == response.type),
+      type: TaskChangesTypes.values.firstWhere(
+          (type) => type.value == response.type,
+          orElse: () => TaskChangesTypes.defaultValue),
       updateDate: response.updateDate,
       userId: response.userId,
       projectName: response.projectName,

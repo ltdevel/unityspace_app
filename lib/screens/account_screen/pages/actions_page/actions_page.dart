@@ -140,6 +140,7 @@ class ActionsPageStore extends WStore {
         return 'Вы изменили важность задачи на ${state == null}';
       case TaskChangesTypes.commit:
         return 'Новый коммит по задаче: ${history.commitName}';
+      case TaskChangesTypes.defaultValue:
       default:
         return 'Такой тип истории не определен :( ${history.userId}';
     }
