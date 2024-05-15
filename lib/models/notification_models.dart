@@ -114,21 +114,21 @@ class DeleteNotificationsResponse {
 }
 
 class NotificationModel implements BaseModel {
-  bool archived;
-  String createdAt;
   @override
-  int id;
-  int initiatorId;
-  List<NotificationLocation> locations;
-  int? message;
-  String notificationType;
-  int parentId;
-  String parentType;
-  int recipientId;
-  String? stageName;
-  String? taskName;
-  String text;
-  bool unread;
+  final int id;
+  final bool archived;
+  final String createdAt;
+  final int initiatorId;
+  final List<NotificationLocation> locations;
+  final int? message;
+  final String notificationType;
+  final int parentId;
+  final String parentType;
+  final int recipientId;
+  final String? stageName;
+  final String? taskName;
+  final String text;
+  final bool unread;
 
   NotificationModel({
     required this.archived,
@@ -163,6 +163,40 @@ class NotificationModel implements BaseModel {
       taskName: data.taskName,
       text: data.text,
       unread: data.unread,
+    );
+  }
+
+  NotificationModel copyWith({
+    int? id,
+    bool? archived,
+    String? createdAt,
+    int? initiatorId,
+    List<NotificationLocation>? locations,
+    int? message,
+    String? notificationType,
+    int? parentId,
+    String? parentType,
+    int? recipientId,
+    String? stageName,
+    String? taskName,
+    String? text,
+    bool? unread,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      archived: archived ?? this.archived,
+      createdAt: createdAt ?? this.createdAt,
+      initiatorId: initiatorId ?? this.initiatorId,
+      locations: locations ?? this.locations,
+      message: message ?? this.message,
+      notificationType: notificationType ?? this.notificationType,
+      parentId: parentId ?? this.parentId,
+      parentType: parentType ?? this.parentType,
+      recipientId: recipientId ?? this.recipientId,
+      stageName: stageName ?? this.stageName,
+      taskName: taskName ?? this.taskName,
+      text: text ?? this.text,
+      unread: unread ?? this.unread,
     );
   }
 }

@@ -35,17 +35,20 @@ class NotificationsStore extends GStore {
     required List<NotificationResponse> notificationsToUpdate,
     required List<NotificationModel> notifications,
   }) {
-    final newNotifications = [...notifications];
-    List<int> notificationIdsToUpdate =
+    final List<int> notificationIdsToUpdate =
         notificationsToUpdate.map((e) => e.id).toList();
 
-    // Проходим по всем уведомлениям и обновляем их статус, если их идентификатор присутствует в списке для обновления
-    for (var notification in newNotifications) {
+    return notifications.map((notification) {
       if (notificationIdsToUpdate.contains(notification.id)) {
-        notification.unread = !notification.unread;
+        // Если идентификатор уведомления присутствует в списке для обновления,
+        // создаем новую копию уведомления с измененным параметром unread
+        return notification.copyWith(unread: !notification.unread);
+      } else {
+        // Если идентификатор уведомления не требуется обновлять,
+        // возвращаем его без изменений
+        return notification;
       }
-    }
-    return newNotifications;
+    }).toList();
   }
 
   /// Возвращает отформатированный список,

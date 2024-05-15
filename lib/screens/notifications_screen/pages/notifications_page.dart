@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/notifications_screen/widgets/notifications_list.dart';
+import 'package:unityspace/store/user_store.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/models/notification_models.dart';
 import 'package:unityspace/utils/errors.dart';
@@ -15,18 +17,27 @@ import 'package:unityspace/utils/logger_plugin.dart';
 /// Содержит в себе методы получения и обработки уведомлений пользователя
 class NotificationPageStore extends WStore {
   //
-  NotificationPageStore({NotificationsStore? notificationsStore})
-      : notificationsStore = notificationsStore ?? NotificationsStore();
+  NotificationPageStore(
+      {NotificationsStore? notificationsStore, UserStore? userStore})
+      : notificationsStore = notificationsStore ?? NotificationsStore(),
+        userStore = userStore ?? UserStore();
   //
   NotificationErrors error = NotificationErrors.none;
   WStoreStatus status = WStoreStatus.init;
   int currentPage = 1;
   int maxPageCount = 1;
   NotificationsStore notificationsStore;
+  UserStore userStore;
   List<NotificationModel> get notifications => computedFromStore(
         store: notificationsStore,
         getValue: (store) => store.notifications,
         keyName: 'notifcations',
+      );
+
+  List<OrganizationMember> get organizationMembers => computedFromStore(
+        store: UserStore(),
+        getValue: (store) => store.organization?.members ?? [],
+        keyName: 'organization_members',
       );
 
   /// Переход на следующую страницу уведомлений
@@ -189,20 +200,17 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
                     final List<NotificationModel> notifications =
                         store.notifications;
                     return NotificationsList(
+                      organizationMembers: store.organizationMembers,
                       items: notifications,
                       onOptionalButtonTap: (index) {
-                        context
-                            .wstore<NotificationPageStore>()
-                            .changeReadStatusNotification(
-                                [notifications[index].id],
-                                notifications[index].archived);
+                        store.changeReadStatusNotification(
+                            [notifications[index].id],
+                            notifications[index].archived);
                       },
                       onArchiveButtonTap: (index) {
-                        context
-                            .wstore<NotificationPageStore>()
-                            .changeArchiveStatusNotification(
-                                [notifications[index].id],
-                                notifications[index].archived);
+                        store.changeArchiveStatusNotification(
+                            [notifications[index].id],
+                            notifications[index].archived);
                       },
                     );
                   }),

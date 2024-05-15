@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unityspace/models/notification_models.dart';
+import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/screens/notifications_screen/widgets/notifications_list.dart';
 import 'package:unityspace/store/notifications_store.dart';
+import 'package:unityspace/store/user_store.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 
 class ArchivedNotificationPageStore extends WStore {
   //
-  ArchivedNotificationPageStore({NotificationsStore? notificationsStore})
-      : notificationsStore = notificationsStore ?? NotificationsStore();
+  ArchivedNotificationPageStore(
+      {NotificationsStore? notificationsStore, UserStore? userStore})
+      : notificationsStore = notificationsStore ?? NotificationsStore(),
+        userStore = userStore ?? UserStore();
   //
   bool isArchived = true;
   NotificationErrors error = NotificationErrors.none;
@@ -19,10 +23,17 @@ class ArchivedNotificationPageStore extends WStore {
   int maxPageCount = 1;
   int currentPage = 1;
   NotificationsStore notificationsStore;
+  UserStore userStore;
   List<NotificationModel> get notifications => computedFromStore(
         store: notificationsStore,
         getValue: (store) => store.notifications,
         keyName: 'notifcations',
+      );
+
+  List<OrganizationMember> get organizationMembers => computedFromStore(
+        store: userStore,
+        getValue: (store) => store.organization?.members ?? [],
+        keyName: 'organization_members',
       );
 
   /// Переход на следующую страницу уведомлений
@@ -170,6 +181,7 @@ class ArchivedNotificationsPage
                         store.notifications;
                     return NotificationsList(
                       items: notifications,
+                      organizationMembers: store.organizationMembers,
                       onArchiveButtonTap: (index) {
                         context
                             .wstore<ArchivedNotificationPageStore>()

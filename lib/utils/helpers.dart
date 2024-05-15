@@ -4,7 +4,9 @@ import 'package:unityspace/utils/http_plugin.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? makeAvatarUrl(final String? avatar) {
-  return avatar != null ? '${HttpPlugin.baseURL}/files/avatar/$avatar' : null;
+  return avatar != null
+      ? '${HttpPlugin.baseURL}/v2/files/avatar/$avatar'
+      : null;
 }
 
 String? getNullStringIfEmpty(final String? str) {
