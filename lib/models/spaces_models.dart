@@ -1,3 +1,4 @@
+import 'package:unityspace/models/i_base_model.dart';
 import 'package:unityspace/utils/helpers.dart' as helpers;
 
 class SpaceResponse {
@@ -146,7 +147,8 @@ class SpaceMemberResponse {
   }
 }
 
-class Space {
+class Space implements BaseModel {
+  @override
   final int id;
   final String name;
   final double order;

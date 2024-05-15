@@ -1,5 +1,7 @@
 import 'dart:core';
 
+import 'package:unityspace/models/i_base_model.dart';
+
 enum TaskChangesTypes {
   createTask(0),
   changeName(1),
@@ -31,7 +33,8 @@ enum TaskChangesTypes {
   const TaskChangesTypes(this.value);
 }
 
-class Task {
+class Task implements BaseModel {
+  @override
   final int id;
   final String name;
   final List<TaskStages> stages;
@@ -251,7 +254,8 @@ class TaskResponses {
   }
 }
 
-class TaskHistory {
+class TaskHistory implements BaseModel {
+  @override
   final int id;
   final String? state;
   final int taskId;

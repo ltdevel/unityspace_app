@@ -1,3 +1,5 @@
+import 'package:unityspace/models/i_base_model.dart';
+
 class InitiatorAndRecipient {
   int id;
   int organizationId;
@@ -111,9 +113,10 @@ class DeleteNotificationsResponse {
   }
 }
 
-class NotificationModel {
+class NotificationModel implements BaseModel {
   bool archived;
   String createdAt;
+  @override
   int id;
   int initiatorId;
   List<NotificationLocation> locations;
