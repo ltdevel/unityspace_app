@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:unityspace/models/task_models.dart';
+import 'package:unityspace/store/gstore_extension.dart';
 import 'package:wstore/wstore.dart';
 import 'package:unityspace/service/task_service.dart' as api;
 import 'package:collection/collection.dart';
@@ -42,7 +43,7 @@ class TasksStore extends GStore {
         tasks = tasksList;
       } else {
         List<Task> updatedTasksList =
-            _updateTasksListLocally(tasksList, tasksMap);
+            List<Task>.from(updateLocally(tasksList, tasksMap));
         tasks = updatedTasksList;
       }
     });
@@ -63,40 +64,12 @@ class TasksStore extends GStore {
         history = historyPage;
       } else {
         List<TaskHistory> updatedHistoryList =
-            _updateHistoryListLocally(historyPage, historyMap);
+            List<TaskHistory>.from(updateLocally(historyPage, historyMap));
 
         updatedHistoryList.sort((a, b) => a.updateDate.compareTo(b.updateDate));
         history = updatedHistoryList.reversed.toList();
       }
     });
-  }
-
-  List<TaskHistory> _updateHistoryListLocally(
-      List<TaskHistory> historyPage, HashMap<int, TaskHistory> historyMap) {
-    for (TaskHistory history in historyPage) {
-      if (historyMap.containsKey(history.id)) {
-        historyMap.update(history.id, (_) => history);
-      } else {
-        historyMap[history.id] = history;
-      }
-    }
-    final List<TaskHistory> newHistory =
-        historyMap.entries.map((element) => element.value).toList();
-    return newHistory;
-  }
-
-  List<Task> _updateTasksListLocally(
-      List<Task> tasks, HashMap<int, Task> tasksMap) {
-    for (Task tasks in tasks) {
-      if (tasksMap.containsKey(tasks.id)) {
-        tasksMap.update(tasks.id, (_) => tasks);
-      } else {
-        tasksMap[tasks.id] = tasks;
-      }
-    }
-    final List<Task> newTasks =
-        tasksMap.entries.map((element) => element.value).toList();
-    return newTasks;
   }
 
   @override
