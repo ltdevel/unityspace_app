@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:unityspace/utils/http_plugin.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? makeAvatarUrl(final String? avatar) {
   return avatar != null ? '${HttpPlugin.baseURL}/files/avatar/$avatar' : null;
@@ -25,25 +26,30 @@ bool isLinkValid(final String url) {
   });
 }
 
-String timeAgo(String date) {
+String timeAgo({
+  required String date,
+  required AppLocalizations localizations,
+}) {
   DateTime dateTime = dateFromDateString(date);
   Duration diff = DateTime.now().difference(dateTime);
-  if (diff.inDays > 365) {
-    return "${(diff.inDays / 365).floor()} ${(diff.inDays / 365).floor() == 1 ? "year" : "years"} ago";
+
+  if (diff.inDays >= 365) {
+    final years = (diff.inDays / 365).floor();
+    return localizations.yearsAgo(years, years);
+  } else if (diff.inDays >= 30) {
+    final months = (diff.inDays / 30).floor();
+    return localizations.monthsAgo(months, months);
+  } else if (diff.inDays >= 7) {
+    final weeks = (diff.inDays / 7).floor();
+    return localizations.weeksAgo(weeks, weeks);
+  } else if (diff.inDays >= 2) {
+    final days = diff.inDays.toInt();
+    return localizations.daysAgo(days, days);
+  } else if (diff.inHours >= 1) {
+    return localizations.yesterday;
+  } else {
+    return localizations.today;
   }
-  if (diff.inDays > 30) {
-    return "${(diff.inDays / 30).floor()} ${(diff.inDays / 30).floor() == 1 ? "month" : "months"} ago";
-  }
-  if (diff.inDays > 7) {
-    return "${(diff.inDays / 7).floor()} ${(diff.inDays / 7).floor() == 1 ? "week" : "weeks"} ago";
-  }
-  if (diff.inDays > 1) {
-    return "${diff.inDays} days ago";
-  }
-  if (diff.inDays == 1) {
-    return "yesterday";
-  }
-  return "today";
 }
 
 DateTime dateFromDateString(String date) {
@@ -62,8 +68,19 @@ String timeFromDateString(String date) {
   return '${timeList[0].padLeft(2, '0')}:${timeList[1].padRight(2, '0')}';
 }
 
-String formatDate(String dateString) {
+String formatDate({required String dateString, required String locale}) {
   DateTime date = DateTime.parse(dateString);
-  DateFormat formatter = DateFormat('EEEE, d MMMM');
-  return formatter.format(date);
+  DateFormat formatter = DateFormat('EEEE, d MMMM', locale);
+  String formattedDate = formatter.format(date);
+  return formattedDate.capitalizeWords();
+}
+
+extension StringExtension on String {
+  String capitalizeWords() {
+    List<String> words = split(' ');
+
+    return words
+        .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
+        .join(' ');
+  }
 }

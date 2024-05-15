@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unityspace/models/task_models.dart';
 import 'package:unityspace/screens/account_screen/pages/actions_page/widgets/action_card.dart';
+import 'package:unityspace/screens/notifications_screen/utils/errors.dart';
 import 'package:unityspace/screens/widgets/common/paddings.dart';
 import 'package:unityspace/store/tasks_store.dart';
 import 'package:unityspace/utils/helpers.dart';
+import 'package:unityspace/utils/localization_helper.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
 import 'package:wstore/wstore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:unityspace/utils/localization_helper.dart';
 
 class ActionsPageStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
-  String error = '';
+  ActionsErrors error = ActionsErrors.none;
   int maxPagesCount = 1;
   int currentPage = 1;
   @override
@@ -34,25 +37,11 @@ class ActionsPageStore extends WStore {
     TasksStore().getTasksHistory(currentPage);
   }
 
-  List<({String title, String taskName, String timeAgo, String date})>
-      getActionPresentations(List<TaskHistory> history) {
-    final List<({String title, String taskName, String timeAgo, String date})>
-        actions = [];
-    for (TaskHistory action in history) {
-      final Task? task = TasksStore().getTaskById(action.taskId);
-      if (task != null) {
-        actions.add(_getActionView(action, task));
-      }
-    }
-
-    return actions;
-  }
-
   Future<void> loadData() async {
     if (status == WStoreStatus.loading) return;
     setStore(() {
       status = WStoreStatus.loading;
-      error = '';
+      error = ActionsErrors.none;
     });
 
     try {
@@ -62,87 +51,12 @@ class ActionsPageStore extends WStore {
         status = WStoreStatus.loaded;
       });
     } catch (e, stack) {
-      logger.d('ActionsPageStore loadData error=$e\nstack=$stack');
-      String errorText =
-          'При загрузке данных возникла проблема, пожалуйста, попробуйте ещё раз';
-      status = WStoreStatus.error;
-      error = errorText;
-    }
-  }
-
-  ({String title, String taskName, String timeAgo, String date}) _getActionView(
-      TaskHistory history, Task task) {
-    String title = taskChangesTypesToString(history, task);
-    String taskName = 'Задача: ${history.taskName}';
-
-    String time =
-        '${timeAgo(history.updateDate)} ${timeFromDateString(history.updateDate)}';
-    String date = formatDate(history.updateDate);
-
-    return (title: title, taskName: taskName, timeAgo: time, date: date);
-  }
-
-  String taskChangesTypesToString(TaskHistory history, Task task) {
-    final state = history.state;
-    final type = history.type;
-    switch (type) {
-      case TaskChangesTypes.createTask:
-        return 'Вы создали задачу';
-      case TaskChangesTypes.changeDescription:
-        return 'Вы изменили описание задачи';
-      case TaskChangesTypes.changeName:
-        return 'Вы изменили название задачи на ${task.name}';
-      case TaskChangesTypes.changeBlockReason:
-        if (state == null) {
-          return 'Вы установили задаче статус "Требует внимания"';
-        }
-        return 'Вы сняли с задачи статус "Требует внимания"';
-      case TaskChangesTypes.overdueTaskNoResponsible:
-        return 'Задача просрочена и на ней нет исполнителя!';
-      case TaskChangesTypes.overdueTaskWithResponsible:
-        return 'Задача просрочена';
-      case TaskChangesTypes.changeDate:
-        if (state == null) {
-          return 'Вы перенесли задачу на новую дату ${task.dateEnd}';
-        }
-        return 'Вы убрали дату у задачи ';
-      case TaskChangesTypes.changeColor:
-        if (state == null) {
-          return 'Вы изменили цвет задачи на ${task.color}';
-        }
-        return 'Вы убрали цвет с задачи';
-      case TaskChangesTypes.changeResponsible:
-        if (state == null) {
-          return 'Вы добавили исполнителя к задаче - ${task.responsibleUsersId}';
-        }
-        return 'Вы убрали исполнителя с задачи';
-      case TaskChangesTypes.changeStatus:
-        return 'Вы изменили статус задачи на ${task.status}';
-      case TaskChangesTypes.changeStage:
-        if (state == 'archive_tasks') {
-          return 'Вы отправили задачу  в архив в проекте ';
-        }
-
-        return 'Вы переместили задачу в колонку "${state == null}" в проекте ${history.projectName}';
-      case TaskChangesTypes.addTag:
-        return 'Вы добавили к задаче  ярлык';
-      case TaskChangesTypes.deleteTag:
-        return 'Вы удалили у задачи ярлык';
-      case TaskChangesTypes.sendMessage:
-        return 'Вы оставили комментарий';
-      case TaskChangesTypes.deleteTask:
-        return 'Вы удалили задачу';
-      case TaskChangesTypes.addCover:
-        return 'Вы изменили обложку у задачи';
-      case TaskChangesTypes.deleteCover:
-        return 'Вы удалили обложку задачи ';
-      case TaskChangesTypes.changeImportance:
-        return 'Вы изменили важность задачи на ${state == null}';
-      case TaskChangesTypes.commit:
-        return 'Новый коммит по задаче: ${history.commitName}';
-      case TaskChangesTypes.defaultValue:
-      default:
-        return 'Такой тип истории не определен :( ${history.userId}';
+      logger.d('on ActionsPage'
+          'ActionsPage loadData error=$e\nstack=$stack');
+      setStore(() {
+        status = WStoreStatus.error;
+        error = ActionsErrors.loadingDataError;
+      });
     }
   }
 }
@@ -189,8 +103,110 @@ class ActionsList extends StatelessWidget {
     super.key,
   });
 
+  List<({String title, String taskName, String timeAgo, String date})>
+      getActionPresentations(
+          {required AppLocalizations localizations,
+          required List<TaskHistory> history}) {
+    final List<({String title, String taskName, String timeAgo, String date})>
+        actions = [];
+    for (TaskHistory action in history) {
+      final Task? task = TasksStore().getTaskById(action.taskId);
+      if (task != null) {
+        actions.add(_getActionView(
+            history: action, task: task, localizations: localizations));
+      }
+    }
+
+    return actions;
+  }
+
+  ({String title, String taskName, String timeAgo, String date}) _getActionView(
+      {required TaskHistory history,
+      required Task task,
+      required AppLocalizations localizations}) {
+    String title = taskChangesTypesToString(
+        history: history, task: task, localizations: localizations);
+    String taskName = 'Задача: ${history.taskName}';
+
+    String time =
+        '${timeAgo(date: history.updateDate, localizations: localizations)} ${timeFromDateString(history.updateDate)}';
+    String date = formatDate(
+        dateString: history.updateDate, locale: localizations.localeName);
+
+    return (title: title, taskName: taskName, timeAgo: time, date: date);
+  }
+
+  String taskChangesTypesToString(
+      {required TaskHistory history,
+      required Task task,
+      required AppLocalizations localizations}) {
+    final state = history.state;
+    final type = history.type;
+    switch (type) {
+      case TaskChangesTypes.createTask:
+        return localizations.createTask;
+      case TaskChangesTypes.changeDescription:
+        return localizations.changeDescription;
+      case TaskChangesTypes.changeName:
+        return localizations.changeName(task.name);
+      case TaskChangesTypes.changeBlockReason:
+        if (state == null) {
+          return localizations.changeBlockReasonSet;
+        }
+        return localizations.changeBlockReasonRemoved;
+      case TaskChangesTypes.overdueTaskNoResponsible:
+        return localizations.overdueTaskNoResponsible;
+      case TaskChangesTypes.overdueTaskWithResponsible:
+        return localizations.overdueTaskWithResponsible;
+      case TaskChangesTypes.changeDate:
+        if (state == null) {
+          return localizations.changeDateSet(task.dateEnd ?? '');
+        }
+        return localizations.changeDateRemoved;
+      case TaskChangesTypes.changeColor:
+        if (state == null) {
+          return localizations.changeColorSet(task.color ?? '');
+        }
+        return localizations.changeColorRemoved;
+      case TaskChangesTypes.changeResponsible:
+        if (state == null) {
+          return localizations.changeResponsibleSet(task.responsibleUsersId);
+        }
+        return localizations.changeResponsibleRemoved;
+      case TaskChangesTypes.changeStatus:
+        return localizations.changeStatus(task.status);
+      case TaskChangesTypes.changeStage:
+        if (state == 'archive_tasks') {
+          return localizations.changeStageArchived(history.projectName ?? '');
+        }
+        return localizations.changeStageColumn(
+            history.projectName ?? '', state ?? '');
+      case TaskChangesTypes.addTag:
+        return localizations.addTag;
+      case TaskChangesTypes.deleteTag:
+        return localizations.deleteTag;
+      case TaskChangesTypes.sendMessage:
+        return localizations.sendMessage;
+      case TaskChangesTypes.deleteTask:
+        return localizations.deleteTask;
+      case TaskChangesTypes.addCover:
+        return localizations.addCover;
+      case TaskChangesTypes.deleteCover:
+        return localizations.deleteCover;
+      case TaskChangesTypes.changeImportance:
+        return localizations.changeImportance(state ?? '');
+      case TaskChangesTypes.commit:
+        return localizations.commit(history.commitName ?? '');
+      case TaskChangesTypes.defaultValue:
+      default:
+        return localizations.unhandledType(history.userId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localization =
+        LocalizationHelper.getLocalizations(context);
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
         if (notification.metrics.atEdge) {
@@ -205,9 +221,8 @@ class ActionsList extends StatelessWidget {
         watch: (store) => store.history ?? [],
         store: context.wstore<ActionsPageStore>(),
         builder: (context, history) {
-          final actions = context
-              .wstore<ActionsPageStore>()
-              .getActionPresentations(history);
+          final actions = getActionPresentations(
+              history: history, localizations: localization);
           return ListView.builder(
               itemCount: actions.length,
               itemBuilder: (context, index) {
