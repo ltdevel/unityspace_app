@@ -6,11 +6,11 @@ import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/screens/widgets/common/paddings.dart';
 import 'package:unityspace/store/tasks_store.dart';
 import 'package:unityspace/utils/helpers.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 import 'package:unityspace/utils/logger_plugin.dart';
+import 'package:unityspace/utils/theme.dart';
 import 'package:wstore/wstore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-// import 'package:unityspace/utils/localization_helper.dart';
 
 class ActionsPageStore extends WStore {
   WStoreStatus status = WStoreStatus.init;
@@ -31,6 +31,10 @@ class ActionsPageStore extends WStore {
       });
       loadNextPage();
     }
+  }
+
+  String? getTaskNameById(int id) {
+    return TasksStore().getTaskById(id)?.name;
   }
 
   void loadNextPage() {
@@ -103,109 +107,9 @@ class ActionsList extends StatelessWidget {
     super.key,
   });
 
-  List<({String title, String taskName, String timeAgo, String date})>
-      getActionPresentations(
-          {required AppLocalizations localizations,
-          required List<TaskHistory> history}) {
-    final List<({String title, String taskName, String timeAgo, String date})>
-        actions = [];
-    for (TaskHistory action in history) {
-      final Task? task = TasksStore().getTaskById(action.taskId);
-      if (task != null) {
-        actions.add(_getActionView(
-            history: action, task: task, localizations: localizations));
-      }
-    }
-
-    return actions;
-  }
-
-  ({String title, String taskName, String timeAgo, String date}) _getActionView(
-      {required TaskHistory history,
-      required Task task,
-      required AppLocalizations localizations}) {
-    String title = taskChangesTypesToString(
-        history: history, task: task, localizations: localizations);
-    String taskName = 'Задача: ${history.taskName}';
-
-    String time =
-        '${timeAgo(date: history.updateDate, localizations: localizations)} ${timeFromDateString(history.updateDate)}';
-    String date = formatDate(
-        dateString: history.updateDate, locale: localizations.localeName);
-
-    return (title: title, taskName: taskName, timeAgo: time, date: date);
-  }
-
-  String taskChangesTypesToString(
-      {required TaskHistory history,
-      required Task task,
-      required AppLocalizations localizations}) {
-    final state = history.state;
-    final type = history.type;
-    switch (type) {
-      case TaskChangesTypes.createTask:
-        return localizations.createTask;
-      case TaskChangesTypes.changeDescription:
-        return localizations.changeDescription;
-      case TaskChangesTypes.changeName:
-        return localizations.changeName(task.name);
-      case TaskChangesTypes.changeBlockReason:
-        if (state == null) {
-          return localizations.changeBlockReasonSet;
-        }
-        return localizations.changeBlockReasonRemoved;
-      case TaskChangesTypes.overdueTaskNoResponsible:
-        return localizations.overdueTaskNoResponsible;
-      case TaskChangesTypes.overdueTaskWithResponsible:
-        return localizations.overdueTaskWithResponsible;
-      case TaskChangesTypes.changeDate:
-        if (state == null) {
-          return localizations.changeDateSet(task.dateEnd ?? '');
-        }
-        return localizations.changeDateRemoved;
-      case TaskChangesTypes.changeColor:
-        if (state == null) {
-          return localizations.changeColorSet(task.color ?? '');
-        }
-        return localizations.changeColorRemoved;
-      case TaskChangesTypes.changeResponsible:
-        if (state == null) {
-          return localizations.changeResponsibleSet(task.responsibleUsersId);
-        }
-        return localizations.changeResponsibleRemoved;
-      case TaskChangesTypes.changeStatus:
-        return localizations.changeStatus(task.status);
-      case TaskChangesTypes.changeStage:
-        if (state == 'archive_tasks') {
-          return localizations.changeStageArchived(history.projectName ?? '');
-        }
-        return localizations.changeStageColumn(
-            history.projectName ?? '', state ?? '');
-      case TaskChangesTypes.addTag:
-        return localizations.addTag;
-      case TaskChangesTypes.deleteTag:
-        return localizations.deleteTag;
-      case TaskChangesTypes.sendMessage:
-        return localizations.sendMessage;
-      case TaskChangesTypes.deleteTask:
-        return localizations.deleteTask;
-      case TaskChangesTypes.addCover:
-        return localizations.addCover;
-      case TaskChangesTypes.deleteCover:
-        return localizations.deleteCover;
-      case TaskChangesTypes.changeImportance:
-        return localizations.changeImportance(state ?? '');
-      case TaskChangesTypes.commit:
-        return localizations.commit(history.commitName ?? '');
-      case TaskChangesTypes.defaultValue:
-      default:
-        return localizations.unhandledType(history.userId);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations localization =
+    final AppLocalizations localizations =
         LocalizationHelper.getLocalizations(context);
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
@@ -221,12 +125,10 @@ class ActionsList extends StatelessWidget {
         watch: (store) => store.history ?? [],
         store: context.wstore<ActionsPageStore>(),
         builder: (context, history) {
-          final actions = getActionPresentations(
-              history: history, localizations: localization);
           return ListView.builder(
-              itemCount: actions.length,
+              itemCount: history.length,
               itemBuilder: (context, index) {
-                final action = actions[index];
+                final action = history[index];
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -234,13 +136,19 @@ class ActionsList extends StatelessWidget {
                   children: [
                     LayoutBuilder(builder: (context, _) {
                       if (index == 0 ||
-                          (dateFromDateString(history[index].updateDate) !=
+                          (dateFromDateString(action.updateDate) !=
                               dateFromDateString(
                                   history[index - 1].updateDate))) {
                         return Column(
                           children: [
                             const PaddingTop(12),
-                            Text(action.date),
+                            Text(
+                                formatDate(
+                                    dateString: action.updateDate,
+                                    locale: localizations.localeName),
+                                style: textTheme.bodyMedium!.copyWith(
+                                    color: ColorConstants.grey04,
+                                    fontWeight: FontWeight.w400)),
                             const PaddingTop(12),
                           ],
                         );
@@ -251,9 +159,13 @@ class ActionsList extends StatelessWidget {
                     PaddingBottom(
                       12,
                       child: ActionCard(
-                        title: action.title,
-                        task: action.taskName,
-                        time: action.timeAgo,
+                        isSelected: false,
+                        data: (
+                          history: action,
+                          taskName: context
+                              .wstore<ActionsPageStore>()
+                              .getTaskNameById(action.id)
+                        ),
                       ),
                     ),
                   ],

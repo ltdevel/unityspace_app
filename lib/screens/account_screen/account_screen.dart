@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unityspace/screens/app_navigation_drawer.dart';
 import 'package:unityspace/screens/account_screen/pages/account_page.dart';
@@ -7,6 +8,8 @@ import 'package:unityspace/screens/account_screen/pages/actions_page/actions_pag
 import 'package:unityspace/screens/account_screen/pages/members_page.dart';
 import 'package:unityspace/screens/account_screen/pages/settings_page.dart';
 import 'package:unityspace/screens/account_screen/pages/tariff_page.dart';
+import 'package:unityspace/screens/widgets/common/appbar.dart';
+import 'package:unityspace/screens/widgets/common/paddings.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tab_button.dart';
 import 'package:unityspace/screens/widgets/tabs_list/tabs_list_row.dart';
 import 'package:unityspace/store/auth_store.dart';
@@ -120,8 +123,8 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
     final localization = LocalizationHelper.getLocalizations(context);
     return Scaffold(
       drawer: const AppNavigationDrawer(),
-      appBar: AppBar(
-        title: Text(localization.my_profile),
+      appBar: CustomAppBar(
+        localization: localization,
         actions: [
           WStoreStatusBuilder(
             store: store,
@@ -146,6 +149,7 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const PaddingTop(28),
           WStoreBuilder(
             store: store,
             watch: (store) => [store.selectedTab, store.currentUserTabs],
@@ -164,7 +168,7 @@ class AccountScreen extends WStoreWidget<AccountScreenStore> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const PaddingTop(12),
           Expanded(
             child: WStoreValueBuilder(
                 store: store,

@@ -11,35 +11,35 @@
     }
   },
   "monthsAgo": "{count, plural, one{1 месяц назад} few{{count} месяца назад} other{{count} месяцев назад}}",
-"@monthsAgo": {
-  "description": "The 'months ago' string with a parameter",
-  "placeholders": {
-    "monthsCount": {
-      "type": "int",
-      "example": "3"
+  "@monthsAgo": {
+    "description": "The 'months ago' string with a parameter",
+    "placeholders": {
+      "monthsCount": {
+        "type": "int",
+        "example": "3"
+      }
     }
-  }
-},
-"weeksAgo": "{count, plural, one{1 неделю назад} few{{count} недели назад} other{{count} недель назад}}",
-"@weeksAgo": {
-  "description": "The 'weeks ago' string with a parameter",
-  "placeholders": {
-    "weeksCount": {
-      "type": "int",
-      "example": "4"
+  },
+  "weeksAgo": "{count, plural, one{1 неделю назад} few{{count} недели назад} other{{count} недель назад}}",
+  "@weeksAgo": {
+    "description": "The 'weeks ago' string with a parameter",
+    "placeholders": {
+      "weeksCount": {
+        "type": "int",
+        "example": "4"
+      }
     }
-  }
-},
-"daysAgo": "{count, plural, one{1 день назад} few{{count} дня назад} other{{count} дней назад}}",
-"@daysAgo": {
-  "description": "The 'days ago' string with a parameter",
-  "placeholders": {
-    "daysCount": {
-      "type": "int",
-      "example": "5"
+  },
+  "daysAgo": "{count, plural, one{1 день назад} few{{count} дня назад} other{{count} дней назад}}",
+  "@daysAgo": {
+    "description": "The 'days ago' string with a parameter",
+    "placeholders": {
+      "daysCount": {
+        "type": "int",
+        "example": "5"
+      }
     }
-  }
-},
+  },
   "yesterday": "вчера",
   "@yesterday": {
     "description": "The 'yesterday' string"
@@ -48,8 +48,6 @@
   "@today": {
     "description": "The 'today' string"
   },
-
-
   "createTask": "Вы создали задачу",
   "changeDescription": "Вы изменили описание задачи",
   "changeName": "Вы изменили название задачи на {name}",

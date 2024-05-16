@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unityspace/utils/theme.dart';
 import 'package:wstore/wstore.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:unityspace/screens/account_screen/account_screen.dart';
@@ -73,26 +74,8 @@ class MyApp extends WStoreWidget<MyAppStore> {
         locale: const Locale('ru'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: ThemeData(
-          fontFamily: 'Roboto',
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0C5B35)),
-          scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFFF5F5F5),
-            surfaceTintColor: Color(0xFFF5F5F5),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8),
-                ),
-              ),
-            ),
-          ),
-          useMaterial3: true,
-        ),
+        theme: themeData,
+        themeMode: ThemeMode.light,
         initialRoute: isAuthenticated ? '/loading' : '/login',
         routes: {
           '/login': (context) => const LoginScreen(),

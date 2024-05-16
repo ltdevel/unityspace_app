@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:unityspace/utils/theme.dart';
 
 class TabButton extends StatelessWidget {
   final String? iconAsset;
@@ -20,14 +21,14 @@ class TabButton extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(8),
       clipBehavior: Clip.antiAlias,
-      color: selected ? const Color(0xFF212022) : const Color(0x0D111012),
+      color: selected ? ColorConstants.main01 : ColorConstants.grey09,
       child: InkWell(
         onTap: selected ? null : onPressed,
         child: Ink(
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
           ),
-          height: 40,
+          height: 32,
           child: Row(
             children: [
               if (iconAsset != null)
@@ -35,22 +36,15 @@ class TabButton extends StatelessWidget {
                   iconAsset!,
                   width: 16,
                   height: 16,
-                  theme: SvgTheme(
-                    currentColor: selected
-                        ? Colors.white.withOpacity(0.9)
-                        : const Color(0xFF111012).withOpacity(0.8),
+                  theme: const SvgTheme(
+                    currentColor: ColorConstants.grey02,
                   ),
                 ),
               if (iconAsset != null) const SizedBox(width: 4),
               Text(
                 title,
-                style: TextStyle(
-                  color: selected
-                      ? Colors.white.withOpacity(0.9)
-                      : const Color(0xFF111012).withOpacity(0.8),
-                  fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-                  fontSize: 16,
-                ),
+                style: textTheme.bodyMedium!.copyWith(
+                    color: ColorConstants.grey02, fontWeight: FontWeight.w500),
               ),
             ],
           ),

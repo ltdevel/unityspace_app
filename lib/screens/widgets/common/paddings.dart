@@ -36,6 +36,24 @@ class PaddingBottom extends StatelessWidget {
   }
 }
 
+class PaddingLeft extends StatelessWidget {
+  const PaddingLeft(
+    this.padding, {
+    super.key,
+    this.child,
+  });
+
+  final double padding;
+  final Widget? child;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: padding),
+      child: child,
+    );
+  }
+}
+
 class PaddingHorizontal extends StatelessWidget {
   const PaddingHorizontal(this.padding, {super.key, this.child});
 
@@ -46,6 +64,25 @@ class PaddingHorizontal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: padding),
+      child: child,
+    );
+  }
+}
+
+class PaddingAll extends StatelessWidget {
+  const PaddingAll(
+    this.padding, {
+    super.key,
+    this.child,
+  });
+
+  final double padding;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(padding),
       child: child,
     );
   }

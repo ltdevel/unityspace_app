@@ -28,12 +28,16 @@ bool isLinkValid(final String url) {
   });
 }
 
+Duration getDifference(DateTime dateTime) {
+  return DateTime.now().difference(dateTime);
+}
+
 String timeAgo({
   required String date,
   required AppLocalizations localizations,
 }) {
   DateTime dateTime = dateFromDateString(date);
-  Duration diff = DateTime.now().difference(dateTime);
+  Duration diff = getDifference(dateTime);
 
   if (diff.inDays >= 365) {
     final years = (diff.inDays / 365).floor();
@@ -74,7 +78,15 @@ String formatDate({required String dateString, required String locale}) {
   DateTime date = DateTime.parse(dateString);
   DateFormat formatter = DateFormat('EEEE, d MMMM', locale);
   String formattedDate = formatter.format(date);
-  return formattedDate.capitalizeWords();
+  Duration diff = getDifference(date);
+  String formattedDateCapitalized = formattedDate.capitalizeWords();
+  if (diff.inDays == 1) {
+    return 'Вчера, $formattedDateCapitalized';
+  } else if (diff.inDays == 0) {
+    return 'Сегодня, $formattedDateCapitalized';
+  } else {
+    return formattedDateCapitalized;
+  }
 }
 
 extension StringExtension on String {

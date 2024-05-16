@@ -320,9 +320,7 @@ class NavigatorMenuEmptySpacesHint extends StatelessWidget {
         vertical: 12,
       ),
       child: Text(
-        isOrganizationOwner
-            ? localization.owner_text
-            : localization.empt_text,
+        isOrganizationOwner ? localization.owner_text : localization.empt_text,
         style: TextStyle(
           color: Colors.white.withOpacity(0.95),
           height: 1.5,
