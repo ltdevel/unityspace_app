@@ -48,7 +48,9 @@ class ArchivedNotificationPageStore extends WStore {
 
   ///Изменяет статус архивирования уведомления
   void changeArchiveStatusNotifications(
-      List<int> notificationIds, bool archived) {
+      List<NotificationModel> notificationList, bool archived) {
+    final notificationIds =
+        notificationList.map((notification) => notification.id).toList();
     notificationsStore.changeArchiveStatusNotifications(
         notificationIds, archived);
   }
@@ -59,7 +61,9 @@ class ArchivedNotificationPageStore extends WStore {
   }
 
   ///Удаляет уведомления
-  void deleteNotifications(List<int> notificationIds) {
+  void deleteNotifications(List<NotificationModel> notificationList) {
+    final notificationIds =
+        notificationList.map((notification) => notification.id).toList();
     notificationsStore.deleteNotifications(notificationIds);
   }
 
@@ -181,20 +185,18 @@ class ArchivedNotificationsPage
                         store.notifications;
                     return NotificationsList(
                       items: notifications,
-                      organizationMembers: store.organizationMembers,
-                      onArchiveButtonTap: (index) {
+                      onArchiveButtonTap: (List<NotificationModel> list) {
                         context
                             .wstore<ArchivedNotificationPageStore>()
                             .changeArchiveStatusNotifications(
-                                [notifications[index].id],
-                                notifications[index].archived);
+                                list, list.any((element) => element.archived));
                       },
-                      onOptionalButtonTap: (int index) {
+                      onOptionalButtonTap: (List<NotificationModel> list) {
                         context
                             .wstore<ArchivedNotificationPageStore>()
                             .deleteNotifications(
-                          [notifications[index].id],
-                        );
+                              list,
+                            );
                       },
                     );
                   }),

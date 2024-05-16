@@ -51,15 +51,20 @@ class NotificationPageStore extends WStore {
   }
 
   ///Изменяет статус архивирования уведомления
-  void changeArchiveStatusNotification(
-      List<int> notificationIds, bool archived) {
+  void changeArchiveStatusNotifications(
+      List<NotificationModel> notificationList, bool archived) {
+    final notificationIds =
+        notificationList.map((notification) => notification.id).toList();
     notificationsStore.changeArchiveStatusNotifications(
         notificationIds, archived);
   }
 
   ///Изменяет статус прочтения уведомления
-  void changeReadStatusNotification(List<int> notificationIds, bool archived) {
-    notificationsStore.changeReadStatusNotification(notificationIds, archived);
+  void changeReadStatusNotification(
+      List<NotificationModel> notificationList, bool unread) {
+    final notificationIds =
+        notificationList.map((notification) => notification.id).toList();
+    notificationsStore.changeReadStatusNotification(notificationIds, unread);
   }
 
   ///Архивирует все уведомления
@@ -200,17 +205,14 @@ class NotificationsPage extends WStoreWidget<NotificationPageStore> {
                     final List<NotificationModel> notifications =
                         store.notifications;
                     return NotificationsList(
-                      organizationMembers: store.organizationMembers,
                       items: notifications,
-                      onOptionalButtonTap: (index) {
+                      onOptionalButtonTap: (List<NotificationModel> list) {
                         store.changeReadStatusNotification(
-                            [notifications[index].id],
-                            notifications[index].archived);
+                            list, list.any((element) => element.unread));
                       },
-                      onArchiveButtonTap: (index) {
-                        store.changeArchiveStatusNotification(
-                            [notifications[index].id],
-                            notifications[index].archived);
+                      onArchiveButtonTap: (List<NotificationModel> list) {
+                        store.changeArchiveStatusNotifications(
+                            list, list.any((element) => element.archived));
                       },
                     );
                   }),

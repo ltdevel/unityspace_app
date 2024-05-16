@@ -86,7 +86,6 @@ class UserAvatarWidget extends WStoreWidget<UserAvatarWidgetStore> {
 
   @override
   UserAvatarWidgetStore createWStore() => UserAvatarWidgetStore();
-
   @override
   Widget build(BuildContext context, UserAvatarWidgetStore store) {
     return WStoreBuilder(
@@ -122,6 +121,90 @@ class UserAvatarWidget extends WStoreWidget<UserAvatarWidgetStore> {
           ),
         );
       },
+    );
+  }
+}
+
+//TODO: Посмотреть на возможность заменить UserAvatarWidget на UserAvatar
+class UserAvatar extends StatefulWidget {
+  final OrganizationMember member;
+  final double width;
+  final double height;
+  final String email;
+  final double fontSize;
+  final double radius;
+  final Color colorBackground;
+  final Color colorText;
+  const UserAvatar({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.fontSize,
+    this.email = '',
+    this.radius = 6,
+    this.colorBackground = const Color(0xFF6E777A),
+    this.colorText = Colors.white,
+    required this.member,
+  });
+
+  @override
+  State<UserAvatar> createState() => _UserAvatarState();
+}
+
+class _UserAvatarState extends State<UserAvatar> {
+  
+  String userNameFirstLetter(OrganizationMember member) {
+    if (member.avatarLink != null) return '';
+    final name = member.name.trim();
+    if (name.isNotEmpty) {
+      final names = name.split(' ');
+      final firstName = names.isNotEmpty ? names[0] : '';
+      final lastName = names.length > 1 ? names[1] : '';
+      final firstLetter =
+          firstName.isNotEmpty ? firstName[0].toUpperCase() : '';
+      final lastLetter = lastName.isNotEmpty ? lastName[0].toUpperCase() : '';
+      return '$firstLetter$lastLetter';
+    }
+    final email = member.email.isEmpty ? '?' : member.email;
+    final nameFromEmail = email.split(' ')[0];
+    final names = nameFromEmail.split('.');
+    final firstName = names.isNotEmpty ? names[0] : '';
+    final lastName = names.length > 1 ? names[1] : '';
+    final firstLetter = firstName.isNotEmpty ? firstName[0].toUpperCase() : '';
+    final lastLetter = lastName.isNotEmpty ? lastName[0].toUpperCase() : '';
+    return '$firstLetter$lastLetter';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(widget.radius),
+        color: widget.colorBackground,
+        border: Border.all(
+          color: Colors.white, // Specify the border color
+          width: 1, // Specify the border width
+        ),
+        image: widget.member.avatarLink != null
+            ? DecorationImage(
+                image:
+                    CachedNetworkImageProvider(widget.member.avatarLink ?? ''),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
+      child: Center(
+        child: Text(
+          userNameFirstLetter(widget.member),
+          style: TextStyle(
+            color: widget.colorText,
+            fontSize: widget.fontSize,
+          ),
+          textScaler: TextScaler.noScaling,
+        ),
+      ),
     );
   }
 }
