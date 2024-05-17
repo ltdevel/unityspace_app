@@ -37,8 +37,11 @@ class ActionsPageStore extends WStore {
     return TasksStore().getTaskById(id)?.name;
   }
 
-  void loadNextPage() {
-    TasksStore().getTasksHistory(currentPage);
+  Future<void> loadNextPage() async {
+    final int newMaxPageCount = await TasksStore().getTasksHistory(currentPage);
+    setStore(() {
+      maxPagesCount = newMaxPageCount;
+    });
   }
 
   Future<void> loadData() async {
@@ -62,6 +65,12 @@ class ActionsPageStore extends WStore {
         error = ActionsErrors.loadingDataError;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    TasksStore().clear();
+    super.dispose();
   }
 }
 
