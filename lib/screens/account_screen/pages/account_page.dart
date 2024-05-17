@@ -522,7 +522,7 @@ class AccountItemWidget extends StatelessWidget {
             const SizedBox(width: 8),
             TextButton(
               style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(40, 40)),
+                minimumSize: WidgetStateProperty.all(const Size(40, 40)),
               ),
               onPressed: onTapChange,
               child: Text(
@@ -533,10 +533,10 @@ class AccountItemWidget extends StatelessWidget {
         ),
         TextButton(
           style: ButtonStyle(
-            minimumSize: MaterialStateProperty.all(
+            minimumSize: WidgetStateProperty.all(
               const Size(double.infinity, 40),
             ),
-            padding: MaterialStateProperty.all<EdgeInsets>(
+            padding: WidgetStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             ),
             alignment: Alignment.centerLeft,
@@ -615,7 +615,7 @@ class AccountAvatarWidget extends StatelessWidget {
                 final loading = status == WStoreStatus.loading;
                 return TextButton(
                   style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(const Size(120, 40)),
+                    minimumSize: WidgetStateProperty.all(const Size(120, 40)),
                   ),
                   onPressed: loading
                       ? null

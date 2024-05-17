@@ -15,8 +15,8 @@ class MainFormTextButtonWidget extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all(const Size(40, 40)),
-        overlayColor: MaterialStateProperty.all<Color>(Colors.white10),
+        minimumSize: WidgetStateProperty.all(const Size(40, 40)),
+        overlayColor: WidgetStateProperty.all<Color>(Colors.white10),
       ),
       child: Text(
         text,
