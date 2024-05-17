@@ -36,6 +36,18 @@ class ActionCard extends WStoreWidget<ActionCardStore> {
     return data.taskName ?? data.history.taskName ?? '???';
   }
 
+  String formatHistoryUpdateDate(
+      {required String dateString, required String locale}) {
+    List<String> dates = dateString.split('/');
+    if (dates.length == 1) {
+      return formatDateddMMyyyy(dateString: dateString, locale: locale);
+    } else if (dates.length == 2) {
+      return '${formatDateddMMyyyy(dateString: dates[0], locale: locale)} - ${formatDateddMMyyyy(dateString: dates[1], locale: locale)}';
+    } else {
+      throw FormatErrors.incorrectDateFormat;
+    }
+  }
+
   String taskChangesTypesToString(
       {required ({TaskHistory history, String? taskName}) data,
       required AppLocalizations localizations}) {
@@ -60,7 +72,7 @@ class ActionCard extends WStoreWidget<ActionCardStore> {
         return localizations.overdueTaskWithResponsible;
       case TaskChangesTypes.changeDate:
         if (history.state != null) {
-          return localizations.changeDateSet(formatDateddMMyyyy(
+          return localizations.changeDateSet(formatHistoryUpdateDate(
               dateString: history.state!, locale: localizations.localeName));
         }
         return localizations.changeDateRemoved;
