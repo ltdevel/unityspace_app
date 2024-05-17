@@ -1,8 +1,9 @@
 {
+  "taskNumberCopied": "Номер задачи скопирован",
   "@@locale": "ru",
   "yearsAgo": "{count, plural, one{1 год назад} few{{count} года назад} other{{count} лет назад}}",
   "@yearsAgo": {
-    "description": "The 'years ago' string with a parameter",
+    "description": "The 'years ago' String with a parameter",
     "placeholders": {
       "yearsCount": {
         "type": "int",
@@ -12,7 +13,7 @@
   },
   "monthsAgo": "{count, plural, one{1 месяц назад} few{{count} месяца назад} other{{count} месяцев назад}}",
   "@monthsAgo": {
-    "description": "The 'months ago' string with a parameter",
+    "description": "The 'months ago' String with a parameter",
     "placeholders": {
       "monthsCount": {
         "type": "int",
@@ -22,7 +23,7 @@
   },
   "weeksAgo": "{count, plural, one{1 неделю назад} few{{count} недели назад} other{{count} недель назад}}",
   "@weeksAgo": {
-    "description": "The 'weeks ago' string with a parameter",
+    "description": "The 'weeks ago' String with a parameter",
     "placeholders": {
       "weeksCount": {
         "type": "int",
@@ -32,7 +33,7 @@
   },
   "daysAgo": "{count, plural, one{1 день назад} few{{count} дня назад} other{{count} дней назад}}",
   "@daysAgo": {
-    "description": "The 'days ago' string with a parameter",
+    "description": "The 'days ago' String with a parameter",
     "placeholders": {
       "daysCount": {
         "type": "int",
@@ -42,37 +43,161 @@
   },
   "yesterday": "вчера",
   "@yesterday": {
-    "description": "The 'yesterday' string"
+    "description": "The 'yesterday' String"
   },
   "today": "сегодня",
   "@today": {
-    "description": "The 'today' string"
+    "description": "The 'today' String"
   },
   "createTask": "Вы создали задачу",
   "changeDescription": "Вы изменили описание задачи",
   "changeName": "Вы изменили название задачи на {name}",
-  "changeBlockReasonSet": "Вы установили задаче статус \"Требует внимания\"",
+  "@changeName": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "название задачи"
+      }
+    }
+  },
+  "changeBlockReasonSet": "Вы установили задаче статус \"Требует внимания\" {statusReason}",
+  "@changeBlockReasonSet": {
+    "placeholders": {
+      "statusReason": {
+        "type": "String",
+        "example": "!!!"
+      }
+    }
+  },
   "changeBlockReasonRemoved": "Вы сняли с задачи статус \"Требует внимания\"",
   "overdueTaskNoResponsible": "Задача просрочена и на ней нет исполнителя!",
   "overdueTaskWithResponsible": "Задача просрочена",
   "changeDateSet": "Вы перенесли задачу на новую дату {dateEnd}",
+  "@changeDateSet": {
+    "placeholders": {
+      "dateEnd": {
+        "type": "String",
+        "example": "17.05.2024"
+      }
+    }
+  },
   "changeDateRemoved": "Вы убрали дату у задачи",
-  "changeColorSet": "Вы изменили цвет задачи на {color}",
+  "changeColorSet": "Вы изменили цвет задачи на ",
   "changeColorRemoved": "Вы убрали цвет с задачи",
-  "changeResponsibleSet": "Вы добавили исполнителя к задаче - {responsibleUsersId}",
-  "changeResponsibleRemoved": "Вы убрали исполнителя с задачи",
+  "changeResponsible": "Вы изменили исполнителя на задаче -",
   "changeStatus": "Вы изменили статус задачи на {status}",
-  "changeStageArchived": "Вы отправили задачу в архив в проекте {projectName}",
-  "changeStageColumn": "Вы переместили задачу в колонку {state} в проекте {projectName}",
-  "addTag": "Вы добавили к задаче ярлык",
-  "deleteTag": "Вы удалили у задачи ярлык",
-  "sendMessage": "Вы оставили комментарий",
+  "@changeStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "example": "Отклонено"
+      }
+    }
+  },
+  "changeStageArchived": "Вы отправили задачу в архив в проекте \"{projectName}\"",
+  "@changeStageArchived": {
+    "placeholders": {
+      "projectName": {
+        "type": "String",
+        "example": "flutter test"
+      }
+    }
+  },
+  "changeStageColumn": "Вы переместили задачу в колонку \"{column}\" в проекте \"{projectName}\"",
+  "@changeStageColumn": {
+    "placeholders": {
+      "column": {
+        "type": "String",
+        "example": "В работе"
+      },
+      "projectName": {
+        "type": "String",
+        "example": "flutter test"
+      }
+    }
+  },
+  "addTag": "Вы добавили к задаче ярлык {tag}",
+  "@addTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String",
+        "example": "new_tag"
+      }
+    }
+  },
+  "deleteTag": "Вы удалили у задачи ярлык {tag}",
+  "@deleteTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String",
+        "example": "new_tag"
+      }
+    }
+  },
+  "sendMessage": "Вы оставили комментарий {comment}",
+  "@sendMessage": {
+    "placeholders": {
+      "comment": {
+        "type": "String",
+        "example": "send message"
+      }
+    }
+  },
   "deleteTask": "Вы удалили задачу",
   "addCover": "Вы изменили обложку у задачи",
   "deleteCover": "Вы удалили обложку задачи",
-  "changeImportance": "Вы изменили важность задачи на {state}",
+  "changeImportance": "Вы изменили важность задачи на {importance}",
+  "@changeImportance": {
+    "placeholders": {
+      "importance": {
+        "type": "String",
+        "example": "Важная"
+      }
+    }
+  },
   "commit": "Новый коммит по задаче: {commitName}",
-  "unhandledType": "Такой тип истории не определен :( {userId}",
+  "@commit": {
+    "placeholders": {
+      "commitName": {
+        "type": "String",
+        "example": "???"
+      }
+    }
+  },
+  "addStage": "Вы добавили задачу в проект {projectName} в колонку {columnName}",
+  "@addStage": {
+    "placeholders": {
+      "projectName": {
+        "type": "String",
+        "example": "flutter test"
+      },
+      "columnName": {
+        "type": "String",
+        "example": "Неразобранное"
+      }
+    }
+  },
+  "deleteStage": "Вы убрали задачу из проекта {projectName}",
+  "@deleteStage": {
+    "placeholders": {
+      "projectName": {
+        "type": "String",
+        "example": "flutter test"
+      }
+    }
+  },
+  "removeMember": "Вы исключили члена пространства -",
+  "addResponsible": "Вы добавили исполнителя к задаче -",
+  "removeResponsible": "Вы убрали исполнителя с задачи -",
+  "unhandledType": "Такой тип истории не определен :( #{userId}",
+  "@unhandledType": {
+    "placeholders": {
+      "userId": {
+        "type": "String",
+        "example": "8877"
+      }
+    }
+  },
   "the_name_of_the_space_cannot_be_empty": "Название пространства не может быть пустым",
   "add_space": "Добавить пространство",
   "create_a_space_and_add_your_colleagues": "Создайте пространство и добавьте в него ваших коллег, чтобы организовать совместную работу над задачами",

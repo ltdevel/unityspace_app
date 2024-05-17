@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:unityspace/models/task_models.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/screens/widgets/common/paddings.dart';
+import 'package:unityspace/store/user_store.dart';
+import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/localization_helper.dart';
 import 'package:unityspace/utils/theme.dart';
+import 'package:wstore/wstore.dart';
+import 'package:collection/collection.dart';
 
-class ActionCard extends StatelessWidget {
+class ActionCardStore extends WStore {
+  WStoreStatus status = WStoreStatus.init;
+  ActionsErrors error = ActionsErrors.none;
+  @override
+  ActionCard get widget => super.widget as ActionCard;
+  List<OrganizationMember> members = UserStore().organization?.members ?? [];
+  String getUserNameById(int id) =>
+      members.firstWhereOrNull((member) => member.id == id)?.name ?? '';
+}
+
+class ActionCard extends WStoreWidget<ActionCardStore> {
   const ActionCard({
     super.key,
     required this.data,
@@ -24,19 +41,18 @@ class ActionCard extends StatelessWidget {
       {required ({TaskHistory history, String? taskName}) data,
       required AppLocalizations localizations}) {
     final history = data.history;
-    final state = history.state;
     final type = history.type;
-    final name = data.taskName ?? history.taskName;
     switch (type) {
       case TaskChangesTypes.createTask:
         return localizations.createTask;
       case TaskChangesTypes.changeDescription:
         return localizations.changeDescription;
       case TaskChangesTypes.changeName:
-        return localizations.changeName(name ?? '');
+        return localizations
+            .changeName(data.taskName ?? history.taskName ?? '');
       case TaskChangesTypes.changeBlockReason:
-        if (state == null) {
-          return localizations.changeBlockReasonSet;
+        if (history.state != null) {
+          return localizations.changeBlockReasonSet(history.state ?? '');
         }
         return localizations.changeBlockReasonRemoved;
       case TaskChangesTypes.overdueTaskNoResponsible:
@@ -44,34 +60,42 @@ class ActionCard extends StatelessWidget {
       case TaskChangesTypes.overdueTaskWithResponsible:
         return localizations.overdueTaskWithResponsible;
       case TaskChangesTypes.changeDate:
-        if (state == null) {
-          return localizations.changeDateSet(history.state ?? '');
+        if (history.state != null) {
+          return localizations.changeDateSet(formatDateddMMyyyy(
+              dateString: history.state!, locale: localizations.localeName));
         }
         return localizations.changeDateRemoved;
       case TaskChangesTypes.changeColor:
-        if (state == null) {
-          return localizations.changeColorSet(history.state ?? '');
+        if (history.state != null) {
+          return localizations.changeColorSet;
         }
         return localizations.changeColorRemoved;
       case TaskChangesTypes.changeResponsible:
-        if (state == null) {
-          return localizations.changeResponsibleSet(history.state ?? '');
-        }
-        return localizations.changeResponsibleRemoved;
+        return localizations.changeResponsible;
       case TaskChangesTypes.changeStatus:
-        return localizations.changeStatus(history.state ?? '');
+        String statusString = '';
+        switch (history.state) {
+          case '0':
+            statusString = '"В работе"';
+          case '1':
+            statusString = '"Выполнено"';
+          case '2':
+            statusString = '"Отклонено"';
+        }
+
+        return localizations.changeStatus(statusString);
       case TaskChangesTypes.changeStage:
-        if (state == 'archive_tasks') {
+        if (history.state == 'archive_tasks') {
           return localizations.changeStageArchived(history.projectName ?? '');
         }
         return localizations.changeStageColumn(
-            history.projectName ?? '', state ?? '');
+            history.state ?? '', history.projectName ?? '');
       case TaskChangesTypes.addTag:
-        return localizations.addTag;
+        return localizations.addTag(history.state ?? '');
       case TaskChangesTypes.deleteTag:
-        return localizations.deleteTag;
+        return localizations.deleteTag(history.state ?? '');
       case TaskChangesTypes.sendMessage:
-        return localizations.sendMessage;
+        return localizations.sendMessage(history.state ?? '');
       case TaskChangesTypes.deleteTask:
         return localizations.deleteTask;
       case TaskChangesTypes.addCover:
@@ -79,17 +103,31 @@ class ActionCard extends StatelessWidget {
       case TaskChangesTypes.deleteCover:
         return localizations.deleteCover;
       case TaskChangesTypes.changeImportance:
-        return localizations.changeImportance(state ?? '');
+        return localizations.changeImportance(history.state ?? '');
       case TaskChangesTypes.commit:
         return localizations.commit(history.commitName ?? '');
+      case TaskChangesTypes.addStage:
+        return localizations.addStage(
+            history.projectName ?? '', history.state ?? '');
+      case TaskChangesTypes.deleteStage:
+        return localizations.deleteStage(history.projectName ?? '');
+      case TaskChangesTypes.removeMember:
+        return localizations.removeMember;
+      case TaskChangesTypes.addResponsible:
+        return localizations.addResponsible;
+      case TaskChangesTypes.removeResponsible:
+        return localizations.removeResponsible;
       case TaskChangesTypes.defaultValue:
       default:
-        return localizations.unhandledType(history.userId);
+        return localizations.unhandledType(history.state ?? '');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  ActionCardStore createWStore() => ActionCardStore();
+
+  @override
+  Widget build(BuildContext context, ActionCardStore store) {
     final AppLocalizations localizations =
         LocalizationHelper.getLocalizations(context);
     return Container(
@@ -118,28 +156,146 @@ class ActionCard extends StatelessWidget {
                   ),
                 ),
                 const PaddingLeft(12),
-                Text(
-                  timeFromDateString(data.history.updateDate),
-                  style: textTheme.labelSmall!.copyWith(
-                    color: ColorConstants.grey04,
-                  ),
-                ),
+                Text(timeFromDateString(data.history.updateDate),
+                    style: textTheme.labelSmall!.copyWith(
+                      color: ColorConstants.grey04,
+                    )),
               ],
             ),
             const PaddingTop(8),
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 57),
               child: Flexible(
-                  child: Text(
-                taskChangesTypesToString(
-                    data: data, localizations: localizations),
-                style: textTheme.headlineSmall!
-                    .copyWith(color: ColorConstants.grey03),
-              )),
+                child: LayoutBuilder(builder: (context, _) {
+                  final type = data.history.type;
+                  final state = data.history.state;
+                  final text = taskChangesTypesToString(
+                      data: data, localizations: localizations);
+                  final taskNumber = data.history.taskId.toString();
+                  if (type == TaskChangesTypes.changeColor) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ActionText(
+                          '$text ',
+                        ),
+                        state != null
+                            ? Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    color: HexColor.fromHex(state),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(4))),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    );
+                  }
+                  if (type == TaskChangesTypes.createTask) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ActionText(
+                          '$text ',
+                        ),
+                        TapToCopyText(
+                          text: '#$taskNumber',
+                        ),
+                      ],
+                    );
+                  }
+                  if (type == TaskChangesTypes.addResponsible ||
+                      type == TaskChangesTypes.removeResponsible ||
+                      type == TaskChangesTypes.changeResponsible ||
+                      type == TaskChangesTypes.removeMember) {
+                    final name = state != null
+                        ? context
+                            .wstore<ActionCardStore>()
+                            .getUserNameById(int.parse(state))
+                        : '???';
+                    return ActionText(
+                      '$text $name',
+                    );
+                  }
+                  return ActionText(
+                    text,
+                  );
+                }),
+              ),
             )
           ],
         ),
       ),
     );
+  }
+}
+
+class ActionText extends StatelessWidget {
+  const ActionText(
+    this.text, {
+    super.key,
+  });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 3,
+      style: textTheme.headlineSmall!.copyWith(color: ColorConstants.grey03),
+    );
+  }
+}
+
+class TapToCopyText extends StatefulWidget {
+  const TapToCopyText({
+    super.key,
+    this.style,
+    required this.text,
+  });
+
+  final TextStyle? style;
+  final String text;
+
+  @override
+  State<TapToCopyText> createState() => _TapToCopyTextState();
+}
+
+class _TapToCopyTextState extends State<TapToCopyText> {
+  bool isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations localizations =
+        LocalizationHelper.getLocalizations(context);
+    return GestureDetector(
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: widget.text));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(localizations.taskNumberCopied)));
+      },
+      child: MouseRegion(
+        onHover: (_) => setIsHovered(true),
+        onExit: (_) => {setIsHovered(false)},
+        child: Text(widget.text,
+            style: textTheme.headlineSmall!.copyWith(
+                color: ColorConstants.grey03,
+                decoration: isHovered ? TextDecoration.underline : null)),
+      ),
+    );
+  }
+
+  void setIsHovered(bool value) {
+    setState(() {
+      isHovered = value;
+    });
   }
 }

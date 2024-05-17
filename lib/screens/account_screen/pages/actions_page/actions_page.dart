@@ -143,7 +143,7 @@ class ActionsList extends StatelessWidget {
                           children: [
                             const PaddingTop(12),
                             Text(
-                                formatDate(
+                                formatDateEEEEdMMMM(
                                     dateString: action.updateDate,
                                     locale: localizations.localeName),
                                 style: textTheme.bodyMedium!.copyWith(

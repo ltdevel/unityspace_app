@@ -3,29 +3,53 @@ import 'dart:core';
 import 'package:unityspace/models/i_base_model.dart';
 
 enum TaskChangesTypes {
+  // Вы создали задачу #291039
   createTask(0),
+  // Вы изменили название задачи на название задачи изменен
   changeName(1),
+  // Вы изменили описание задачи
   changeDescription(2),
+  // Вы добавили исполнителя к задаче - Марина Бухановская
   changeResponsible(3),
+  // Вы переместили задачу в колонку "В работе" в проекте "flutt
   changeStage(4),
+  // Вы изменили цвет задачи на [square with color]
   changeColor(5),
+  // Вы изменили статус задачи на "Отклонено"
   changeStatus(6),
+  // Вы перенесли задачу на новую дату 17.05.2024
   changeDate(7),
+  // Вы оставили комментарий "send message"
   sendMessage(8),
+  // Вы добавили к задаче ярлык #new_tag
   addTag(9),
+  // Вы удалили у задачи ярлык #new_tag
   deleteTag(10),
+  // Вы удалили задачу
   deleteTask(11),
+  // Требует внимания
   changeBlockReason(12),
+  // Вы изменили обложку у задачи
   addCover(13),
+  // Вы удалили обложку задачи
   deleteCover(14),
+  // Задача просрочена и на ней нет исполнителя!
   overdueTaskNoResponsible(15),
+  // Задача просрочена
   overdueTaskWithResponsible(16),
+  // Вы изменили важность задачи на {state}
   changeImportance(17),
+  // Новый коммит по задаче: {commitName}
   commit(18),
+  // Вы добавили задачу в проект "Проект"
   addStage(19),
+  // Вы убрали задачу из проекта "Проект"
   deleteStage(20),
+  // Вы исключили члена пространства Иван Петров
   removeMember(21),
+  // Вы добавили исполнителя к задаче - "Иван Петров"
   addResponsible(22),
+  // Вы убрали исполнителя с задачи - "Иван Петров"
   removeResponsible(23),
   defaultValue(-1),
   ;

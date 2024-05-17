@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:intl/intl.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:unityspace/utils/http_plugin.dart';
@@ -51,7 +53,7 @@ String timeAgo({
   } else if (diff.inDays >= 2) {
     final days = diff.inDays.toInt();
     return localizations.daysAgo(days, days);
-  } else if (diff.inDays >= 1) {
+  } else if (diff.inHours >= 1) {
     return localizations.yesterday;
   } else {
     return localizations.today;
@@ -74,7 +76,8 @@ String timeFromDateString(String date) {
   return '${timeList[0].padLeft(2, '0')}:${timeList[1].padRight(2, '0')}';
 }
 
-String formatDate({required String dateString, required String locale}) {
+String formatDateEEEEdMMMM(
+    {required String dateString, required String locale}) {
   DateTime date = DateTime.parse(dateString);
   DateFormat formatter = DateFormat('EEEE, d MMMM', locale);
   String formattedDate = formatter.format(date);
@@ -89,6 +92,12 @@ String formatDate({required String dateString, required String locale}) {
   }
 }
 
+String formatDateddMMyyyy(
+    {required String dateString, required String locale}) {
+  DateTime date = DateTime.parse(dateString);
+  return DateFormat('dd.MM.yyyy', locale).format(date);
+}
+
 extension StringExtension on String {
   String capitalizeWords() {
     List<String> words = split(' ');
@@ -97,4 +106,21 @@ extension StringExtension on String {
         .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
         .join(' ');
   }
+}
+
+extension HexColor on Color {
+  /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
+  static Color fromHex(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
+  /// Prefixes a hash sign if [hasLeadingHash] is set to `true` (default is `true`).
+  String toHex({bool hasLeadingHash = true}) => '${hasLeadingHash ? '#' : ''}'
+      '${alpha.toRadixString(16).padLeft(2, '0')}'
+      '${red.toRadixString(16).padLeft(2, '0')}'
+      '${green.toRadixString(16).padLeft(2, '0')}'
+      '${blue.toRadixString(16).padLeft(2, '0')}';
 }
