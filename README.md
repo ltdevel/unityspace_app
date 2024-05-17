@@ -1,16 +1,36 @@
-# unityspace
+# Unity Space
 
-A new Flutter project.
 
-## Getting Started
+## Ручная сборка проекта
 
-This project is a starting point for a Flutter application.
+### Android:
+Ввести комманды: 
 
-A few resources to get you started if this is your first Flutter project:
+Для сборки:
+- flutter build apk --release
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### macOS:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Ввести комманды: 
+
+Для сборки:
+- flutter build macos
+
+Для того чтобы собрать dmg файл, стоит перейти в папку dmg_creator:
+
+- cd installers/dmg_creator
+
+затем для сборки dmg файла:
+- appdmg ./config.json ./unity_space.dmg
+
+### Windows:
+
+Для сборки:
+- flutter build windows
+
+Для запуска скрипта нужно установить программу Inno Setup:
+- (Ссылка для скачивания) https://jrsoftware.org/isdl.php
+- (Видео туториал для работы с Inno Setup) https://www.youtube.com/watch?v=XvwX-hmYv0E&ab_channel=RetroPortalStudio
+
+затем для сборки сборки exe файла запустите desktop_inno_script.iss по пути : 
+- installers/exe_creator/desktop_inno_script.iss
