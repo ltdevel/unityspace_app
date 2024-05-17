@@ -1,4 +1,5 @@
 import 'package:unityspace/models/spaces_models.dart';
+import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/utils/helpers.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:unityspace/service/spaces_service.dart' as api;
@@ -41,7 +42,7 @@ class SpacesStore extends GStore {
       return newSpace.id;
     } on HttpPluginException catch (e) {
       if (e.message == 'Cannot add more spaces, check paid tariff or remove spaces') {
-        throw 'paid tariff';
+        throw PaidTariffErrors.paidTariffError;
       }
       rethrow;
     }

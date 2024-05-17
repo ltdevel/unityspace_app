@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unityspace/models/auth_models.dart';
+import 'package:unityspace/utils/constants.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:unityspace/service/auth_service.dart' as api;
 import 'package:unityspace/store/user_store.dart';
@@ -23,8 +24,8 @@ class AuthStore extends GStore {
   Future<void> removeUserTokens() async {
     // удалить из локал стореджа
     final sp = await SharedPreferences.getInstance();
-    await sp.remove('access_token');
-    await sp.remove('refresh_token');
+    await sp.remove(ConstantPreferenceKeys.accessToken);
+    await sp.remove(ConstantPreferenceKeys.refreshToken);
     //
     setStore(() {
       _currentTokens = const AuthTokens('', '');
@@ -41,8 +42,8 @@ class AuthStore extends GStore {
 
     // сохранить в локалсторедж
     final sp = await SharedPreferences.getInstance();
-    await sp.setString('access_token', userToken);
-    await sp.setString('refresh_token', refreshToken);
+    await sp.setString(ConstantPreferenceKeys.accessToken, userToken);
+    await sp.setString(ConstantPreferenceKeys.refreshToken, refreshToken);
 
     //
     setStore(() {
@@ -55,8 +56,9 @@ class AuthStore extends GStore {
 
   Future<void> loadUserTokens() async {
     final sp = await SharedPreferences.getInstance();
-    final userToken = sp.getString('access_token') ?? '';
-    final refreshToken = sp.getString('refresh_token') ?? '';
+    final userToken = sp.getString(ConstantPreferenceKeys.accessToken) ?? '';
+    final refreshToken =
+        sp.getString(ConstantPreferenceKeys.refreshToken) ?? '';
     setStore(() {
       _currentTokens = AuthTokens(userToken, refreshToken);
     });
@@ -134,7 +136,7 @@ class AuthStore extends GStore {
     if (token.isEmpty) {
       HttpPlugin().setAuthorizationHeader('');
     } else {
-      HttpPlugin().setAuthorizationHeader('Bearer $token');
+      HttpPlugin().setAuthorizationHeader('${ConstantStrings.bearer} $token');
     }
   }
 }

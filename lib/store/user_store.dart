@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:unityspace/models/user_models.dart';
 import 'package:unityspace/service/user_service.dart' as api;
 import 'package:unityspace/store/auth_store.dart';
+import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:wstore/wstore.dart';
 
@@ -88,7 +89,7 @@ class UserStore extends GStore {
       await AuthStore().setUserTokens(tokens.accessToken, tokens.refreshToken);
     } on HttpPluginException catch (e) {
       if (e.message == 'Credentials incorrect') {
-        throw 'Incorrect old password';
+        throw UserAuthErrors.incorrectOldPassword;
       }
       rethrow;
     }
