@@ -152,7 +152,7 @@ class LoginByEmailForm extends StatelessWidget {
             return MainFormInputField(
               enabled: !loading,
               labelText:
-                  '${localization.your_email} (${localization.at_least_8_characters})',
+                  '${localization.password} (${localization.at_least_8_characters})',
               iconAssetName: showPassword
                   ? 'assets/icons/password_hide.svg'
                   : 'assets/icons/password_show.svg',
