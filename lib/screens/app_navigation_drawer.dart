@@ -174,93 +174,96 @@ class AppNavigationDrawer extends WStoreWidget<AppNavigationDrawerStore> {
                     store.isOrganizationOwner,
                   ],
                   builder: (context, store) {
-                    return Column(
-                      children: [
-                        NavigatorMenuListTitle(title: localization.all_spaces),
-                        if (store.allSortedSpaces.isEmpty)
-                          NavigatorMenuEmptySpacesHint(
-                            isOrganizationOwner: store.isOrganizationOwner,
-                          ),
-                        ...store.allSortedSpaces.map(
-                          (space) => NavigatorMenuItem(
-                            iconAssetName: 'assets/icons/navigator_space.svg',
-                            title: space.name,
-                            selected: currentRoute == '/space' &&
-                                currentArguments == space.id,
-                            favorite: space.favorite,
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              if (currentRoute != '/space' ||
-                                  currentArguments != space.id) {
-                                Navigator.of(context).pushReplacementNamed(
-                                  '/space',
-                                  arguments: space.id,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        if (store.isOrganizationOwner)
-                          const SizedBox(height: 16),
-                        if (store.isOrganizationOwner)
-                          WStoreListener(
-                            store: store,
-                            watch: (store) => [
-                              store.newSpaceId,
-                              store.redirectTo,
-                            ],
-                            onChange: (context, store) {
-                              if (store.newSpaceId != null) {
-                                final spaceId = store.newSpaceId;
-                                store.setSpaceId(null);
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          NavigatorMenuListTitle(
+                              title: localization.all_spaces),
+                          if (store.allSortedSpaces.isEmpty)
+                            NavigatorMenuEmptySpacesHint(
+                              isOrganizationOwner: store.isOrganizationOwner,
+                            ),
+                          ...store.allSortedSpaces.map(
+                            (space) => NavigatorMenuItem(
+                              iconAssetName: 'assets/icons/navigator_space.svg',
+                              title: space.name,
+                              selected: currentRoute == '/space' &&
+                                  currentArguments == space.id,
+                              favorite: space.favorite,
+                              onTap: () {
                                 Navigator.of(context).pop();
-                                Navigator.of(context).pushReplacementNamed(
-                                  '/space',
-                                  arguments: spaceId,
-                                );
-                              }
-                              if (store.redirectTo == 'goto_pay') {
-                                store.setRedirectTo(null);
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pushReplacementNamed(
-                                  '/account',
-                                  arguments: {'page': 'tariff'},
-                                );
-                              }
-                              if (store.redirectTo == 'start_trial') {
-                                store.setRedirectTo(null);
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pushReplacementNamed(
-                                  '/account',
-                                  arguments: {
-                                    'page': 'tariff',
-                                    'action': 'trial',
-                                  },
-                                );
-                              }
-                            },
-                            child: AddSpaceButtonWidget(
-                              onTap: () async {
-                                if (store.spaceCreating) return;
-                                store.spaceCreating = true;
-                                if (store.isAddingSpaceExceededLimit) {
-                                  final redirect =
-                                      await showAddSpaceLimitDialog(
-                                    context,
-                                    showTrialButton: store.trialNeverStarted,
+                                if (currentRoute != '/space' ||
+                                    currentArguments != space.id) {
+                                  Navigator.of(context).pushReplacementNamed(
+                                    '/space',
+                                    arguments: space.id,
                                   );
-                                  store.setRedirectTo(redirect);
-                                } else {
-                                  final spaceId = await showAddSpaceDialog(
-                                    context,
-                                  );
-                                  store.setSpaceId(spaceId);
                                 }
-                                store.spaceCreating = false;
                               },
                             ),
                           ),
-                      ],
+                          if (store.isOrganizationOwner)
+                            const SizedBox(height: 16),
+                          if (store.isOrganizationOwner)
+                            WStoreListener(
+                              store: store,
+                              watch: (store) => [
+                                store.newSpaceId,
+                                store.redirectTo,
+                              ],
+                              onChange: (context, store) {
+                                if (store.newSpaceId != null) {
+                                  final spaceId = store.newSpaceId;
+                                  store.setSpaceId(null);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushReplacementNamed(
+                                    '/space',
+                                    arguments: spaceId,
+                                  );
+                                }
+                                if (store.redirectTo == 'goto_pay') {
+                                  store.setRedirectTo(null);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushReplacementNamed(
+                                    '/account',
+                                    arguments: {'page': 'tariff'},
+                                  );
+                                }
+                                if (store.redirectTo == 'start_trial') {
+                                  store.setRedirectTo(null);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushReplacementNamed(
+                                    '/account',
+                                    arguments: {
+                                      'page': 'tariff',
+                                      'action': 'trial',
+                                    },
+                                  );
+                                }
+                              },
+                              child: AddSpaceButtonWidget(
+                                onTap: () async {
+                                  if (store.spaceCreating) return;
+                                  store.spaceCreating = true;
+                                  if (store.isAddingSpaceExceededLimit) {
+                                    final redirect =
+                                        await showAddSpaceLimitDialog(
+                                      context,
+                                      showTrialButton: store.trialNeverStarted,
+                                    );
+                                    store.setRedirectTo(redirect);
+                                  } else {
+                                    final spaceId = await showAddSpaceDialog(
+                                      context,
+                                    );
+                                    store.setSpaceId(spaceId);
+                                  }
+                                  store.spaceCreating = false;
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
                     );
                   },
                 ),
