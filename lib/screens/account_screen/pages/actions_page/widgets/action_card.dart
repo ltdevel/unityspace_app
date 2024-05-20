@@ -176,64 +176,62 @@ class ActionCard extends WStoreWidget<ActionCardStore> {
             const PaddingTop(8),
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 57),
-              child: Flexible(
-                child: LayoutBuilder(builder: (context, _) {
-                  final type = data.history.type;
-                  final state = data.history.state;
-                  final text = taskChangesTypesToString(
-                      data: data, localizations: localizations);
-                  final taskNumber = data.history.taskId.toString();
-                  if (type == TaskChangesTypes.changeColor) {
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ActionText(
-                          '$text ',
-                        ),
-                        state != null
-                            ? Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                    color: HexColor.fromHex(state),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(4))),
-                              )
-                            : const SizedBox.shrink(),
-                      ],
-                    );
-                  }
-                  if (type == TaskChangesTypes.createTask) {
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ActionText(
-                          '$text ',
-                        ),
-                        TapToCopyText(
-                          text: '#$taskNumber',
-                        ),
-                      ],
-                    );
-                  }
-                  if (type == TaskChangesTypes.addResponsible ||
-                      type == TaskChangesTypes.removeResponsible ||
-                      type == TaskChangesTypes.changeResponsible ||
-                      type == TaskChangesTypes.removeMember) {
-                    final name = state != null
-                        ? context
-                            .wstore<ActionCardStore>()
-                            .getUserNameById(int.parse(state))
-                        : '???';
-                    return ActionText(
-                      '$text $name',
-                    );
-                  }
-                  return ActionText(
-                    text,
+              child: LayoutBuilder(builder: (context, _) {
+                final type = data.history.type;
+                final state = data.history.state;
+                final text = taskChangesTypesToString(
+                    data: data, localizations: localizations);
+                final taskNumber = data.history.taskId.toString();
+                if (type == TaskChangesTypes.changeColor) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ActionText(
+                        '$text ',
+                      ),
+                      state != null
+                          ? Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                  color: HexColor.fromHex(state),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(4))),
+                            )
+                          : const SizedBox.shrink(),
+                    ],
                   );
-                }),
-              ),
+                }
+                if (type == TaskChangesTypes.createTask) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ActionText(
+                        '$text ',
+                      ),
+                      TapToCopyText(
+                        text: '#$taskNumber',
+                      ),
+                    ],
+                  );
+                }
+                if (type == TaskChangesTypes.addResponsible ||
+                    type == TaskChangesTypes.removeResponsible ||
+                    type == TaskChangesTypes.changeResponsible ||
+                    type == TaskChangesTypes.removeMember) {
+                  final name = state != null
+                      ? context
+                          .wstore<ActionCardStore>()
+                          .getUserNameById(int.parse(state))
+                      : '???';
+                  return ActionText(
+                    '$text $name',
+                  );
+                }
+                return ActionText(
+                  text,
+                );
+              }),
             )
           ],
         ),

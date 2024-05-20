@@ -86,26 +86,24 @@ class ActionsPage extends WStoreWidget<ActionsPageStore> {
   Widget build(BuildContext context, ActionsPageStore store) {
     return PaddingHorizontal(
       12,
-      child: Expanded(
-        child: WStoreStatusBuilder(
-          store: store,
-          watch: (store) => store.status,
-          builder: (context, _) {
-            return const SizedBox.shrink();
-          },
-          builderLoaded: (context) {
-            return const ActionsList();
-          },
-          builderLoading: (context) {
-            return Center(
-              child: Lottie.asset('assets/animations/main_loader.json',
-                  width: 200, height: 200),
-            );
-          },
-          builderError: (context) {
-            return const Text('error');
-          },
-        ),
+      child: WStoreStatusBuilder(
+        store: store,
+        watch: (store) => store.status,
+        builder: (context, _) {
+          return const SizedBox.shrink();
+        },
+        builderLoaded: (context) {
+          return const ActionsList();
+        },
+        builderLoading: (context) {
+          return Center(
+            child: Lottie.asset('assets/animations/main_loader.json',
+                width: 200, height: 200),
+          );
+        },
+        builderError: (context) {
+          return const Text('error');
+        },
       ),
     );
   }
