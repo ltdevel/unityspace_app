@@ -53,7 +53,7 @@ String timeAgo({
   } else if (diff.inDays >= 2) {
     final days = diff.inDays.toInt();
     return localizations.daysAgo(days, days);
-  } else if (diff.inHours >= 1) {
+  } else if (diff.inDays >= 1) {
     return localizations.yesterday;
   } else {
     return localizations.today;
