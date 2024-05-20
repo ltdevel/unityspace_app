@@ -147,12 +147,14 @@ class NotificationHelper {
     return members.firstWhereOrNull((member) => member.id == id);
   }
 
-  Map<String, OrganizationMember?> organizationMembersByEmailMap(state) {
-    if (state.organization.members == null) {
+  Map<String, OrganizationMember?> organizationMembersByEmailMap(
+      UserStore store) {
+    if (store.organization?.members == null) {
       return {};
     }
-    return state.organization.members!
-        .fold<Map<String, OrganizationMember?>>({}, (acc, member) {
+    final organizationMembers = store.organization?.members ?? [];
+    return organizationMembers.fold<Map<String, OrganizationMember?>>({},
+        (acc, member) {
       acc[member.email] = member;
       return acc;
     });
