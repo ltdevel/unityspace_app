@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:intl/intl.dart';
 import 'package:string_validator/string_validator.dart';
-import 'package:unityspace/utils/errors.dart';
 import 'package:unityspace/utils/http_plugin.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:unityspace/utils/theme.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:wstore/wstore.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:unityspace/screens/account_screen/account_screen.dart';
@@ -19,6 +22,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthStore().loadUserTokens();
   await initializeDateFormatting('ru_RU', null);
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+    WindowOptions windowOptions =
+        const WindowOptions(minimumSize: Size(600, 400));
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
 
   runApp(
     MyApp(
